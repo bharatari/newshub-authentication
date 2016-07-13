@@ -9,6 +9,14 @@ const Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
   const user = sequelize.define('user', {
+    firstName: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
     email: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -25,20 +33,25 @@ module.exports = function(sequelize) {
     },
     title: {
       type: Sequelize.STRING,
-      allowNull: false,
     },
     notes: {
       type: Sequelize.STRING,
     },
     roles: {
       type: Sequelize.STRING,
-      allowNull: false,
     },
     disabled: {
       type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: false,
     },
   }, {
-    freezeTableName: true
+    freezeTableName: true,
+    getterMethods: {
+      fullName() {
+        return this.firstName + ' ' + this.lastName;
+      },
+    },
   });
 
   return user;
