@@ -6,6 +6,7 @@
 // for more of what you can do here.
 
 const Sequelize = require('sequelize');
+const modelUtils = require('../../utils/models');
 
 module.exports = function(sequelize) {
   const device = sequelize.define('device', {
@@ -19,7 +20,10 @@ module.exports = function(sequelize) {
     },
     description: {
       type: Sequelize.STRING,
-      allowNull: false,
+    },
+    image: {
+      type: Sequelize.TEXT,
+      allowNull: true,
     },
     notes: {
       type: Sequelize.STRING,
@@ -31,12 +35,12 @@ module.exports = function(sequelize) {
     quantity: {
       type: Sequelize.INTEGER,
       allowNull: false,
-    }
+    },
   }, {
     freezeTableName: true,
     classMethods: {
       associate(models) {
-        device.belongsToMany(models.reservation, { through: 'reservation_devices' });
+        device.belongsToMany(models.reservation, { through: modelUtils.reservationDevices(sequelize) });
       },
     },
   });
