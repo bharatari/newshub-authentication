@@ -9,9 +9,6 @@ module.exports = function(){
 
   const options = {
     Model: device(app.get('sequelize')),
-    paginate: {
-      default: 5,
-    }
   };
 
   // Initialize our service with any options it requires
