@@ -7,8 +7,11 @@ module.exports = {
   processQuantity(models, devices, startDate, endDate) {
     return models.reservation.findAll({
       where: {
-        date: {
-          $overlap: [new Date(startDate), new Date(endDate)],
+        startDate: {
+          $gte: new Date(startDate),
+        },
+        endDate: {
+          $lte: new Date(endDate),
         },
       },
       include: [{
@@ -18,7 +21,7 @@ module.exports = {
       return new Promise((resolve, reject) => {
         async.each(reservations, (reservation, callback) => {
           async.each(reservation.devices, (device, cb) => {
-            this.subtractQuantity(devices, device.id, quantity);
+            devices = this.subtractQuantity(devices, device.id, device.reservation_devices.quantity);
             cb();
           }, function (err) {
             callback();
@@ -41,6 +44,10 @@ module.exports = {
     });
 
     device.dataValues.availableQuantity = device.dataValues.availableQuantity - quantity;
+
+    if (device.dataValues.availableQuantity < 0) {
+      device.dataValues.availableQuantity = 0;
+    }
 
     return devices;
   },

@@ -28,9 +28,9 @@ module.exports = function () {
             const endDate = hook.data.endDate;
 
             return utils.processQuantity(models, devices, startDate, endDate).then(function (result) {
-              return hook;
+              resolve(hook);
             }).catch(function (e) {
-              throw e;
+              reject(e);
             });        
           } else {
             resolve(hook);
