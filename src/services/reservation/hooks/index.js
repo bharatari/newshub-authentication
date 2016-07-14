@@ -6,6 +6,7 @@ const auth = require('feathers-authentication').hooks;
 const associate = require('./associate');
 const populate = require('./populate');
 const process = require('./process');
+const status = require('./status');
 
 exports.before = {
   all: [
@@ -22,8 +23,12 @@ exports.before = {
   create: [
     process(),
   ],
-  update: [],
-  patch: [],
+  update: [
+    hooks.disable(),
+  ],
+  patch: [
+    status(),
+  ],
   remove: []
 };
 
