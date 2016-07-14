@@ -1,14 +1,8 @@
 # newshub-server
 
-> 
-
-## About
-
-This project uses [Feathers](http://feathersjs.com). An open source web  framework for building modern real-time applications.
+The server implementation of the NewsHub project built on the [Feathers](http://feathersjs.com) Node.js framework.
 
 ## Getting Started
-
-Getting up and running is as easy as 1, 2, 3.
 
 1. Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
 2. Install your dependencies
@@ -46,6 +40,4 @@ For more information on all the things you can do with Feathers visit [docs.feat
 
 ## License
 
-Copyright (c) 2015
-
-Licensed under the [MIT license](LICENSE).
+Copyright (c) 2015 Bharat Arimilli
