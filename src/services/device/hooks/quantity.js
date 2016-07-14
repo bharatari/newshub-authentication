@@ -17,7 +17,7 @@ module.exports = function () {
       delete hook.params.query.endDate;
     } else {
       return new Promise((resolve, reject) => {
-        const devices = hook.result.data;
+        const devices = hook.result;
 
         async.each(devices, (device, callback) => {
           device.dataValues.availableQuantity = device.dataValues.quantity;
