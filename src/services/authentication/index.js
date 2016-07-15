@@ -18,9 +18,6 @@ module.exports = function() {
     local: {
       usernameField: "username",
     },
-    token: {
-      secret: process.env.TOKEN_SECRET,
-    }
   };
 
   Object.assign(config, auth);
