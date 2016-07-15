@@ -11,11 +11,17 @@ const modelUtils = require('../../utils/models');
 module.exports = function(sequelize) {
   const reservation = sequelize.define('reservation', {
     purpose: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     notes: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
+    },
+    specialRequests: {
+      type: Sequelize.TEXT,
+    },
+    adminNotes: {
+      type: Sequelize.TEXT,
     },
     startDate: {
       type: Sequelize.DATE,
@@ -24,6 +30,9 @@ module.exports = function(sequelize) {
     endDate: {
       type: Sequelize.DATE,
       allowNull: false,
+    },
+    meta: {
+      type: Sequelize.JSON,
     },
     approved: {
       type: Sequelize.BOOLEAN,
@@ -40,6 +49,11 @@ module.exports = function(sequelize) {
       allowNull: false,
       defaultValue: false,
     },
+    disabled: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   }, {
     freezeTableName: true,
     classMethods: {
@@ -48,6 +62,7 @@ module.exports = function(sequelize) {
         reservation.belongsTo(models.user, { as: 'approvedBy' });
         reservation.belongsTo(models.user, { as: 'checkedOutBy' });
         reservation.belongsTo(models.user, { as: 'checkedInBy' });
+        reservation.belongsTo(models.user, { as: 'disabledBy' });
         reservation.belongsTo(models.user);
       },
     },
