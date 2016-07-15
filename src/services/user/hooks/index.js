@@ -3,6 +3,7 @@
 const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
+const token = require('./token');
 
 exports.before = {
   all: [],
@@ -18,7 +19,8 @@ exports.before = {
     auth.restrictToOwner({ ownerField: 'id' })
   ],
   create: [
-    auth.hashPassword()
+    auth.hashPassword(),
+    token(),
   ],
   update: [
     auth.verifyToken(),
