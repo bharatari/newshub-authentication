@@ -7,6 +7,7 @@ const associate = require('./associate');
 const populate = require('./populate');
 const process = require('./process');
 const status = require('./status');
+const email = require('./email');
 
 exports.before = {
   all: [
@@ -38,6 +39,7 @@ exports.after = {
   get: [],
   create: [
     associate(),
+    email(),
   ],
   update: [],
   patch: [],
