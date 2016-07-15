@@ -1,5 +1,6 @@
 'use strict';
 
+const signupToken = require('./signupToken');
 const notification = require('./notification');
 const reservation = require('./reservation');
 const device = require('./device');
@@ -22,6 +23,7 @@ module.exports = function() {
   app.configure(device);
   app.configure(reservation);
   app.configure(notification);
+  app.configure(signupToken);
 
   const models = sequelize.models;
 
