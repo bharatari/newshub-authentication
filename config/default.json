@@ -1,0 +1,24 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "postgres": "postgres://postgres:postgres@localhost:5432/newshub_server_development",
+  "public": "../public/",
+  "auth": {
+    "token": {
+      "secret": "p9g6Jt5SqfJ9HoM5hIO0UG9r1JjlhRN4fGXheh5kcG2BxMjtpCw4u1uTJTOO5iztQZVTPZ1SBueCdzSfOnAwEw=="
+    },
+    "userEndpoint": "/api/user",
+    "localEndpoint": "/api/login",
+    "successRedirect": false,
+    "failureRedirect": false,
+    "shouldSetupSuccessRoute": false,
+    "shouldSetupFailureRoute": false,
+    "idField": "id",
+    "local": {
+      "usernameField": "username"
+    }
+  },
+  "keys": {
+    "SENDGRID_KEY": "SENDGRID_KEY"
+  }
+}
