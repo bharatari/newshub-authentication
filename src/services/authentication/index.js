@@ -7,5 +7,14 @@ module.exports = function() {
 
   const auth = app.get('auth');
 
-  app.configure(authentication(auth));
+  const config = {
+    localEndpoint: '/api/login',
+    local: {
+      usernameField: 'username',
+    },
+  };
+
+  Object.assign(config, auth);
+  
+  app.configure(authentication(config));
 };
