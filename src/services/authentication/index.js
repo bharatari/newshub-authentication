@@ -7,8 +7,14 @@ module.exports = function() {
 
   const auth = app.get('auth');
 
-  const config = {
+  let config = {
+    userEndpoint: '/api/user',
     localEndpoint: '/api/login',
+    successRedirect: false,
+    failureRedirect: false,
+    shouldSetupSuccessRoute: false,
+    shouldSetupFailureRoute: false,
+    idField: 'id',
     local: {
       usernameField: 'username',
     },
