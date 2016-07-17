@@ -21,6 +21,6 @@ module.exports = function() {
   };
 
   Object.assign(config, auth);
-  
+
   app.configure(authentication(config));
 };
