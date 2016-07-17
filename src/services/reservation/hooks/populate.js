@@ -5,22 +5,28 @@ module.exports = function (options) {
     const models = hook.app.get('sequelize').models;
 
     if (hook.type === 'before') {
-      hook.params.sequelize = {
-        include: [{
-          model: models.user,
-          as: 'approvedBy',
-        }, {
-          model: models.user,
-          as: 'checkedOutBy',
-        }, {
-          model: models.user,
-          as: 'checkedInBy',
-        }, {
-          model: models.device,
-        }, {
-          model: models.user,
-        }],
-      };
+      const include = [{
+        model: models.user,
+        as: 'approvedBy',
+      }, {
+        model: models.user,
+        as: 'checkedOutBy',
+      }, {
+        model: models.user,
+        as: 'checkedInBy',
+      }, {
+        model: models.device,
+      }, {
+        model: models.user,
+      }];
+
+      if (hook.params.sequelize) {
+        hook.params.sequelize.include = include;
+      } else {
+        hook.params.sequelize = {
+          include,
+        };
+      }
     }
 
     return hook;    

@@ -6,6 +6,7 @@ const auth = require('feathers-authentication').hooks;
 const associate = require('./associate');
 const populate = require('./populate');
 const process = require('./process');
+const filter = require('./filter');
 const status = require('./status');
 const email = require('./email');
 
@@ -16,6 +17,7 @@ exports.before = {
     auth.restrictToAuthenticated()
   ],
   find: [
+    filter(),
     populate(),
   ],
   get: [

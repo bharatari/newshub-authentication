@@ -2,18 +2,12 @@
 
 const async = require('async');
 const _ = require('lodash');
+const reservation = require('../reservation/utils');
 
 module.exports = {
   processQuantity(models, devices, startDate, endDate) {
     return models.reservation.findAll({
-      where: {
-        startDate: {
-          $gte: new Date(startDate),
-        },
-        endDate: {
-          $lte: new Date(endDate),
-        },
-      },
+      where: reservation.overlaps(startDate, endDate),
       include: [{
         model: models.device
       }],
