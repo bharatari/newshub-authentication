@@ -12,7 +12,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const client = sendgrid.SendGrid(app.get('keys').SENDGRID_KEY);
 
-      const from_email = new helper.Email("web@utdmercury.com");
+      const from_email = new helper.Email("technology@utdtv.com");
       const to_email = new helper.Email(to);
       const content = new helper.Content("text/html", body);
       const mail = new helper.Mail();
