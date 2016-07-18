@@ -8,7 +8,7 @@ module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
 
-    hook.data.token = chance.hash();
+    hook.data.token = chance.hash({ casing: 'upper', length: 6 });
     hook.data.expires = moment().add(3, 'days').toDate();
 
     return hook;    
