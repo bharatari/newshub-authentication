@@ -7,8 +7,15 @@ module.exports = function (options) {
   return function (hook) {
     return hook.app.get('sequelize').models.user.findAll({
       where: {
-        roles: 'admin',
-      },
+        $or: [
+          {
+            roles: 'admin',
+          },
+          {
+            roles: 'master',
+          }
+        ],
+      },  
     }).then(function (users) {
       return new Promise((resolve, reject) => {
         async.each(users, function (user, callback) {
