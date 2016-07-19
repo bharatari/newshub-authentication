@@ -10,25 +10,25 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize) {
   const notification = sequelize.define('notification', {
     title: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     body: {
-      type: Sequelize.STRING, 
+      type: Sequelize.TEXT, 
       allowNull: false,
     },
     type: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     icon: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
     },
     sound: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
     },
     actionId: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
     },
   }, {
     freezeTableName: true,

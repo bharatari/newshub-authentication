@@ -9,36 +9,49 @@ const Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
   const user = sequelize.define('user', {
+    firstName: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+    },
+    lastName: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+    },
     email: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
       unique: true,
     },
     username: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
       unique: true,
     },
     password: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     title: {
-      type: Sequelize.STRING,
-      allowNull: false,
+      type: Sequelize.TEXT,
     },
     notes: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
     },
     roles: {
-      type: Sequelize.STRING,
-      allowNull: false,
+      type: Sequelize.TEXT,
     },
     disabled: {
-      type: Sequelize.STRING,
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   }, {
-    freezeTableName: true
+    freezeTableName: true,
+    getterMethods: {
+      fullName() {
+        return this.firstName + ' ' + this.lastName;
+      },
+    },
   });
 
   return user;
