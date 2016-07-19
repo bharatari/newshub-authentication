@@ -9,6 +9,8 @@ const process = require('./process');
 const filter = require('./filter');
 const status = require('./status');
 const email = require('./email');
+const validate = require('./validate');
+const remove = require('./remove');
 
 exports.before = {
   all: [
@@ -17,6 +19,7 @@ exports.before = {
     auth.restrictToAuthenticated()
   ],
   find: [
+    validate(),
     filter(),
     populate(),
   ],
@@ -25,6 +28,7 @@ exports.before = {
   ],
   create: [
     process(),
+    validate(),
   ],
   update: [
     hooks.disable(),
@@ -32,7 +36,9 @@ exports.before = {
   patch: [
     status(),
   ],
-  remove: []
+  remove: [
+    remove(),
+  ]
 };
 
 exports.after = {
