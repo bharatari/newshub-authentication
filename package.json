@@ -1,7 +1,7 @@
 {
   "name": "newshub-server",
   "description": "",
-  "version": "0.2.0-alpha.3",
+  "version": "0.2.0",
   "homepage": "",
   "main": "src/",
   "keywords": [
