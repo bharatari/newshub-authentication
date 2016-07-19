@@ -1,6 +1,7 @@
 'use strict';
 
 const authentication = require('feathers-authentication');
+const hooks = require('./hooks');
 
 module.exports = function() {
   const app = this;
@@ -23,4 +24,13 @@ module.exports = function() {
   Object.assign(config, auth);
 
   app.configure(authentication(config));
+
+  // Get our initialize service to that we can bind hooks
+  const service = app.service('/api/login');
+
+  // Set up our before hooks
+  service.before(hooks.before);
+
+  // Set up our after hooks
+  service.after(hooks.after);
 };
