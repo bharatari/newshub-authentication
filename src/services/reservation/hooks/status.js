@@ -3,11 +3,12 @@
 const user = require('../../user/utils');
 const errors = require('feathers-errors');
 const email = require('../../../utils/email');
+const _ = require('lodash');
 
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
-    const { approved, checkedOut, checkedIn, adminNotes, disabled } = hook.data;
+    const { approved, checkedOut, checkedIn, adminNotes, disabled, specialRequests } = hook.data;
 
     if (approved || checkedOut || checkedIn || adminNotes || disabled) {
       return models.reservation.findOne({
@@ -19,18 +20,34 @@ module.exports = function (options) {
         }],
       }).then(function (reservation) {
         if (approved && !reservation.approved) {
-          if (user.isAdmin(hook.params.user)) {
-            hook.data.approvedById = hook.params.user.id;
+          if (_.isNil(specialRequests) && _.isNil(reservation.specialRequests)) {
+            if (user.isAdmin(hook.params.user)) {
+              hook.data.approvedById = hook.params.user.id;
 
-            return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
+              return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
+                .then(function (response) {
+                  return hook;
+                }).catch(function (err) {
+                  // Don't throw error just because email didn't send
+                  return hook;
+                });
+            } else {
+              throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
+            }
           } else {
-            throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
+            if (user.isMaster(hook.params.user)) {
+              hook.data.approvedById = hook.params.user.id;
+
+              return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
+                .then(function (response) {
+                  return hook;
+                }).catch(function (err) {
+                  // Don't throw error just because email didn't send
+                  return hook;
+                });
+            } else {
+              throw new errors.NotAuthenticated('MASTER_SPECIAL_REQUEST');
+            }
           }
         }
 
