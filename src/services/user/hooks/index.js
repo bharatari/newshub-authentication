@@ -6,6 +6,7 @@ const auth = require('feathers-authentication').hooks;
 const token = require('./token');
 const master = require('./master');
 const admin = require('./admin');
+const normalize = require('./normalize');
 
 exports.before = {
   all: [],
@@ -22,6 +23,7 @@ exports.before = {
     admin(),
   ],
   create: [
+    normalize(),
     auth.hashPassword(),
     token(),
   ],
