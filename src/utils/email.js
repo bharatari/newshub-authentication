@@ -6,15 +6,16 @@ module.exports = {
     'UTD_TV_SIGNUP': '7f610a12-21fe-4b50-a4ae-c8f974598d3c',
     'ADMIN_ACTION': '2c6c78f3-784c-4663-9709-766963c5617d',
     'USER_RESERVATION_RESPONSE': '58154394-8687-4655-b92a-07bb34796276',
+    'USER_RESERVATION_ADMIN_NOTES': '5c3be594-714a-41c8-b07d-f646fd267867',
     'CREATED_RESERVATION': '9cb91814-4954-4be8-83c6-d5ac609063c3',
   },
   sendEmail(app, to, subject, body, template) {
     return new Promise((resolve, reject) => {
       const client = sendgrid.SendGrid(app.get('keys').SENDGRID_KEY);
 
-      const from_email = new helper.Email("technology@utdtv.com");
+      const from_email = new helper.Email('technology@utdtv.com');
       const to_email = new helper.Email(to);
-      const content = new helper.Content("text/html", body);
+      const content = new helper.Content('text/html', body);
       const mail = new helper.Mail();
       
       mail.setSubject(subject);
