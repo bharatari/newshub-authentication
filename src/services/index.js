@@ -1,5 +1,6 @@
 'use strict';
 
+const image = require('./image');
 const signupToken = require('./signupToken');
 const notification = require('./notification');
 const reservation = require('./reservation');
@@ -24,6 +25,7 @@ module.exports = function() {
   app.configure(reservation);
   app.configure(notification);
   app.configure(signupToken);
+  app.configure(image);
 
   const models = sequelize.models;
 

@@ -3,8 +3,8 @@
 const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
-const quantity = require('./quantity');
-const populate = require('./populate');
+const upload = require('./upload');
+const normalize = require('./normalize');
 
 exports.before = {
   all: [
@@ -12,14 +12,12 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated()
   ],
-  find: [
-    populate(),
-    quantity(),
+  find: [],
+  get: [],
+  create: [
+    upload(),
+    normalize(),
   ],
-  get: [
-    populate(),
-  ],
-  create: [],
   update: [],
   patch: [],
   remove: []
@@ -27,9 +25,7 @@ exports.before = {
 
 exports.after = {
   all: [],
-  find: [
-    quantity(),
-  ],
+  find: [],
   get: [],
   create: [],
   update: [],

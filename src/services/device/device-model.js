@@ -21,10 +21,6 @@ module.exports = function(sequelize) {
     description: {
       type: Sequelize.TEXT,
     },
-    image: {
-      type: Sequelize.TEXT,
-      allowNull: true,
-    },
     notes: {
       type: Sequelize.TEXT,
     },
@@ -48,6 +44,7 @@ module.exports = function(sequelize) {
     freezeTableName: true,
     classMethods: {
       associate(models) {
+        device.belongsTo(models.image, { as: 'thumbnail' });
         device.belongsToMany(models.reservation, { through: modelUtils.reservationDevices(sequelize) });
       },
     },
