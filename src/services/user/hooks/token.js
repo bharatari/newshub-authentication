@@ -6,7 +6,6 @@ const moment = require('moment');
 
 module.exports = function (options) {
   return function (hook) {
-
     if (hook.data.signupToken) {
       return hook.app.get('sequelize').models.signupToken.findOne({
         where: {
