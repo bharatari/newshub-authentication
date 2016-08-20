@@ -12,7 +12,7 @@ module.exports = function (options) {
           key: hook.app.get('keys').S3_API_KEY,
           secret: hook.app.get('keys').S3_API_SECRET,
           bucket: 'sitrea-newshub',
-          maxBytes: 2000000,
+          maxBytes: 5000000,
           saveAs: function (fs, cb) {
             const finalPath = '/utdtv-images/' + fs.filename;
             cb(null, finalPath);
