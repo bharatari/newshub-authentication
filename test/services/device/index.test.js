@@ -86,6 +86,7 @@ describe('device service', function () {
         quantity: 1,
       })
       .end((err, res) => {
+        console.log(err);
         res.should.have.status(201);
         done();
       });
