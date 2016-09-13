@@ -11,6 +11,12 @@ module.exports = {
           return user.dataValues.roles.includes('admin') || user.dataValues.roles.includes('master');
         }
       }
+    } else {
+      if (user.roles) {
+        if (_.isString(user.roles)) {
+          return user.roles.includes('admin') || user.roles.includes('master');
+        }
+      }
     }
     
     return false;
@@ -20,6 +26,12 @@ module.exports = {
       if (user.dataValues.roles) {
         if (_.isString(user.dataValues.roles)) {
           return user.dataValues.roles.includes('master');
+        }
+      }
+    } else {
+      if (user.roles) {
+        if (_.isString(user.roles)) {
+          return user.roles.includes('master');
         }
       }
     }

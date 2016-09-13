@@ -4,12 +4,14 @@ const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
 const disabled = require('./disabled');
+const normalize = require('./normalize');
 
 exports.before = {
   all: [],
   find: [],
   get: [],
   create: [
+    normalize(),
     disabled(),
   ],
   update: [],

@@ -1,5 +1,6 @@
 'use strict';
 
+const image = require('./image');
 const signupToken = require('./signupToken');
 const notification = require('./notification');
 const reservation = require('./reservation');
@@ -13,7 +14,10 @@ module.exports = function() {
 
   const sequelize = new Sequelize(app.get('postgres'), {
     dialect: 'postgres',
-    logging: false
+    logging: false,
+    dialectOptions: {
+      ssl: true,
+    },
   });
 
   app.set('sequelize', sequelize);
@@ -24,6 +28,7 @@ module.exports = function() {
   app.configure(reservation);
   app.configure(notification);
   app.configure(signupToken);
+  app.configure(image);
 
   const models = sequelize.models;
 

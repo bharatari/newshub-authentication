@@ -7,7 +7,7 @@ module.exports = function (options) {
   return function (hook) {
     if (hook.method === 'create') {
       if (hook.data.startDate >= hook.data.endDate) {
-        throw new errors.BadRequest('Start date cannot be after end date')
+        throw new errors.BadRequest('Start date cannot be after end date');
       } else {
         return hook;
       }

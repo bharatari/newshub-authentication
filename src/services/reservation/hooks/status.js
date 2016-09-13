@@ -85,7 +85,7 @@ module.exports = function (options) {
 
         if (adminNotes && (reservation.adminNotes !== adminNotes)) {
           if (user.isAdmin(hook.params.user)) {
-            return email.sendEmail(hook.app, reservation.user.email, null, 'added notes to', 'USER_RESERVATION_RESPONSE')
+            return email.sendEmail(hook.app, reservation.user.email, null, adminNotes, 'USER_RESERVATION_ADMIN_NOTES')
               .then(function (response) {
                 return hook;
               }).catch(function (err) {
