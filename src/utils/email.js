@@ -1,5 +1,5 @@
-const sendgrid = require('sendgrid')
-const helper = require('sendgrid').mail
+const sendgrid = require('sendgrid');
+const helper = require('sendgrid').mail;
 
 module.exports = {
   templates: {
