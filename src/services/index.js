@@ -12,13 +12,22 @@ const Sequelize = require('sequelize');
 module.exports = function() {
   const app = this;
 
-  const sequelize = new Sequelize(app.get('postgres'), {
-    dialect: 'postgres',
-    logging: false,
-    dialectOptions: {
-      ssl: true,
-    },
-  });
+  let sequelize;
+
+  if (app.get('env') === 'test') {
+    sequelize = new Sequelize(app.get('postgres'), {
+      dialect: 'postgres',
+      logging: false,
+      dialectOptions: {
+        ssl: true,
+      },
+    });
+  } else {
+    sequelize = new Sequelize(app.get('postgres'), {
+      dialect: 'postgres',
+      logging: false,
+    });
+  }
 
   app.set('sequelize', sequelize);
 

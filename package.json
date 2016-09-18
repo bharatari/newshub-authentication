@@ -15,7 +15,7 @@
     "node": "6.2.0"
   },
   "scripts": {
-    "test": "npm run jshint && npm run mocha",
+    "test": "set NODE_ENV=test&& npm run jshint && npm run mocha",
     "jshint": "jshint src/. test/. --config",
     "start": "node src/",
     "mocha": "mocha test/ --recursive"
