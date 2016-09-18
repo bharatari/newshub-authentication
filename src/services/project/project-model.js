@@ -21,7 +21,8 @@ module.exports = function(sequelize) {
     freezeTableName: true,
     classMethods: {
       associate(models) {
-        project.belongsToMany(models.users, { through: 'project_participants' });
+        project.belongsToMany(models.user, { through: 'project_participants' });
+        project.belongsToMany(models.reservation, { through: 'project_reservation '});
       },
     },
   });
