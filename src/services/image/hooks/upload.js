@@ -14,7 +14,7 @@ module.exports = function (options) {
           bucket: 'sitrea-newshub',
           maxBytes: 5000000,
           saveAs: function (fs, cb) {
-            const finalPath = '/utdtv-images/' + fs.filename;
+            const finalPath = '/utdtv-images/' + utils.generateFileName(fs.filename);
             cb(null, finalPath);
           }
         }, function (err, uploadedFiles) {
