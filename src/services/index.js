@@ -15,18 +15,18 @@ module.exports = function() {
 
   let sequelize;
 
-  if (app.get('env') === 'test') {
+  if (app.get('env') === 'development') {
+    sequelize = new Sequelize(app.get('postgres'), {
+      dialect: 'postgres',
+      logging: false,
+    });
+  } else {
     sequelize = new Sequelize(app.get('postgres'), {
       dialect: 'postgres',
       logging: false,
       dialectOptions: {
         ssl: true,
       },
-    });
-  } else {
-    sequelize = new Sequelize(app.get('postgres'), {
-      dialect: 'postgres',
-      logging: false,
     });
   }
 
