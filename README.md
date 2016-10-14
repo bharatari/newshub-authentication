@@ -1,4 +1,4 @@
-# <a href='http://www.arimilli.io'><img src='http://www.arimilli.io/logo/newshub-client.png' height='80'></a>
+# <a href='http://www.arimilli.io'><img src='http://www.arimilli.io/logo/newshub-server.png' height='80'></a>
 [![Build Status](https://travis-ci.com/bharatari/newshub-server.svg?token=X1vPctVSxD4sEeqPYVqS&branch=master)](https://travis-ci.com/bharatari/newshub-server)
 
 The server implementation of the NewsHub project built on the [Feathers](http://feathersjs.com) Node.js framework.
