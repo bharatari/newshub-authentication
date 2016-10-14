@@ -11,6 +11,7 @@ const status = require('./status');
 const email = require('./email');
 const validate = require('./validate');
 const remove = require('./remove');
+const restrict = require('./restrict');
 
 exports.before = {
   all: [
@@ -29,6 +30,7 @@ exports.before = {
   create: [
     process(),
     validate(),
+    restrict(),
   ],
   update: [
     hooks.disable(),
