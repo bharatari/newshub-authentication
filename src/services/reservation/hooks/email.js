@@ -15,6 +15,18 @@ module.exports = function (options) {
             roles: 'master',
           }
         ],
+        options: {
+          $or: [
+            {
+              doNotDisturb: null,
+            },
+            {
+              doNotDisturb: {
+                $not: true,
+              },
+            },
+          ],
+        },
       },  
     }).then(function (users) {
       return new Promise((resolve, reject) => {

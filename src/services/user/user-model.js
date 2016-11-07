@@ -45,6 +45,9 @@ module.exports = function(sequelize) {
       allowNull: false,
       defaultValue: false,
     },
+    options: {
+      type: Sequelize.JSONB,
+    },
   }, {
     freezeTableName: true,
     getterMethods: {
