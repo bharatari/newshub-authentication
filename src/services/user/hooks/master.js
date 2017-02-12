@@ -8,7 +8,7 @@ const _ = require('lodash');
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
-    const { roles, disabled } = hook.data;
+    const { roles, disabled, options } = hook.data;
 
     if (userUtils.isMaster(hook.params.user)) {
       return hook;
@@ -22,8 +22,20 @@ module.exports = function (options) {
           throw new errors.NotAuthenticated('Must be a master user to update roles');
         }
 
-        if (_.isNil(disabled) && (disabled != user.disabled)) {
+        if (!_.isNil(disabled) && (disabled != user.disabled)) {
           throw new errors.NotAuthenticated('Must be a master user to update disabled status');
+        }
+
+        if (options) {
+          if (user.options) {
+            if (!_.isNil(options.doNotDisturb) && (options.doNotDisturb != user.options.doNotDisturb)) {
+              throw new errors.NotAuthenticated('Must be a master user to update do not disturb status');
+            }
+          } else {
+            if (!_.isNil(options.doNotDisturb)) {
+              throw new errors.NotAuthenticated('Must be a master user to update do not disturb status');
+            }
+          }
         }
       }).catch(function (err) {
         throw err;
