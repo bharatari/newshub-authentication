@@ -1,5 +1,8 @@
 'use strict';
 
+const resetPassword = require('./resetPassword');
+const meta = require('./meta');
+const rolePreset = require('./rolePreset');
 const project = require('./project');
 const image = require('./image');
 const signupToken = require('./signupToken');
@@ -40,6 +43,9 @@ module.exports = function() {
   app.configure(signupToken);
   app.configure(image);
   app.configure(project);
+  app.configure(rolePreset);
+  app.configure(meta);
+  app.configure(resetPassword);
 
   const models = sequelize.models;
 
