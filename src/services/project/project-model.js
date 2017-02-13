@@ -22,7 +22,7 @@ module.exports = function(sequelize) {
     classMethods: {
       associate(models) {
         project.belongsToMany(models.user, { through: 'project_participants' });
-        project.belongsToMany(models.reservation, { through: 'project_reservation '});
+        project.belongsToMany(models.reservation, { through: 'project_reservation' });
       },
     },
   });
