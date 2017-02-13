@@ -20,8 +20,70 @@ module.exports = function (options) {
         hook.params.sequelize = {
           where,
         };
-      } else {
-        hook.params.sequelize = {};
+      }
+
+      if (hook.params.query.$sort) {
+        if (_.has(hook.params.query.$sort, 'status')) {
+          if (hook.params.query.$sort['status'] === '-1') {
+            hook.params.sequelize = Object.assign({
+              order: [
+                ['checkedOut', 'DESC'],
+                ['checkedIn', 'ASC'],
+              ],
+            }, hook.params.sequelize);
+          } else {
+            hook.params.sequelize = Object.assign({
+              order: [
+                ['approved', 'ASC'],
+                ['disabled', 'ASC'],
+                ['checkedOut', 'ASC'],
+                ['checkedIn', 'ASC'],
+              ],
+            }, hook.params.sequelize);
+          }
+
+          delete hook.params.query.$sort;
+        }
+
+        if (_.has(hook.params.query.$sort, 'user.fullName')) {
+          if (hook.params.query.$sort['user.fullName'] === '-1') {
+            hook.params.sequelize = Object.assign({
+              order: [
+                [{ model: models.user }, 'firstName', 'DESC'],
+                [{ model: models.user }, 'lastName', 'DESC'],
+              ],
+            }, hook.params.sequelize);
+          } else {
+            hook.params.sequelize = Object.assign({
+              order: [
+                [{ model: models.user }, 'firstName', 'ASC'],
+                [{ model: models.user }, 'lastName', 'ASC'],
+              ],
+            }, hook.params.sequelize);
+          }
+         
+          delete hook.params.query.$sort;
+        }
+
+        if (_.has(hook.params.query.$sort, 'checkedOutBy.fullName')) {
+          if (hook.params.query.$sort['checkedOutBy.fullName'] === '-1') {
+            hook.params.sequelize = Object.assign({
+              order: [
+                [{ model: models.user, as: 'checkedOutBy' }, 'firstName', 'DESC'],
+                [{ model: models.user, as: 'checkedOutBy' }, 'lastName', 'DESC'],
+              ],
+            }, hook.params.sequelize);
+          } else {
+            hook.params.sequelize = Object.assign({
+              order: [
+                [{ model: models.user, as: 'checkedOutBy' }, 'firstName', 'ASC'],
+                [{ model: models.user, as: 'checkedOutBy' }, 'lastName', 'ASC'],
+              ],
+            }, hook.params.sequelize);
+          }
+
+          delete hook.params.query.$sort;
+        }
       }
     }
 
