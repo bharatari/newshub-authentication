@@ -17,6 +17,7 @@
   "scripts": {
     "test": "set NODE_ENV=test&& npm run mocha && npm run istanbul",
     "lint": "eslint src test",
+    "lint:fix": "eslint src test --fix",
     "start": "node src/",
     "mocha": "mocha test/ --recursive",
     "istanbul": "istanbul cover node_modules/mocha/bin/_mocha -- test/ --recursive"
@@ -44,12 +45,14 @@
     "sendgrid": "^3.0.8",
     "sequelize": "^3.23.3",
     "sequelize-cli": "^2.5.1",
+    "sequelize-fixtures": "^0.5.6",
     "serve-favicon": "^2.3.0",
     "skipper": "^0.6.4",
     "skipper-s3": "^0.5.6",
     "winston": "^2.2.0"
   },
   "devDependencies": {
+    "bcryptjs": "^2.4.3",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "eslint": "^3.15.0",
