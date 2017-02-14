@@ -15,7 +15,7 @@
     "node": "6.2.0"
   },
   "scripts": {
-    "test": "set NODE_ENV=test&& npm run lint && npm run mocha",
+    "test": "set NODE_ENV=test&& npm run mocha",
     "lint": "eslint src test",
     "start": "node src/",
     "mocha": "mocha test/ --recursive"
