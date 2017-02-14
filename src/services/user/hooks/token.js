@@ -11,7 +11,7 @@ module.exports = function (options) {
         where: {
           token: hook.data.signupToken,
         },
-      }).then(function (response) {
+      }).then((response) => {
         if (response.dataValues) {
           if (response.dataValues.hasBeenUsed) {
             throw new errors.BadRequest('SIGNUP_TOKEN_USED');
@@ -20,20 +20,17 @@ module.exports = function (options) {
           } else {
             return response.update({
               hasBeenUsed: true,
-            }).then(function (response) {
-              return hook;
-            }).catch(function (err) {
+            }).then(response => hook).catch((err) => {
               throw new errors.GeneralError('Unknown signup token error');
             });
           }
         } else {
           throw new errors.BadRequest('SIGNUP_TOKEN_INVALID');
         }
-      }).catch(function (err) {
+      }).catch((err) => {
         throw err;
       });
-    } else {
-      throw new errors.BadRequest('SIGNUP_TOKEN_INVALID');
     }
+    throw new errors.BadRequest('SIGNUP_TOKEN_INVALID');
   };
 };

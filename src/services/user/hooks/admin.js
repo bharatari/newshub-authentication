@@ -1,4 +1,5 @@
 'use strict';
+/* eslint consistent-return: 0, eqeqeq: 0 */
 
 const user = require('../../user/utils');
 const errors = require('feathers-errors');
@@ -12,9 +13,9 @@ module.exports = function (options) {
         return hook;
       } else if (user.isAdmin(hook.params.user)) {
         return hook;
-      } else {
-        throw new errors.NotAuthenticated('Must own this user or be an admin user.');
       }
+
+      throw new errors.NotAuthenticated('Must own this user or be an admin user.');
     }
   };
 };

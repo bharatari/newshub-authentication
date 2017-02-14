@@ -1,4 +1,5 @@
 'use strict';
+/* eslint eqeqeq: 0 */
 
 const userUtils = require('../../user/utils');
 const errors = require('feathers-errors');
@@ -17,7 +18,7 @@ module.exports = function (options) {
         where: {
           id: hook.id,
         },
-      }).then(function (user) {
+      }).then((user) => {
         if (roles && (roles != user.roles)) {
           throw new errors.NotAuthenticated('Must be a master user to update roles');
         }
@@ -31,17 +32,14 @@ module.exports = function (options) {
             if (!_.isNil(options.doNotDisturb) && (options.doNotDisturb != user.options.doNotDisturb)) {
               throw new errors.NotAuthenticated('Must be a master user to update do not disturb status');
             }
-          } else {
-            if (!_.isNil(options.doNotDisturb)) {
-              throw new errors.NotAuthenticated('Must be a master user to update do not disturb status');
-            }
+          } else if (!_.isNil(options.doNotDisturb)) {
+            throw new errors.NotAuthenticated('Must be a master user to update do not disturb status');
           }
         }
-      }).catch(function (err) {
+      }).catch((err) => {
         throw err;
       });
-    } else {
-      throw new errors.NotAuthenticated('Must own this user or be a master user.');
     }
+    throw new errors.NotAuthenticated('Must own this user or be a master user.');
   };
 };

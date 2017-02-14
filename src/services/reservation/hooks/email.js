@@ -13,7 +13,7 @@ module.exports = function (options) {
           },
           {
             roles: 'master',
-          }
+          },
         ],
         options: {
           $or: [
@@ -27,25 +27,23 @@ module.exports = function (options) {
             },
           ],
         },
-      },  
-    }).then(function (users) {
-      return new Promise((resolve, reject) => {
-        async.each(users, function (user, callback) {
-          email.sendEmail(hook.app, user.dataValues.email, null, hook.params.user.fullName, 'CREATED_RESERVATION')
-            .then(function (response) {
+      },
+    }).then(users => new Promise((resolve, reject) => {
+      async.each(users, (user, callback) => {
+        email.sendEmail(hook.app, user.dataValues.email, null, hook.params.user.fullName, 'CREATED_RESERVATION')
+            .then((response) => {
               callback();
-            }).catch(function (err) {
+            }).catch((err) => {
               // Don't throw error just because email didn't send
               callback();
             });
-        }, function (err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
+      }, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
       });
-    });
+    }));
   };
 };

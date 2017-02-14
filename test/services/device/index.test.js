@@ -1,4 +1,5 @@
 'use strict';
+/* eslint no-shadow: 0 */
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -9,6 +10,7 @@ const Device = app.service('/api/device');
 const Token = app.service('/api/signup-token');
 const authentication = require('feathers-authentication/client');
 const bodyParser = require('body-parser');
+
 let user;
 let admin;
 let master;
@@ -31,8 +33,8 @@ describe('device service', function () {
         .post('/api/login')
         .set('Accept', 'application/json')
         .send({
-          'username': 'normal',
-          'password': 'password',
+          username: 'normal',
+          password: 'password',
         })
         .end((err, res) => {
           user = res.body.token;
@@ -41,8 +43,8 @@ describe('device service', function () {
             .post('/api/login')
             .set('Accept', 'application/json')
             .send({
-              'username': 'admin',
-              'password': 'adminpassword',
+              username: 'admin',
+              password: 'adminpassword',
             })
             .end((err, res) => {
               admin = res.body.token;
@@ -51,8 +53,8 @@ describe('device service', function () {
                 .post('/api/login')
                 .set('Accept', 'application/json')
                 .send({
-                  'username': 'master',
-                  'password': 'masterpassword',
+                  username: 'master',
+                  password: 'masterpassword',
                 })
                 .end((err, res) => {
                   master = res.body.token;
@@ -65,7 +67,7 @@ describe('device service', function () {
   after((done) => {
     User.remove(null, () => {
       Device.remove(null, () => {
-        this.server.close(function () {
+        this.server.close(() => {
           done();
         });
       });
@@ -74,7 +76,7 @@ describe('device service', function () {
   it('registered the device service', () => {
     assert.ok(app.service('/api/device'));
   });
-  it('should allow masters to create a device', function (done) {
+  it('should allow masters to create a device', (done) => {
     chai.request(app)
       .post('/api/device')
       .set('Accept', 'application/json')
@@ -90,7 +92,7 @@ describe('device service', function () {
         done();
       });
   });
-  it('should not allow admins to create a device', function (done) {
+  it('should not allow admins to create a device', (done) => {
     chai.request(app)
       .post('/api/device')
       .set('Accept', 'application/json')
@@ -106,7 +108,7 @@ describe('device service', function () {
         done();
       });
   });
-  it('should not allow normal users to create a device', function (done) {
+  it('should not allow normal users to create a device', (done) => {
     chai.request(app)
       .post('/api/device')
       .set('Accept', 'application/json')
