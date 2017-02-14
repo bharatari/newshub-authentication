@@ -90,6 +90,8 @@ describe('resetPassword service', () => {
   });
 
   it('Does not reset password for invalid token and valid email', (done) => {
+    const models = app.get('sequelize').models;
+
     chai.request(app)
       .post('/api/reset-password')
       .set('Accept', 'application/json')
