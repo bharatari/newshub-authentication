@@ -15,10 +15,11 @@
     "node": "6.2.0"
   },
   "scripts": {
-    "test": "set NODE_ENV=test&& npm run mocha",
+    "test": "set NODE_ENV=test&& npm run mocha && npm run istanbul",
     "lint": "eslint src test",
     "start": "node src/",
-    "mocha": "mocha test/ --recursive"
+    "mocha": "mocha test/ --recursive",
+    "istanbul": "istanbul cover node_modules/mocha/bin/_mocha -- test/ --recursive"
   },
   "dependencies": {
     "async": "^2.0.0-rc.6",
@@ -52,6 +53,7 @@
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "eslint": "^3.15.0",
+    "istanbul": "^0.4.5",
     "mocha": "^2.5.3",
     "request": "^2.72.0"
   }
