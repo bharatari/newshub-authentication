@@ -1,13 +1,13 @@
 'use strict';
 
 // rolePreset-model.js - A sequelize model
-// 
+//
 // See http://docs.sequelizejs.com/en/latest/docs/models-definition/
 // for more of what you can do here.
 
 const Sequelize = require('sequelize');
 
-module.exports = function(sequelize) {
+module.exports = function (sequelize) {
   const rolePreset = sequelize.define('rolePreset', {
     name: {
       type: Sequelize.STRING,
@@ -18,7 +18,7 @@ module.exports = function(sequelize) {
       allowNull: false,
     },
   }, {
-    freezeTableName: true
+    freezeTableName: true,
   });
 
   return rolePreset;

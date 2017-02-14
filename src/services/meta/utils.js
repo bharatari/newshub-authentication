@@ -1,14 +1,13 @@
-// Write functions that can take a Sequelize schema and convert it
-
 /**
  * The display property allows you to set whether a property should be visible by default on a table.
  * If you don't want a property to appear at all on the client, remove it from the fields array and
- * sanitize it on the server-side. The display property does not supersede permissions. 
+ * sanitize it on the server-side. The display property does not supersede permissions.
  * Fields will still only be displayed if the user has the permission to do so.
- * 
+ *
  * The same goes for the editable flag. It governs whether someone, given the proper permissions, should
  * be able to edit a property. Some properties such as IDs should not be directly edited.
  */
+
 module.exports = {
   getSchema(model) {
     return this[model];
@@ -116,6 +115,6 @@ module.exports = {
       association: true,
       display: true,
       type: 'string',
-    }]
+    }],
   },
 };

@@ -1,4 +1,5 @@
 'use strict';
+/* eslint class-methods-use-this: 0 */
 
 const hooks = require('./hooks');
 
@@ -13,12 +14,12 @@ class Service {
 
   get(id, params) {
     return Promise.resolve({
-      id, text: `A new message with ID: ${id}!`
+      id, text: `A new message with ID: ${id}!`,
     });
   }
 
   setup(app, path) {
-    
+
   }
 }
 

@@ -29,7 +29,7 @@ exports.before = {
   ],
   remove: [
     hooks.disable(),
-  ]
+  ],
 };
 
 exports.after = {
@@ -43,5 +43,5 @@ exports.after = {
   patch: [
     sanitize(),
   ],
-  remove: []
+  remove: [],
 };

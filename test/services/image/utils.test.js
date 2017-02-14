@@ -4,15 +4,15 @@ const assert = require('assert');
 const app = require('../../../src/app');
 const utils = require('../../../src/services/image/utils');
 
-describe('image utils', function () {
-  describe('#generateFileName', function () {
+describe('image utils', () => {
+  describe('#generateFileName', () => {
     it('it works', () => {
       const result = utils.generateFileName('image.jpg');
 
       assert.ok(result);
     });
   });
-  describe('#getFileType', function () {
+  describe('#getFileType', () => {
     it('it returns empty string for invalid file name', () => {
       const type = utils.getFileType('image.');
 
@@ -57,6 +57,6 @@ describe('image utils', function () {
       const type = utils.getFileType('image.JPG');
 
       assert.equal(type, '.JPG');
-    });    
+    });
   });
 });

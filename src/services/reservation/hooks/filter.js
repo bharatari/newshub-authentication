@@ -24,7 +24,7 @@ module.exports = function (options) {
 
       if (hook.params.query.$sort) {
         if (_.has(hook.params.query.$sort, 'status')) {
-          if (hook.params.query.$sort['status'] === '-1') {
+          if (hook.params.query.$sort.status === '-1') {
             hook.params.sequelize = Object.assign({
               order: [
                 ['checkedOut', 'DESC'],
@@ -61,7 +61,7 @@ module.exports = function (options) {
               ],
             }, hook.params.sequelize);
           }
-         
+
           delete hook.params.query.$sort;
         }
 

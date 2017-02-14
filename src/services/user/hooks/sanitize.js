@@ -14,10 +14,10 @@ module.exports = function (options) {
           };
         } else {
           hook.params.sequelize = {};
-        }      
+        }
       }
     }
 
-    return hook;    
+    return hook;
   };
 };

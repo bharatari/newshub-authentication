@@ -17,7 +17,7 @@ exports.before = {
   all: [
     auth.verifyToken(),
     auth.populateUser(),
-    auth.restrictToAuthenticated()
+    auth.restrictToAuthenticated(),
   ],
   find: [
     validate(),
@@ -40,7 +40,7 @@ exports.before = {
   ],
   remove: [
     remove(),
-  ]
+  ],
 };
 
 exports.after = {
@@ -53,5 +53,5 @@ exports.after = {
   ],
   update: [],
   patch: [],
-  remove: []
+  remove: [],
 };

@@ -5,7 +5,7 @@ module.exports = {
     if (_.isString(str)) {
       return str.toLowerCase().trim();
     }
-    
+
     return str;
-  }
+  },
 };

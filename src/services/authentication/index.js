@@ -3,12 +3,12 @@
 const authentication = require('feathers-authentication');
 const hooks = require('./hooks');
 
-module.exports = function() {
+module.exports = function () {
   const app = this;
 
   const auth = app.get('auth');
 
-  let config = {
+  const config = {
     userEndpoint: '/api/user',
     localEndpoint: '/api/login',
     successRedirect: false,

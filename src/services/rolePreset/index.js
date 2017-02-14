@@ -11,8 +11,8 @@ module.exports = function () {
     Model: rolePreset(app.get('sequelize')),
     paginate: {
       default: 5,
-      max: 25
-    }
+      max: 25,
+    },
   };
 
   // Initialize our service with any options it requires

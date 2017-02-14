@@ -25,10 +25,8 @@ module.exports = function (options) {
       hook.data.userId = result.id;
       hook.data.email = result.email;
 
-      return email.sendEmail(hook.app, hook.data.email, "Password Reset", hook.data.token, 'RESET_PASSWORD')
-        .then((result) => {
-          return hook;
-        })
+      return email.sendEmail(hook.app, hook.data.email, 'Password Reset', hook.data.token, 'RESET_PASSWORD')
+        .then(result => hook)
         .catch((err) => {
           throw new errors.GeneralError(err);
         });

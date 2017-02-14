@@ -13,7 +13,7 @@ const authentication = require('./authentication');
 const user = require('./user');
 const Sequelize = require('sequelize');
 
-module.exports = function() {
+module.exports = function () {
   const app = this;
 
   let sequelize;

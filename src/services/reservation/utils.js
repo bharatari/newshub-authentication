@@ -36,8 +36,8 @@ module.exports = {
         },
         endDate: {
           $gte: new Date(endDate),
-        }
+        },
       }],
     };
-  }
+  },
 };

@@ -6,4 +6,4 @@ module.exports = {
 
     return _.omit(query, ...PROPERTIES);
   },
-}
+};

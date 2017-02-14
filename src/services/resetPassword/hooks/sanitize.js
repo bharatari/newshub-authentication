@@ -17,6 +17,6 @@ module.exports = function (options) {
       };
     }
 
-    return hook;    
+    return hook;
   };
 };
