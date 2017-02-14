@@ -1,4 +1,5 @@
 'use strict';
+
 /* eslint no-shadow: 0 */
 
 const chai = require('chai');
@@ -44,7 +45,7 @@ describe('device service', function () {
             .set('Accept', 'application/json')
             .send({
               username: 'admin',
-              password: 'adminpassword',
+              password: 'password',
             })
             .end((err, res) => {
               admin = res.body.token;
@@ -54,7 +55,7 @@ describe('device service', function () {
                 .set('Accept', 'application/json')
                 .send({
                   username: 'master',
-                  password: 'masterpassword',
+                  password: 'password',
                 })
                 .end((err, res) => {
                   master = res.body.token;

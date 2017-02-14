@@ -1,4 +1,5 @@
 'use strict';
+
 /* eslint eqeqeq: 0 */
 
 const userUtils = require('../../user/utils');

@@ -1,4 +1,5 @@
 'use strict';
+
 /* eslint consistent-return: 0 */
 
 const async = require('async');

@@ -1,4 +1,5 @@
 'use strict';
+
 /* eslint consistent-return: 0, eqeqeq: 0 */
 
 const user = require('../../user/utils');
@@ -16,8 +17,6 @@ module.exports = function (options) {
       } else {
         throw new errors.NotAuthenticated('Must own this user or be an admin user.');
       }
-
-      
     }
   };
 };

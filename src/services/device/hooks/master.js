@@ -10,6 +10,6 @@ module.exports = function (options) {
       return hook;
     } else {
       throw new errors.NotAuthenticated('Must be a master user to create a device.');
-    }    
+    }
   };
 };
