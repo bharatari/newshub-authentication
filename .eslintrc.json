@@ -10,9 +10,10 @@
     },
     "rules": {
       "linebreak-style": 0,
-      "import/no-extraneous-dependencies": ["error", {"optionalDependencies": false, "peerDependencies": false}],
       "no-unused-vars": 0,
       "no-param-reassign": 0,
-      "func-names": 0
+      "func-names": 0,
+      "strict": 0,
+      "no-else-return": 0
     }
 }

@@ -13,9 +13,11 @@ module.exports = function (options) {
         return hook;
       } else if (user.isAdmin(hook.params.user)) {
         return hook;
+      } else {
+        throw new errors.NotAuthenticated('Must own this user or be an admin user.');
       }
 
-      throw new errors.NotAuthenticated('Must own this user or be an admin user.');
+      
     }
   };
 };

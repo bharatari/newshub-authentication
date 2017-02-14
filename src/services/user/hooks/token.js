@@ -30,7 +30,8 @@ module.exports = function (options) {
       }).catch((err) => {
         throw err;
       });
+    } else {
+      throw new errors.BadRequest('SIGNUP_TOKEN_INVALID');
     }
-    throw new errors.BadRequest('SIGNUP_TOKEN_INVALID');
   };
 };

@@ -15,9 +15,9 @@ module.exports = function (options) {
       if (reservation.dataValues.approved) {
         if (user.isAdmin(hook.params.user)) {
           return hook;
+        } else {
+          throw new errors.BadRequest('You cannot delete a reservation after it has been approved');
         }
-
-        throw new errors.BadRequest('You cannot delete a reservation after it has been approved');
       } else if (user.isAdmin(hook.params.user)) {
         return hook;
       } else if (hook.reservation.userId === hook.params.user.id) {

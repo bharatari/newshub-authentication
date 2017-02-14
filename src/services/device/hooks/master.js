@@ -8,7 +8,8 @@ module.exports = function (options) {
   return function (hook) {
     if (userUtils.isMaster(hook.params.user)) {
       return hook;
-    }
-    throw new errors.NotAuthenticated('Must be a master user to create a device.');
+    } else {
+      throw new errors.NotAuthenticated('Must be a master user to create a device.');
+    }    
   };
 };

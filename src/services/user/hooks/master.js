@@ -39,7 +39,8 @@ module.exports = function (options) {
       }).catch((err) => {
         throw err;
       });
+    } else {
+      throw new errors.NotAuthenticated('Must own this user or be a master user.');
     }
-    throw new errors.NotAuthenticated('Must own this user or be a master user.');
   };
 };
