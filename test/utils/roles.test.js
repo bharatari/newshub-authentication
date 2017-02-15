@@ -8,7 +8,6 @@ const app = require('../../src/app');
 const utils = require('../../src/utils/roles');
 
 describe('roles utils', () => {
-  /*
   describe('#hasPermission', () => {
     it('should return true for properly authorized user', () => {
       const models = app.get('sequelize').models;
@@ -219,5 +218,5 @@ describe('roles utils', () => {
 
       return assert.deepEqual(values, ['reservation', 'purpose', 'read']);
     });
-  });*/
+  });
 });
