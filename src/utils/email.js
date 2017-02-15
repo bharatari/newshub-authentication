@@ -11,7 +11,6 @@ module.exports = {
     RESET_PASSWORD: 'a5f46d68-9542-4448-9040-f4514346ebe8',
   },
   sendEmail(app, to, subject, body, template) {
-    console.log(sendgrid);
     return new Promise((resolve, reject) => {
       const client = sendgrid.SendGrid(app.get('keys').SENDGRID_KEY);
 
