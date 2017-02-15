@@ -23,6 +23,12 @@ describe('resetPassword service', () => {
     this.server.once('listening', () => done());
   });
 
+  after((done) => {
+    this.server.close(() => {
+      done();
+    });
+  });
+
   it('registered the resetPassword service', () => {
     assert.ok(app.service('/api/reset-password'));
   });
