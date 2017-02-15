@@ -8,12 +8,12 @@
 const Sequelize = require('sequelize');
 
 module.exports = function (sequelize) {
-  const rolePreset = sequelize.define('rolePreset', {
+  const role = sequelize.define('role', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    roles: {
+    permissions: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -21,5 +21,5 @@ module.exports = function (sequelize) {
     freezeTableName: true,
   });
 
-  return rolePreset;
+  return role;
 };

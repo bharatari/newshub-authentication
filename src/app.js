@@ -14,6 +14,7 @@ const socketio = require('feathers-socketio');
 const middleware = require('./middleware');
 const services = require('./services');
 const skipper = require('skipper');
+const redis = require('./utils/redis');
 
 const app = feathers();
 
@@ -32,6 +33,7 @@ app.use(compress())
   .configure(rest())
   .configure(socketio())
   .configure(services)
-  .configure(middleware);
+  .configure(middleware)
+  .configure(redis);
 
 module.exports = app;

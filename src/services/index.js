@@ -2,7 +2,7 @@
 
 const resetPassword = require('./resetPassword');
 const meta = require('./meta');
-const rolePreset = require('./rolePreset');
+const role = require('./role');
 const project = require('./project');
 const image = require('./image');
 const signupToken = require('./signupToken');
@@ -43,7 +43,7 @@ module.exports = function () {
   app.configure(signupToken);
   app.configure(image);
   app.configure(project);
-  app.configure(rolePreset);
+  app.configure(role);
   app.configure(meta);
   app.configure(resetPassword);
 
