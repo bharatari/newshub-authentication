@@ -1,6 +1,6 @@
 'use strict';
 
-if (process.env.NODE_ENV === 'development') {
+if (!process.env.S3_API_KEY) {
   require('dotenv').config();
 }
 

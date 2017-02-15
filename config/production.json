@@ -3,7 +3,6 @@
   "port": "PORT",
   "postgres": "DATABASE_URL",
   "public": "../public/",
-  "redis": "REDIS_URL",
   "auth": {
     "idField": "id",
     "token": {
@@ -13,6 +12,7 @@
   "keys": {
     "S3_API_KEY": "S3_API_KEY",
     "S3_API_SECRET": "S3_API_SECRET",
-    "SENDGRID_KEY": "SENDGRID_KEY"
+    "SENDGRID_KEY": "SENDGRID_KEY",
+    "REDIS_URL": "REDIS_URL"
   }
 }

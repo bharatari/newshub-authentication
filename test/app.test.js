@@ -1,24 +1,32 @@
 'use strict';
 
-if (!process.env.TEST_DB) {
+if (!process.env.S3_API_KEY) {
   require('dotenv').config();
 }
 
 const assert = require('assert');
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const request = require('request');
 const app = require('../src/app');
 const fixtures = require('sequelize-fixtures');
 const user = require('./fixtures/user');
+const resetPasswordToken = require('./fixtures/resetPasswordToken');
 
 describe('Feathers application tests', () => {
   before(function (done) {
+    chai.use(chaiAsPromised);
+
     this.server = app.listen(3030);
     this.server.once('listening', () => {
       const models = app.get('sequelize').models;
 
       fixtures.loadFixtures(user(models), models)
         .then(() => {
-          done();
+          fixtures.loadFixtures(resetPasswordToken(models), models)
+            .then(() => {
+              done();
+            });
         });
     });
   });

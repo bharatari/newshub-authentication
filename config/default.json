@@ -3,7 +3,6 @@
   "port": 3030,
   "postgres": "postgres://postgres:postgres@localhost:5432/newshub_server_development",
   "public": "../public/",
-  "redis": "REDIS_URL",
   "auth": {
     "token": {
       "secret": "p9g6Jt5SqfJ9HoM5hIO0UG9r1JjlhRN4fGXheh5kcG2BxMjtpCw4u1uTJTOO5iztQZVTPZ1SBueCdzSfOnAwEw=="
@@ -12,6 +11,7 @@
   "keys": {
     "S3_API_KEY": "S3_API_KEY",
     "S3_API_SECRET": "S3_API_SECRET",
-    "SENDGRID_KEY": "SENDGRID_KEY"
+    "SENDGRID_KEY": "SENDGRID_KEY",
+    "REDIS_URL": "REDIS_URL"
   }
 }

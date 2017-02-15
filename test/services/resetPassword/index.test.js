@@ -27,7 +27,7 @@ describe('resetPassword service', () => {
     assert.ok(app.service('/api/reset-password'));
   });
 
-  it('User can request reset token', (done) => {
+  it('user can request reset token', (done) => {
     chai.request(app)
       .post('/api/reset-password')
       .set('Accept', 'application/json')
@@ -40,7 +40,7 @@ describe('resetPassword service', () => {
       });
   });
 
-  it('Does not create reset token for invalid email', (done) => {
+  it('does not create reset token for invalid email', (done) => {
     chai.request(app)
       .post('/api/reset-password')
       .set('Accept', 'application/json')
@@ -53,7 +53,7 @@ describe('resetPassword service', () => {
       });
   });
 
-  it('Resets password for valid token and email', (done) => {
+  it('resets password for valid token and email', (done) => {
     const models = app.get('sequelize').models;
     
     chai.request(app)
@@ -63,6 +63,8 @@ describe('resetPassword service', () => {
         email: 'normal@domain.com'
       })
       .end((err, res) => {
+        res.should.have.status(200);
+
         models.resetPasswordToken.findOne({
           where: {
             email: 'normal@domain.com',
@@ -89,7 +91,7 @@ describe('resetPassword service', () => {
       });
   });
 
-  it('Does not reset password for invalid token and valid email', (done) => {
+  it('does not reset password for invalid token and valid email', (done) => {
     const models = app.get('sequelize').models;
 
     chai.request(app)
@@ -125,7 +127,7 @@ describe('resetPassword service', () => {
       });
   });
 
-  it('Does not reset password for invalid token and invalid email', (done) => {
+  it('does not reset password for invalid token and invalid email', (done) => {
     chai.request(app)
       .patch('/api/reset-password')
       .set('Accept', 'application/json')
@@ -140,7 +142,7 @@ describe('resetPassword service', () => {
       });
   });
 
-  it('Does not reset password for expired token', (done) => {
+  it('does not reset password for expired token', (done) => {
     chai.request(app)
       .patch('/api/reset-password')
       .set('Accept', 'application/json')
@@ -155,7 +157,7 @@ describe('resetPassword service', () => {
       });
   });
 
-  it('Does not reset password for used token', (done) => {
+  it('does not reset password for used token', (done) => {
     chai.request(app)
       .patch('/api/reset-password')
       .set('Accept', 'application/json')
