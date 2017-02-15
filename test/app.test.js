@@ -12,9 +12,17 @@ const app = require('../src/app');
 const fixtures = require('sequelize-fixtures');
 const user = require('./fixtures/user');
 const resetPasswordToken = require('./fixtures/resetPasswordToken');
+const role = require('./fixtures/role');
+const mockery = require('mockery');
+const sendgrid = require('./mocks/sendgrid');
 
 describe('Feathers application tests', () => {
   before(function (done) {
+    mockery.enable({
+      warnOnUnregistered: false,
+    });
+    mockery.registerMock('sendgrid', sendgrid);
+
     chai.use(chaiAsPromised);
 
     this.server = app.listen(3030);
@@ -25,7 +33,10 @@ describe('Feathers application tests', () => {
         .then(() => {
           fixtures.loadFixtures(resetPasswordToken(models), models)
             .then(() => {
-              done();
+              fixtures.loadFixtures(role(models), models)
+                .then(() => {
+                  done();
+                });
             });
         });
     });

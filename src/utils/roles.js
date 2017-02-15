@@ -18,11 +18,11 @@ module.exports = {
   can(models, redis, userId, service, method) {
     const permission = this.convertToPermission(service, method);
 
-    return this.getPermissions(models, userId)
-      .then(permissions =>
-         this.populateRoles(models, redis, permissions)
-          .then(rolesArray =>
-             _.includes(rolesArray, role)
+    return this.getUserRoles(models, userId)
+      .then(roles =>
+         this.populateRoles(models, redis, roles)
+          .then(permissionsArray =>
+             _.includes(permissionsArray, permission)
           )
           .catch((err) => {
             throw err;
@@ -57,22 +57,22 @@ module.exports = {
    * @param {string} permissions
    * @returns {Array}
    */
-  populateRoles(models, redis, permissions) {
-    const originalPermissions = roles.split(', ');
-    let permissionsArray = [
-      ...originalPermissions,
+  populateRoles(models, redis, roles) {
+    const original = roles.split(', ');
+    let permissions = [
+      ...original,
     ];
 
     return new Promise((resolve, reject) => {
-      async.each(originalPermissions, (role, callback) => {
+      async.each(original, (role, callback) => {
         if (this.isRole(role)) {
           this.populateRole(models, redis, role)
             .then((newPermissions) => {
-              _.remove(permissionsArray, n =>
+              _.remove(permissions, n =>
                 n === role
               );
 
-              permissionsArray = permissionsArray.concat(newPermissions);
+              permissions = permissions.concat(newPermissions);
 
               callback();
             })
@@ -86,7 +86,7 @@ module.exports = {
         if (err) {
           reject(err);
         } else {
-          resolve(permissionsArray);
+          resolve(permissions);
         }
       });
     });
@@ -162,7 +162,7 @@ module.exports = {
     }).then((data) => {
       const result = JSON.parse(JSON.stringify(data));
 
-      redis.hset('rolePreset', result.name, result.permissions);
+      redis.hset('role', result.name, result.permissions);
 
       return result.permissions;
     }).catch((err) => {
@@ -176,7 +176,7 @@ module.exports = {
    * @param {string} userId
    * @returns {Promise}
    */
-  getRoles(models, userId) {
+  getUserRoles(models, userId) {
     return models.user.findOne({
       where: {
         id: userId,

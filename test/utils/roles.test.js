@@ -8,26 +8,26 @@ const app = require('../../src/app');
 const utils = require('../../src/utils/roles');
 
 describe('roles utils', () => {
-  describe('#hasPermission', () => {
+  describe('#can', () => {
     it('should return true for properly authorized user', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
       return models.user.findOne({
         where: {
-          username: 'testuser',
+          username: 'device',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
-        return assert.becomes(utils.hasPermission(models, redis, user.id, 'room', 'create'), true);
+        return assert.becomes(utils.can(models, redis, user.id, 'device', 'create'), true);
       }).catch((err) => {
         assert.fail();
       });
     });
   });
   describe('#convertToPermission', () => {
-    it('should return the correct role', () => {
+    it('should return the correct permission', () => {
       const result = utils.convertToPermission('reservation', 'update');
 
       assert.equal(result, 'reservation:update');
@@ -62,13 +62,14 @@ describe('roles utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'testuser',
+          username: 'approve',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
-        return assert.becomes(utils.getRoles(app.get('sequelize').models, user.id), 'admin, reservation:approve');
+        return assert.becomes(utils.getUserRoles(app.get('sequelize').models, user.id), 'admin, reservation:approve');
       }).catch((err) => {
+        console.log(err);
         assert.fail();
       });
     });

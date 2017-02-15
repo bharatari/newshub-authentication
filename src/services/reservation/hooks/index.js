@@ -12,6 +12,7 @@ const email = require('./email');
 const validate = require('./validate');
 const remove = require('./remove');
 const restrict = require('./restrict');
+const count = require('./count');
 
 exports.before = {
   all: [
@@ -45,7 +46,9 @@ exports.before = {
 
 exports.after = {
   all: [],
-  find: [],
+  find: [
+    count(),
+  ],
   get: [],
   create: [
     associate(),

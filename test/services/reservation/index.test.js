@@ -7,4 +7,6 @@ describe('reservation service', () => {
   it('registered the reservation service', () => {
     assert.ok(app.service('/api/reservation'));
   });
+
+  // test proper counts
 });

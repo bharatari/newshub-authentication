@@ -27,7 +27,7 @@ describe('resetPassword service', () => {
     assert.ok(app.service('/api/reset-password'));
   });
 
-  it('user can request reset token', (done) => {
+  it('creates reset token for valid email', (done) => {
     chai.request(app)
       .post('/api/reset-password')
       .set('Accept', 'application/json')
@@ -63,13 +63,12 @@ describe('resetPassword service', () => {
         email: 'normal@domain.com'
       })
       .end((err, res) => {
-        res.should.have.status(200);
-
         models.resetPasswordToken.findOne({
           where: {
             email: 'normal@domain.com',
             used: false,
           },
+          order: '"createdAt" DESC',
         }).then((token) => {
           const data = JSON.parse(JSON.stringify(token));
 

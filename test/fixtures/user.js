@@ -46,6 +46,32 @@ module.exports = function (models) {
                   roles: 'master',
                 },
               },
+              {
+                model: 'user',
+                data: {
+                  username: 'device',
+                  firstName: 'Device',
+                  lastName: 'Creator',
+                  email: 'device@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'device:create',
+                }
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'approve',
+                  firstName: 'Reservation',
+                  lastName: 'Approve',
+                  email: 'reservation@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'admin, reservation:approve',
+                }
+              },
             ]);
           });
         });

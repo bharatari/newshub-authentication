@@ -1,5 +1,3 @@
-const bcrypt = require('bcryptjs');
-
 module.exports = function (models) {
   return new Promise((resolve, reject) => {
     return models.resetPasswordToken.destroy({ where: {} })

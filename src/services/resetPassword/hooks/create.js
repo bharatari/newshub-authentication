@@ -19,6 +19,7 @@ module.exports = function (options) {
       },
     }).then((result) => {
       if (!result) {
+        console.log('cant find anything')
         throw new errors.BadRequest('USER_NOT_FOUND_RESET_PASSWORD_TOKEN');
       }
 
