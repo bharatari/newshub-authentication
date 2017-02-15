@@ -20,7 +20,7 @@
     "lint:fix": "eslint src test --fix",
     "start": "node src/",
     "mocha": "mocha --require test/bootstrap.test.js test/ --recursive",
-    "istanbul": "istanbul cover node_modules/mocha/bin/_mocha -- test/ --recursive && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js "
+    "istanbul": "istanbul cover node_modules/mocha/bin/_mocha -- test/ --recursive && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
     "async": "^2.0.0-rc.6",
