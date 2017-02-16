@@ -11,6 +11,7 @@
   "keys": {
     "S3_API_KEY": "S3_API_KEY",
     "S3_API_SECRET": "S3_API_SECRET",
-    "SENDGRID_KEY": "SENDGRID_KEY"
+    "SENDGRID_KEY": "SENDGRID_KEY",
+    "REDIS_URL": "TEST_REDIS_URL"
   }
 }

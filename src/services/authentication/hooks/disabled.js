@@ -10,13 +10,13 @@ module.exports = function () {
       where: {
         username: hook.data.username,
       },
-    }).then(function (user) {
+    }).then((user) => {
       if (user.disabled) {
         throw new errors.NotAuthenticated('USER_DISABLED');
       } else {
         return hook;
       }
-    }).catch(function (err) {
+    }).catch((err) => {
       throw err;
     });
   };

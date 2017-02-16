@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint consistent-return: 0 */
+
 const async = require('async');
 const utils = require('../utils');
 
@@ -27,14 +29,13 @@ module.exports = function () {
             const startDate = hook.data.startDate;
             const endDate = hook.data.endDate;
 
-            return utils.processQuantity(models, devices, startDate, endDate).then(function (result) {
+            return utils.processQuantity(models, devices, startDate, endDate).then((result) => {
               resolve(hook);
-            }).catch(function (e) {
+            }).catch((e) => {
               reject(e);
-            });        
-          } else {
-            resolve(hook);
+            });
           }
+          resolve(hook);
         });
       });
     }

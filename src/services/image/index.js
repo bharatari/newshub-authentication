@@ -11,12 +11,12 @@ module.exports = function () {
     Model: image(app.get('sequelize')),
     paginate: {
       default: 5,
-      max: 25
-    }
+      max: 25,
+    },
   };
 
   // Initialize our service with any options it requires
-  app.use('/api/image', function (req, res, next) {
+  app.use('/api/image', (req, res, next) => {
     req.feathers.file = req.file;
     next();
   }, service(options));

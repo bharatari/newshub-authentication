@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint consistent-return: 0, eqeqeq: 0 */
+
 const user = require('../../user/utils');
 const errors = require('feathers-errors');
 const moment = require('moment');

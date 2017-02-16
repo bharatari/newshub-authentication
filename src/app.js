@@ -14,6 +14,8 @@ const socketio = require('feathers-socketio');
 const middleware = require('./middleware');
 const services = require('./services');
 const skipper = require('skipper');
+const redis = require('./utils/redis');
+
 const app = feathers();
 
 app.configure(configuration(path.join(__dirname, '..')));
@@ -21,9 +23,9 @@ app.configure(configuration(path.join(__dirname, '..')));
 app.use(compress())
   .options('*', cors())
   .use(cors())
-  .use(favicon( path.join(app.get('public'), 'favicon.ico') ))
-  .use('/', serveStatic( app.get('public') ))
-  .use('/app/*', serveStatic( app.get('public') ))
+  .use(favicon(path.join(app.get('public'), 'favicon.ico')))
+  .use('/', serveStatic(app.get('public')))
+  .use('/app/*', serveStatic(app.get('public')))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .use(skipper())
@@ -31,6 +33,7 @@ app.use(compress())
   .configure(rest())
   .configure(socketio())
   .configure(services)
-  .configure(middleware);
+  .configure(middleware)
+  .configure(redis);
 
 module.exports = app;

@@ -11,12 +11,14 @@ const status = require('./status');
 const email = require('./email');
 const validate = require('./validate');
 const remove = require('./remove');
+const restrict = require('./restrict');
+const count = require('./count');
 
 exports.before = {
   all: [
     auth.verifyToken(),
     auth.populateUser(),
-    auth.restrictToAuthenticated()
+    auth.restrictToAuthenticated(),
   ],
   find: [
     validate(),
@@ -29,6 +31,7 @@ exports.before = {
   create: [
     process(),
     validate(),
+    restrict(),
   ],
   update: [
     hooks.disable(),
@@ -38,12 +41,14 @@ exports.before = {
   ],
   remove: [
     remove(),
-  ]
+  ],
 };
 
 exports.after = {
   all: [],
-  find: [],
+  find: [
+    count(),
+  ],
   get: [],
   create: [
     associate(),
@@ -51,5 +56,5 @@ exports.after = {
   ],
   update: [],
   patch: [],
-  remove: []
+  remove: [],
 };

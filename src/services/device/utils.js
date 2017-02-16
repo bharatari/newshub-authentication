@@ -9,33 +9,29 @@ module.exports = {
     return models.reservation.findAll({
       where: reservation.overlaps(startDate, endDate),
       include: [{
-        model: models.device
+        model: models.device,
       }],
-    }).then((reservations) => {
-      return new Promise((resolve, reject) => {
-        async.each(reservations, (reservation, callback) => {
-          async.each(reservation.devices, (device, cb) => {
-            devices = this.subtractQuantity(devices, device.id, device.reservation_devices.quantity);
-            cb();
-          }, function (err) {
-            callback();
-          });
-        }, function (err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(devices);
-          }
+    }).then(reservations => new Promise((resolve, reject) => {
+      async.each(reservations, (reservation, callback) => {
+        async.each(reservation.devices, (device, cb) => {
+          devices = this.subtractQuantity(devices, device.id, device.reservation_devices.quantity);
+          cb();
+        }, (err) => {
+          callback();
         });
+      }, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(devices);
+        }
       });
-    }).catch(function (err) {
+    })).catch((err) => {
       throw err;
     });
   },
   subtractQuantity(devices, id, quantity) {
-    let device = _.find(devices, function (item) {
-      return item.dataValues.id === id;
-    });
+    const device = _.find(devices, item => item.dataValues.id === id);
 
     device.dataValues.availableQuantity = device.dataValues.availableQuantity - quantity;
 

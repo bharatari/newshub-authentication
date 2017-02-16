@@ -16,7 +16,7 @@ exports.before = {
   ],
   update: [],
   patch: [],
-  remove: []
+  remove: [],
 };
 
 exports.after = {
@@ -26,5 +26,5 @@ exports.after = {
   create: [],
   update: [],
   patch: [],
-  remove: []
+  remove: [],
 };

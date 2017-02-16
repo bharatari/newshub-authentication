@@ -1,5 +1,9 @@
 'use strict';
 
+const resetPassword = require('./resetPassword');
+const meta = require('./meta');
+const role = require('./role');
+const project = require('./project');
 const image = require('./image');
 const signupToken = require('./signupToken');
 const notification = require('./notification');
@@ -9,16 +13,25 @@ const authentication = require('./authentication');
 const user = require('./user');
 const Sequelize = require('sequelize');
 
-module.exports = function() {
+module.exports = function () {
   const app = this;
 
-  const sequelize = new Sequelize(app.get('postgres'), {
-    dialect: 'postgres',
-    logging: false,
-    dialectOptions: {
-      ssl: true,
-    },
-  });
+  let sequelize;
+
+  if (app.get('env') === 'development') {
+    sequelize = new Sequelize(app.get('postgres'), {
+      dialect: 'postgres',
+      logging: false,
+    });
+  } else {
+    sequelize = new Sequelize(app.get('postgres'), {
+      dialect: 'postgres',
+      logging: false,
+      dialectOptions: {
+        ssl: true,
+      },
+    });
+  }
 
   app.set('sequelize', sequelize);
 
@@ -29,6 +42,10 @@ module.exports = function() {
   app.configure(notification);
   app.configure(signupToken);
   app.configure(image);
+  app.configure(project);
+  app.configure(role);
+  app.configure(meta);
+  app.configure(resetPassword);
 
   const models = sequelize.models;
 

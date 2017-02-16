@@ -11,16 +11,14 @@ module.exports = function (options) {
       } else {
         return hook;
       }
-    } else {
-      if (hook.params.query.startDate && hook.params.query.endDate) {
-        if (hook.params.query.startDate >= hook.params.query.endDate) {
-          throw new errors.BadRequest('Start date cannot be after end date');
-        } else {
-          return hook;
-        }
+    } else if (hook.params.query.startDate && hook.params.query.endDate) {
+      if (hook.params.query.startDate >= hook.params.query.endDate) {
+        throw new errors.BadRequest('Start date cannot be after end date');
       } else {
         return hook;
       }
-    }    
+    } else {
+      return hook;
+    }
   };
 };

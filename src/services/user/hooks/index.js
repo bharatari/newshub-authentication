@@ -7,6 +7,7 @@ const token = require('./token');
 const master = require('./master');
 const admin = require('./admin');
 const normalize = require('./normalize');
+const sanitize = require('./sanitize');
 
 exports.before = {
   all: [],
@@ -14,6 +15,7 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
+    sanitize(),
   ],
   get: [
     auth.verifyToken(),
@@ -36,7 +38,7 @@ exports.before = {
   ],
   remove: [
     hooks.disable(),
-  ]
+  ],
 };
 
 exports.after = {
@@ -46,5 +48,5 @@ exports.after = {
   create: [],
   update: [],
   patch: [],
-  remove: []
+  remove: [],
 };

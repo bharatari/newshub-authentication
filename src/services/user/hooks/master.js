@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint eqeqeq: 0 */
+
 const userUtils = require('../../user/utils');
 const errors = require('feathers-errors');
 const moment = require('moment');
@@ -8,7 +10,7 @@ const _ = require('lodash');
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
-    const { roles, disabled } = hook.data;
+    const { roles, disabled, options } = hook.data;
 
     if (userUtils.isMaster(hook.params.user)) {
       return hook;
@@ -17,15 +19,25 @@ module.exports = function (options) {
         where: {
           id: hook.id,
         },
-      }).then(function (user) {
+      }).then((user) => {
         if (roles && (roles != user.roles)) {
           throw new errors.NotAuthenticated('Must be a master user to update roles');
         }
 
-        if (_.isNil(disabled) && (disabled != user.disabled)) {
+        if (!_.isNil(disabled) && (disabled != user.disabled)) {
           throw new errors.NotAuthenticated('Must be a master user to update disabled status');
         }
-      }).catch(function (err) {
+
+        if (options) {
+          if (user.options) {
+            if (!_.isNil(options.doNotDisturb) && (options.doNotDisturb != user.options.doNotDisturb)) {
+              throw new errors.NotAuthenticated('Must be a master user to update do not disturb status');
+            }
+          } else if (!_.isNil(options.doNotDisturb)) {
+            throw new errors.NotAuthenticated('Must be a master user to update do not disturb status');
+          }
+        }
+      }).catch((err) => {
         throw err;
       });
     } else {

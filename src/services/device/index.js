@@ -4,7 +4,7 @@ const service = require('feathers-sequelize');
 const device = require('./device-model');
 const hooks = require('./hooks');
 
-module.exports = function(){
+module.exports = function () {
   const app = this;
 
   const options = {

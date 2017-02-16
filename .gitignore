@@ -27,5 +27,8 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 
+# Development Environment Variables
+.env
+
 lib/
 data/
