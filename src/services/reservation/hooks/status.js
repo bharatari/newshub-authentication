@@ -4,10 +4,12 @@ const user = require('../../user/utils');
 const errors = require('feathers-errors');
 const email = require('../../../utils/email');
 const _ = require('lodash');
+const roles = require('../../../utils/roles');
 
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
+    const redis = hook.app.get('redis');
     const { approved, checkedOut, checkedIn, adminNotes, disabled, specialRequests } = hook.data;
 
     if (approved || checkedOut || checkedIn || adminNotes || disabled) {
@@ -21,7 +23,7 @@ module.exports = function (options) {
       }).then(function (reservation) {
         if (approved && !reservation.approved) {
           if (_.isNil(specialRequests) && _.isNil(reservation.specialRequests)) {
-            if (user.isAdmin(hook.params.user)) {
+            if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'approved')) {
               hook.data.approvedById = hook.params.user.id;
 
               return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
@@ -35,7 +37,7 @@ module.exports = function (options) {
               throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
             }
           } else {
-            if (user.isMaster(hook.params.user)) {
+            if (roles.has(models, redis, hook.params.user.id, 'reservation:special-requests')) {
               hook.data.approvedById = hook.params.user.id;
 
               return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
@@ -52,7 +54,7 @@ module.exports = function (options) {
         }
 
         if (checkedOut && !reservation.checkedOut) {
-          if (user.isAdmin(hook.params.user)) {
+          if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedOut')) {
             hook.data.checkedOutById = hook.params.user.id;
 
             return email.sendEmail(hook.app, reservation.user.email, null, 'checked out', 'USER_RESERVATION_RESPONSE')
@@ -68,7 +70,7 @@ module.exports = function (options) {
         }
 
         if (checkedIn && !reservation.checkedIn) {
-          if (user.isAdmin(hook.params.user)) {
+          if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedIn')) {
             hook.data.checkedInById = hook.params.user.id;
 
             return email.sendEmail(hook.app, reservation.user.email, null, 'checked in', 'USER_RESERVATION_RESPONSE')
@@ -84,7 +86,7 @@ module.exports = function (options) {
         }
 
         if (adminNotes && (reservation.adminNotes !== adminNotes)) {
-          if (user.isAdmin(hook.params.user)) {
+          if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'adminNotes')) {
             return email.sendEmail(hook.app, reservation.user.email, null, adminNotes, 'USER_RESERVATION_ADMIN_NOTES')
               .then(function (response) {
                 return hook;
@@ -98,7 +100,7 @@ module.exports = function (options) {
         }
 
         if (disabled && !reservation.disabled) {
-          if (user.isAdmin(hook.params.user)) {
+          if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'disabled')) {
             hook.data.disabledById = hook.params.user.id;
 
             return email.sendEmail(hook.app, reservation.user.email, null, 'rejected', 'USER_RESERVATION_RESPONSE')

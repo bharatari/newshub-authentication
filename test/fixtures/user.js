@@ -72,6 +72,19 @@ module.exports = function (models) {
                   roles: 'admin, reservation:approve',
                 }
               },
+              {
+                model: 'user',
+                data: {
+                  username: 'adminAdvisor',
+                  firstName: 'Admin',
+                  lastName: 'Advisor',
+                  email: 'adminAdvisor@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'admin, advisor',
+                },
+              },
             ]);
           });
         });

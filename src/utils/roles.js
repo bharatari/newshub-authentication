@@ -15,30 +15,124 @@ module.exports = {
    * @param {string} method
    * @returns {Promise}
    */
-  can(models, redis, userId, service, method) {
-    const permission = this.convertToPermission(service, method);
+  can(models, redis, userId, service, method, property) {
+    const permission = this.convertToPermission(service, method, property);
 
+    if (!_.isNil(property)) {
+      const upperPermission = this.convertToUpperPermission(permission);
+
+      return this.has(models, redis, userId, permission)
+        .then((result) => {
+          if (result) {
+            return this.cannot(models, redis, userId, permission)
+              .then((deny) => {
+                if (deny) {
+                  return false;
+                } else {
+                  return true;
+                }
+              });
+          } else {
+            return this.has(models, redis, userId, upperPermission)
+              .then((upper) => {
+                return this.cannot(models, redis, userId, permission)
+                  .then((deny) => {
+                    if (deny) {
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  });
+              });
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    }
+    
+    return this.has(models, redis, userId, permission);
+  },
+
+  /**
+   * Checks if user has the given permission. Used by
+   * the can function and also can be used for checking
+   * and custom permissions.
+   */
+  has(models, redis, userId, permission) {
+    return this.is(models, userId, 'master')
+      .then((result) => {
+        if (result) {
+          return true;
+        }
+
+        return this.getUserRoles(models, userId)
+          .then(roles =>
+            this.populateRoles(models, redis, roles)
+          )
+          .then(permissionsArray =>
+            this.includesPermission(permissionsArray, permission)
+          )
+      })
+      .catch((err) => {
+        throw err;
+      });
+  },
+
+  /**
+   * Checks if there is a deny permission for the given
+   * permission.
+   */
+  cannot(models, redis, userId, permission) {
+    const denyPermission = this.convertToDenyPermission(permission);
+
+    return this.is(models, userId, 'master')
+      .then((result) => {
+        if (result) {
+          return false;
+        }
+
+        return this.getUserRoles(models, userId)
+          .then(roles =>
+            this.populateRoles(models, redis, roles)
+          )
+          .then(permissionsArray =>
+            !this.includesPermission(permissionsArray, denyPermission)
+          )
+      })
+      .catch((err) => {
+        throw err;
+      });
+  },
+
+  /**
+   * Checks if user has the specified role.
+   */
+  is(models, userId, role) {
     return this.getUserRoles(models, userId)
       .then(roles =>
-         this.populateRoles(models, redis, roles)
-          .then(permissionsArray =>
-             _.includes(permissionsArray, permission)
-          )
-          .catch((err) => {
-            throw err;
-          })
+        this.includesRole(roles, role)
       )
       .catch((err) => {
         throw err;
       });
   },
+
   /**
-   * Checks if user has the specified custom role.
-   * 
+   * Alias of includesPermission function.
    */
-  protect(models, userId, role) {
-    
+  includesRole(roles, role) {
+    return this.includesPermission(roles, role);
   },
+
+  /**
+   * Check if the specified permission is included in the
+   * array of permissions.
+   */
+  includesPermission(permissions, permission) {
+    return _.includes(permissions, permission);
+  },
+
   /**
    * Converts Feathers service and method to corresponding permission.
    *
@@ -46,9 +140,14 @@ module.exports = {
    * @param {string} method
    * @returns {string}
    */
-  convertToPermission(service, method) {
+  convertToPermission(service, method, property) {
+    if (!_.isNil(property)) {
+      return `${service}:${method}:${property}`
+    }
+
     return `${service}:${method}`;
   },
+
   /**
    * Replaces roles with corresponding permissions.
    *
@@ -58,7 +157,14 @@ module.exports = {
    * @returns {Array}
    */
   populateRoles(models, redis, roles) {
-    const original = roles.split(', ');
+    let original;
+
+    if (roles && _.isString(roles)) {
+      original = roles.split(', ');
+    } else {
+      original = [];
+    }
+
     let permissions = [
       ...original,
     ];
@@ -91,6 +197,7 @@ module.exports = {
       });
     });
   },
+
   /**
    * Replaces role with corresponding permissions.
    *
@@ -115,11 +222,12 @@ module.exports = {
         }
       }
 
-      throw new Error();
+      return [];
     }).catch((err) => {
       throw err;
     });
   },
+
   /**
    * Gets role's corresponding permissions from redis or database.
    *
@@ -145,6 +253,7 @@ module.exports = {
       });
     });
   },
+
   /**
    * Gets role's corresponding permissions from the database
    * and caches in Redis.
@@ -169,6 +278,7 @@ module.exports = {
       throw err;
     });
   },
+
   /**
    * Gets user's roles.
    *
@@ -188,11 +298,12 @@ module.exports = {
         return user.roles;
       }
 
-      throw new Error();
+      throw '';
     }).catch((err) => {
       throw err;
     });
   },
+
   /**
    * Checks if value is a role.
    *
@@ -208,6 +319,7 @@ module.exports = {
 
     return false;
   },
+
   /**
    * Checks if value is a permission.
    *
@@ -225,6 +337,7 @@ module.exports = {
 
     return false;
   },
+
   /**
    * Checks if value is a property permission.
    *
@@ -242,6 +355,7 @@ module.exports = {
 
     return false;
   },
+
   /**
    * Checks if value is a custom permission.
    *
@@ -259,6 +373,7 @@ module.exports = {
 
     return false;
   },
+
   /**
    * Checks if action is a CRUD action.
    *
@@ -275,6 +390,23 @@ module.exports = {
 
     return _.includes(actions, action);
   },
+
+  /**
+   * Convert property permission to a standard CRUD action permission.
+   */
+  convertToUpperPermission(permission) {
+    const array = permission.split(':');
+
+    return `${array[0]}:${array[2]}`;
+  },
+
+  /**
+   * Convert property permission to a deny property permission.
+   */
+  convertToDenyPermission(permission) {
+    return `deny!${permission}`;
+  },
+
   /**
    * Convert methods to CRUD actions.
    *
@@ -292,6 +424,7 @@ module.exports = {
 
     return methods[method];
   },
+
   /**
    * Splits string with colon delimiter.
    *

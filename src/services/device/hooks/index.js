@@ -5,7 +5,6 @@ const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
 const quantity = require('./quantity');
 const populate = require('./populate');
-const master = require('./master');
 
 exports.before = {
   all: [
@@ -21,7 +20,7 @@ exports.before = {
     populate(),
   ],
   create: [
-    master(),
+    globalHooks.checkRoles('device'),
   ],
   update: [],
   patch: [],
