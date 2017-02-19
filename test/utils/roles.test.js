@@ -70,11 +70,37 @@ describe('roles utils', () => {
     });
 
     it('should return true for master user even with deny', () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      return models.user.findOne({
+        where: {
+          username: 'masterDeny',
+        },
+      }).then((data) => {
+        const user = JSON.parse(JSON.stringify(data));
+
+        return assert.becomes(utils.can(models, redis, user.id, 'user', 'update'), true);
+      }).catch((err) => {
+        assert.fail();
+      });
     });
 
-    it('should return false for overlapping deny permission', () => {
-      
+    it('should handle deny as taking precedence in case of overlap', () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      return models.user.findOne({
+        where: {
+          username: 'deny',
+        },
+      }).then((data) => {
+        const user = JSON.parse(JSON.stringify(data));
+
+        return assert.becomes(utils.can(models, redis, user.id, 'user', 'update'), false);
+      }).catch((err) => {
+        assert.fail();
+      });
     });
 
     it('should return false for denied property permission', () => {
@@ -133,6 +159,180 @@ describe('roles utils', () => {
     });
 
     it('should not throw error for user with non-existent permissions', () => {
+
+    });
+  });
+
+  describe('#cannot', () => {
+    it('should return true if deny permission is included', () => {
+
+    });
+
+    it('should return false if deny permission is not included', () => {
+
+    });
+
+    it('should deny access to own user record with owner deny permission', () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      return models.user.findOne({
+        where: {
+          username: 'ownerDeny',
+        },
+      }).then((data) => {
+        const user = JSON.parse(JSON.stringify(data));
+
+        return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', user.id), true);
+      }).catch((err) => {
+        assert.fail();
+      });
+    });
+
+    it('should deny access to own user record with deny property permission', () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      return models.user.findOne({
+        where: {
+          username: 'ownerDenyProperty',
+        },
+      }).then((data) => {
+        const user = JSON.parse(JSON.stringify(data));
+
+        return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', user.id), true);
+      }).catch((err) => {
+        assert.fail();
+      });
+    });
+
+    it('should not deny access to other user record with owner deny permission', () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      return models.user.findOne({
+        where: {
+          username: 'ownerDeny',
+        },
+      }).then((data) => {
+        const user = JSON.parse(JSON.stringify(data));
+
+        return models.user.findOne({
+          where: {
+            username: 'admin',
+          },
+        }).then((result) => {
+          const otherUser = JSON.parse(JSON.stringify(result));
+
+          return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', otherUser.id), false);
+        });
+      }).catch((err) => {
+        assert.fail();
+      });
+    });
+
+    it('should not deny access to other user record with owner deny property permission', () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      return models.user.findOne({
+        where: {
+          username: 'ownerDenyProperty',
+        },
+      }).then((data) => {
+        const user = JSON.parse(JSON.stringify(data));
+
+        return models.user.findOne({
+          where: {
+            username: 'admin',
+          },
+        }).then((result) => {
+          const otherUser = JSON.parse(JSON.stringify(result));
+
+          return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', otherUser.id), false);
+        });
+      }).catch((err) => {
+        assert.fail();
+      });
+    });
+
+    it.skip('should deny access to own record with deny permission', () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      return models.user.findOne({
+        where: {
+          username: 'ownerDenyReservation',
+        },
+      }).then((data) => {
+        const user = JSON.parse(JSON.stringify(data));
+
+        return models.reservation.findOne({
+          where: {
+            username: 'admin',
+          },
+        }).then((result) => {
+          const reservation = JSON.parse(JSON.stringify(result));
+
+          return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), false);
+        });
+      }).catch((err) => {
+        assert.fail();
+      });
+    });
+
+    it.skip('should deny access to own record with deny property permission', () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      return models.user.findOne({
+        where: {
+          username: 'ownerDenyReservationProperty',
+        },
+      }).then((data) => {
+        const user = JSON.parse(JSON.stringify(data));
+
+        return models.reservation.findOne({
+          where: {
+            username: 'admin',
+          },
+        }).then((result) => {
+          const reservation = JSON.parse(JSON.stringify(result));
+
+          return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), false);
+        });
+      }).catch((err) => {
+        assert.fail();
+      });
+    });
+
+    it('should not deny access to other record with deny permission', () => {
+
+    });
+
+    it('should not deny access to other record with deny property permission', () => {
+
+    });
+
+    it('should handle overlap by making deny flag take precedence', () => {
+
+    });
+  });
+
+  describe('#includesPermission', () => {
+    it('should return true if permission is included', () => {
+
+    });
+
+    it('should return false if permission is not included', () => {
+
+    });
+
+    it('should return true if owner permission is included and user owns record', () => {
+
+    });
+
+    it('should return false if only owner permission is included and user does not own record', () => {
 
     });
   });

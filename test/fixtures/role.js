@@ -7,7 +7,7 @@ module.exports = function (models) {
             model: 'role',
             data: {
               name: 'admin',
-              permissions: 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update',
+              permissions: 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled',
             },
           },
           {

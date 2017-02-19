@@ -6,43 +6,62 @@ const _ = require('lodash');
 const async = require('async');
 
 module.exports = {
+  userModel: 'user',
+  userIdField: 'userId',
+
+  check(models, redis, userId, service, method, property, record, previousRecord) {
+    // detect differences in properties for update
+    // validate against roles
+
+    // for create, check deny permissions for properties
+    // the user is allowed or not allowed to create
+
+
+    // check for standard roles otherwise
+    // 
+  },
+
   /**
    * Checks if user has permission to use given service and method.
    *
+   * @public
    * @param {Object} models - Sequelize models
    * @param {string} userId
    * @param {string} service - Name of Feathers service
    * @param {string} method
    * @returns {Promise}
    */
-  can(models, redis, userId, service, method, property) {
+  can(models, redis, userId, service, method, property, id) {
     const permission = this.convertToPermission(service, method, property);
 
     if (!_.isNil(property)) {
       const upperPermission = this.convertToUpperPermission(permission);
 
-      return this.has(models, redis, userId, permission)
+      return this.has(models, redis, userId, permission, service, id)
         .then((result) => {
           if (result) {
-            return this.cannot(models, redis, userId, permission)
+            return this.cannot(models, redis, userId, permission, service, id)
               .then((deny) => {
-                if (deny) {
-                  return false;
-                } else {
-                  return true;
-                }
+                return !deny;
               });
           } else {
-            return this.has(models, redis, userId, upperPermission)
+            return this.has(models, redis, userId, upperPermission, service, id)
               .then((upper) => {
-                return this.cannot(models, redis, userId, permission)
-                  .then((deny) => {
-                    if (deny) {
-                      return false;
-                    } else {
-                      return true;
-                    }
-                  });
+                if (upper) {
+                  return this.cannot(models, redis, userId, upperPermission, service, id)
+                    .then((deny) => {
+                      if (!deny) {
+                        return this.cannot(models, redis, userId, permission, service, id)
+                          .then((deny) => {
+                            return !deny;
+                          });
+                      } else {
+                        return false;
+                      }
+                    });
+                } else {
+                  return false;
+                }
               });
           }
         })
@@ -51,15 +70,31 @@ module.exports = {
         });
     }
     
-    return this.has(models, redis, userId, permission);
+    return this.has(models, redis, userId, permission, service, id)
+      .then((result) => {
+        if (result) {
+
+          return this.cannot(models, redis, userId, permission, service, id)
+            .then((deny) => {
+              return !deny;
+            });
+        }
+
+        return false;
+      })
+      .catch((err) => {
+        throw err;
+      });
   },
 
   /**
    * Checks if user has the given permission. Used by
    * the can function and also can be used for checking
    * and custom permissions.
+   * 
+   * @public
    */
-  has(models, redis, userId, permission) {
+  has(models, redis, userId, permission, model, id) {
     return this.is(models, userId, 'master')
       .then((result) => {
         if (result) {
@@ -71,7 +106,7 @@ module.exports = {
             this.populateRoles(models, redis, roles)
           )
           .then(permissionsArray =>
-            this.includesPermission(permissionsArray, permission)
+            this.includesPermission(models, permissionsArray, permission, userId, model, id)
           )
       })
       .catch((err) => {
@@ -80,10 +115,32 @@ module.exports = {
   },
 
   /**
-   * Checks if there is a deny permission for the given
-   * permission.
+   * Checks if user has the specified role.
+   * 
+   * @public
    */
-  cannot(models, redis, userId, permission) {
+  is(models, userId, role) {
+    return this.getUserRoles(models, userId)
+      .then(roles =>
+        this.includes(roles, role)
+      )
+      .catch((err) => {
+        throw err;
+      });
+  },
+
+  /**
+   * Checks if there is a deny permission for the given
+   * permission. Does not handle owner flags as owner permissions
+   * cannot be denied, deny the entire permission instead.
+   * 
+   * @private
+   */
+  cannot(models, redis, userId, permission, model, id) {
+    // We can handle owner flags here by checking for a separate owner
+    // permission and if that permission exists with a deny flag,
+    // we check if the user owns the record,
+    // and if they own it, they don't have permission.
     const denyPermission = this.convertToDenyPermission(permission);
 
     return this.is(models, userId, 'master')
@@ -96,9 +153,12 @@ module.exports = {
           .then(roles =>
             this.populateRoles(models, redis, roles)
           )
-          .then(permissionsArray =>
-            !this.includesPermission(permissionsArray, denyPermission)
-          )
+          .then((permissionsArray) => {
+            return this.includesPermission(models, permissionsArray, denyPermission, userId, model, id)
+              .then((deny) => {
+                return deny;
+              });
+          })
       })
       .catch((err) => {
         throw err;
@@ -106,43 +166,86 @@ module.exports = {
   },
 
   /**
-   * Checks if user has the specified role.
+   * Strict check of whether the permission exists in the
+   * collection.
+   * 
+   * @private
    */
-  is(models, userId, role) {
-    return this.getUserRoles(models, userId)
-      .then(roles =>
-        this.includesRole(roles, role)
-      )
-      .catch((err) => {
-        throw err;
-      });
-  },
-
-  /**
-   * Alias of includesPermission function.
-   */
-  includesRole(roles, role) {
-    return this.includesPermission(roles, role);
+  includes(collection, item) {
+    return _.includes(collection, item);
   },
 
   /**
    * Check if the specified permission is included in the
-   * array of permissions.
+   * array of permissions. Handles owner check.
+   * 
+   * @private
    */
-  includesPermission(permissions, permission) {
-    return _.includes(permissions, permission);
+  includesPermission(models, permissions, permission, userId, model, id) {
+    return new Promise((resolve, reject) => {
+      if (this.includes(permissions, permission)) {
+        resolve(true);
+      } else if (!_.isNil(id)) {
+        const ownerPermission = `${permission}!owner`;
+
+        if (this.includes(permissions, ownerPermission)) {
+          return this.getRecord(models, model, id)
+            .then((data) => {              
+              if (model === this.userModel) {
+                if (data.id === userId) {
+                  resolve(true);
+                } else {
+                  resolve(false);
+                }
+              } else {
+                if (data[this.userIdField] === userId) {
+                  resolve(true);
+                } else {
+                  resolve(false);
+                }
+              }
+            }).catch((err) => {
+              reject(err);
+            });
+        } else {
+          resolve(false);
+        }
+      } else {
+        resolve(false);
+      }      
+    });
+  },
+
+  /**
+   * Gets specified record with Sequelize.
+   * 
+   * @private
+   */
+  getRecord(models, model, id) {
+    return models[model].findOne({
+      where: {
+        id,
+      },
+    }).then((result) => {
+      const data = JSON.parse(JSON.stringify(result));
+
+      return data;
+    }).catch((err) => {
+      throw err;
+    });
   },
 
   /**
    * Converts Feathers service and method to corresponding permission.
    *
+   * @private
    * @param {string} service - Name of Feathers service
    * @param {string} method
    * @returns {string}
    */
   convertToPermission(service, method, property) {
     if (!_.isNil(property)) {
-      return `${service}:${method}:${property}`
+      return `${service}:${property}:${method}`
     }
 
     return `${service}:${method}`;
@@ -151,6 +254,7 @@ module.exports = {
   /**
    * Replaces roles with corresponding permissions.
    *
+   * @private
    * @param {Object} models - Sequelize models
    * @param {Object} redis - Redis instance
    * @param {string} permissions
@@ -201,6 +305,7 @@ module.exports = {
   /**
    * Replaces role with corresponding permissions.
    *
+   * @private
    * @param {Object} models - Sequelize models
    * @param {Object} redis - Redis instance
    * @param {string} role - Role to replace
@@ -231,6 +336,7 @@ module.exports = {
   /**
    * Gets role's corresponding permissions from redis or database.
    *
+   * @private
    * @param {Object} models - Sequelize models
    * @param {Object} redis
    * @param {string} role
@@ -258,6 +364,7 @@ module.exports = {
    * Gets role's corresponding permissions from the database
    * and caches in Redis.
    *
+   * @private
    * @param {Object} models - Sequelize models
    * @param {Object} redis
    * @param {string} role
@@ -282,6 +389,7 @@ module.exports = {
   /**
    * Gets user's roles.
    *
+   * @private
    * @param {Object} models - Sequelize models
    * @param {string} userId
    * @returns {Promise}
@@ -307,6 +415,7 @@ module.exports = {
   /**
    * Checks if value is a role.
    *
+   * @private
    * @param {string} value
    * @returns {boolean}
    */
@@ -323,6 +432,7 @@ module.exports = {
   /**
    * Checks if value is a permission.
    *
+   * @private
    * @param {string} value
    * @returns {boolean}
    */
@@ -341,6 +451,7 @@ module.exports = {
   /**
    * Checks if value is a property permission.
    *
+   * @private
    * @param {string} value
    * @returns {boolean}
    */
@@ -359,6 +470,7 @@ module.exports = {
   /**
    * Checks if value is a custom permission.
    *
+   * @private
    * @param {string} value
    * @returns {boolean}
    */
@@ -377,6 +489,7 @@ module.exports = {
   /**
    * Checks if action is a CRUD action.
    *
+   * @private
    * @param {string} action
    * @returns {boolean}
    */
@@ -393,6 +506,8 @@ module.exports = {
 
   /**
    * Convert property permission to a standard CRUD action permission.
+   * 
+   * @private
    */
   convertToUpperPermission(permission) {
     const array = permission.split(':');
@@ -402,6 +517,8 @@ module.exports = {
 
   /**
    * Convert property permission to a deny property permission.
+   * 
+   * @private
    */
   convertToDenyPermission(permission) {
     return `deny!${permission}`;
@@ -410,6 +527,7 @@ module.exports = {
   /**
    * Convert methods to CRUD actions.
    *
+   * @private
    * @param {string} method
    * @returns {boolean}
    */
@@ -428,6 +546,7 @@ module.exports = {
   /**
    * Splits string with colon delimiter.
    *
+   * @private
    * @param {string} value
    * @returns {Array}
    */
