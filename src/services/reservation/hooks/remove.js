@@ -2,10 +2,12 @@
 
 const errors = require('feathers-errors');
 const user = require('../../user/utils');
+const roles = require('../../../utils/roles');
 
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
+    const redis = hook.app.get('redis');
 
     return models.reservation.findOne({
       where: {
@@ -13,12 +15,12 @@ module.exports = function (options) {
       },
     }).then((reservation) => {
       if (reservation.dataValues.approved) {
-        if (user.isAdmin(hook.params.user)) {
+        if (roles.can(models, redis, hook.params.user.id, 'reservation', 'delete')) {
           return hook;
         } else {
           throw new errors.BadRequest('You cannot delete a reservation after it has been approved');
         }
-      } else if (user.isAdmin(hook.params.user)) {
+      } else if (roles.can(models, redis, hook.params.user.id, 'reservation', 'delete')) {
         return hook;
       } else if (hook.reservation.userId === hook.params.user.id) {
         return hook;
