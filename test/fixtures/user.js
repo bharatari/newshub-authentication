@@ -49,6 +49,19 @@ module.exports = function (models) {
               {
                 model: 'user',
                 data: {
+                  username: 'masterDeny',
+                  firstName: 'Master',
+                  lastName: 'User',
+                  email: 'masterDeny@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'master, deny!user:update',
+                },
+              },
+              {
+                model: 'user',
+                data: {
                   username: 'device',
                   firstName: 'Device',
                   lastName: 'Creator',
@@ -72,6 +85,97 @@ module.exports = function (models) {
                   roles: 'admin, reservation:approve',
                 }
               },
+              {
+                model: 'user',
+                data: {
+                  username: 'adminAdvisor',
+                  firstName: 'Admin',
+                  lastName: 'Advisor',
+                  email: 'adminAdvisor@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'admin, advisor',
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'deny',
+                  firstName: 'Deny',
+                  lastName: 'User',
+                  email: 'deny@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'deny!user:update, user:update',
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'ownerDeny',
+                  firstName: 'Owner',
+                  lastName: 'Deny',
+                  email: 'ownerDeny@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'user:update, deny!user:update!owner'
+                }
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'ownerDenyProperty',
+                  firstName: 'Owner',
+                  lastName: 'Deny',
+                  email: 'ownerDenyProperty@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'user:update!owner, deny!user:roles:update!owner'
+                }
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'ownerDenyOverlap',
+                  firstName: 'Owner',
+                  lastName: 'Deny',
+                  email: 'ownerDenyOverlap@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'user:update, deny!user:update!owner, user:roles:update!owner'
+                }
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'ownerDenyReservation',
+                  firstName: 'Owner',
+                  lastName: 'Deny',
+                  email: 'ownerDenyReservation@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'reservation:update, deny!reservation:update!owner'
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'ownerDenyReservationProperty',
+                  firstName: 'Owner',
+                  lastName: 'Deny',
+                  email: 'ownerDenyReservationProperty@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  roles: 'reservation:update, deny!reservation:approved:update!owner'
+                },
+              }
             ]);
           });
         });

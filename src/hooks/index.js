@@ -6,7 +6,10 @@
 // see http://docs.feathersjs.com/hooks/readme.html for more details
 // on hooks.
 
-exports.checkPermissions = function (options) {
+const roles = require('../utils/roles');
+const errors = require('feathers-errors');
+
+exports.checkRoles = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');

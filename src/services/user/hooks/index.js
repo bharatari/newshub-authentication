@@ -5,7 +5,6 @@ const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
 const token = require('./token');
 const master = require('./master');
-const admin = require('./admin');
 const normalize = require('./normalize');
 const sanitize = require('./sanitize');
 
