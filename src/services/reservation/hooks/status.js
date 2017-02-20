@@ -34,7 +34,7 @@ module.exports = function (options) {
                   return hook;
                 });
             } else {
-              throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
+              throw new errors.NotAuthenticated('Must have permission to update reservation status.');
             }
           } else {
             if (roles.has(models, redis, hook.params.user.id, 'reservation:special-requests')) {
@@ -65,7 +65,7 @@ module.exports = function (options) {
                 return hook;
               });
           } else {
-            throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
+            throw new errors.NotAuthenticated('Must have permission to update reservation status.');
           }
         }
 
@@ -81,7 +81,7 @@ module.exports = function (options) {
                 return hook;
               });
           } else {
-            throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
+            throw new errors.NotAuthenticated('Must have permission to update reservation status.');
           }          
         }
 
@@ -95,7 +95,7 @@ module.exports = function (options) {
                 return hook;
               });
           } else {
-            throw new errors.NotAuthenticated('Must be an admin to update reservation admin notes.');
+            throw new errors.NotAuthenticated('Must have permission to update reservation admin notes.');
           }
         }
 
@@ -111,7 +111,7 @@ module.exports = function (options) {
                 return hook;
               });
           } else {
-            throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
+            throw new errors.NotAuthenticated('Must have permission to update reservation status.');
           }
         }
 
