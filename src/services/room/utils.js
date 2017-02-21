@@ -9,6 +9,7 @@ module.exports = {
     const overlaps = reservation.overlaps(startDate, endDate);
     const where = Object.assign(overlaps, {
       roomId,
+      disabled: false,
     });
 
     return models.reservation.findAll({

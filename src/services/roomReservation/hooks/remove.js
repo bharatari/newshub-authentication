@@ -6,6 +6,7 @@ const user = require('../../user/utils');
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
+    const redis = hook.app.get('redis');
 
     return models.roomReservation.findOne({
       where: {
