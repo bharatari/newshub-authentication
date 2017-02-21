@@ -8,7 +8,7 @@
 const Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
-  const building = sequelize.define('buildings', {
+  const building = sequelize.define('building', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,

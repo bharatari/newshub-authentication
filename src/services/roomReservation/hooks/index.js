@@ -12,6 +12,7 @@ const validate = require('./validate');
 const remove = require('./remove');
 const restrict = require('./restrict');
 const count = require('./count');
+const approve = require('./approve');
 
 exports.before = {
   all: [
@@ -31,6 +32,7 @@ exports.before = {
     process(),
     validate(),
     restrict(),
+    approve(),
   ],
   update: [
     hooks.disable(),
