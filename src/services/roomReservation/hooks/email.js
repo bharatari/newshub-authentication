@@ -9,9 +9,6 @@ module.exports = function (options) {
       where: {
         $or: [
           {
-            roles: 'admin',
-          },
-          {
             roles: 'master',
           },
         ],

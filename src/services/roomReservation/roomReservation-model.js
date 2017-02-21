@@ -56,5 +56,5 @@ module.exports = function (sequelize) {
     },
   });
 
-  return reservation;
+  return roomReservation;
 };
