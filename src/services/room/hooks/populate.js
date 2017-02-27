@@ -12,9 +12,9 @@ module.exports = function (options) {
       if (hook.params.sequelize) {
         hook.params.sequelize.include = include;
       } else {
-        hook.params.sequelize = Object.assign(hook.params.sequelize, {
+        hook.params.sequelize = {
           include,
-        });
+        };
       }
     }
 

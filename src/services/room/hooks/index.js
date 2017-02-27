@@ -4,7 +4,6 @@ const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
 const populate = require('./populate');
-const available = require('./available');
 
 exports.before = {
   all: [

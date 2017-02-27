@@ -1,6 +1,30 @@
 'use strict';
 
 module.exports = {
+  available(models, roomId, startDate, endDate) {
+    const overlaps = this.overlaps(startDate, endDate);
+    const where = Object.assign(overlaps, {
+      roomId,
+      disabled: false,
+    });
+
+    return models.roomReservation.findAll({
+      where,
+      include: [{
+        model: models.room,
+      }],
+    }).then((result) => {
+      const reservations = JSON.parse(JSON.stringify(result));
+
+      if (reservations.length > 0) {
+        return false;
+      }
+
+      return true;
+    }).catch((err) => {
+      throw err;
+    });
+  },
   overlaps(startDate, endDate) {
     return {
       $or: [{

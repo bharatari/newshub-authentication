@@ -30,6 +30,11 @@ module.exports = function(sequelize) {
       allowNull: false,
       defaultValue: {},
     },
+    disabled: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   }, {
     freezeTableName: true,
     classMethods: {

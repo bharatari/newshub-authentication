@@ -14,7 +14,7 @@ module.exports = function () {
           return hook;
         }
 
-        throw new errors.BadRequest('Room unavailable for given dates');
+        throw new errors.BadRequest('ROOM_UNAVAILABLE');
       })
       .catch((err) => {
         throw err;

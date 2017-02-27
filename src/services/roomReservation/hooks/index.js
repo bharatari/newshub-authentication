@@ -13,6 +13,7 @@ const remove = require('./remove');
 const restrict = require('./restrict');
 const count = require('./count');
 const approve = require('./approve');
+const available = require('./available');
 
 exports.before = {
   all: [
@@ -30,6 +31,7 @@ exports.before = {
   ],
   create: [
     process(),
+    available(),
     validate(),
     restrict(),
     approve(),
