@@ -20,7 +20,7 @@ exports.before = {
     populate(),
   ],
   create: [
-    globalHooks.checkRoles({ service: 'device' }),
+    globalHooks.checkAccess({ service: 'device' }),
   ],
   update: [],
   patch: [],

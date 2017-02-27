@@ -2,7 +2,7 @@
 
 const errors = require('feathers-errors');
 const user = require('../../user/utils');
-const roles = require('../../../utils/roles');
+const access = require('../../../utils/access');
 
 module.exports = function (options) {
   return function (hook) {
@@ -14,7 +14,7 @@ module.exports = function (options) {
         id: hook.id,
       },
     }).then(async (reservation) => {
-      const canDelete = await roles.can(models, redis, hook.params.user.id, 'reservation', 'delete')
+      const canDelete = await access.can(models, redis, hook.params.user.id, 'reservation', 'delete')
 
       if (reservation.dataValues.approved) {
         if (canDelete) {

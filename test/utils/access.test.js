@@ -5,12 +5,12 @@
 
 const assert = require('chai').assert;
 const app = require('../../src/app');
-const utils = require('../../src/utils/roles');
+const utils = require('../../src/utils/access');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const _ = require('lodash');
 
-describe('roles utils', () => {
+describe('access utils', () => {
   before((done) => {
     chai.use(chaiAsPromised);
 

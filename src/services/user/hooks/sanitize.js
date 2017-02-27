@@ -1,7 +1,7 @@
 'use strict';
 
 const userUtils = require('../../user/utils');
-const roles = require('../../../utils/roles');
+const access = require('../../../utils/access');
 
 module.exports = function (options) {
   return async function (hook) {
@@ -10,7 +10,7 @@ module.exports = function (options) {
 
     if (hook.params.provider) {
       if (hook.type === 'before') {
-        const canViewDisabled = await roles.has(models, redis, hook.params.user.id, 'user:view-disabled')
+        const canViewDisabled = await access.has(models, redis, hook.params.user.id, 'user:view-disabled')
 
         if (!canViewDisabled) {
           hook.params.sequelize = {

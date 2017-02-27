@@ -3,6 +3,7 @@
 const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
+const process = require('./process');
 
 exports.before = {
   all: [
@@ -10,12 +11,24 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated(),
   ],
-  find: [],
-  get: [],
-  create: [],
-  update: [],
-  patch: [],
-  remove: [],
+  find: [
+    process(),
+  ],
+  get: [
+    hooks.disable(),
+  ],
+  create: [
+    hooks.disable(),
+  ],
+  update: [
+    hooks.disable(),
+  ],
+  patch: [
+    hooks.disable(),
+  ],
+  remove: [
+    hooks.disable(),
+  ],
 };
 
 exports.after = {

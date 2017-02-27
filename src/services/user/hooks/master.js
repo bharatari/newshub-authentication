@@ -6,7 +6,7 @@ const userUtils = require('../../user/utils');
 const errors = require('feathers-errors');
 const moment = require('moment');
 const _ = require('lodash');
-const roles = require('../../../utils/roles');
+const access = require('../../../utils/access');
 
 module.exports = function (options) {
   return function (hook) {
@@ -20,7 +20,7 @@ module.exports = function (options) {
       },
     }).then(async (user) => {
       if (roles && (roles != user.roles)) {
-        const canUpdateRoles = await roles.can(models, redis, hook.params.user.id, 'user', 'update', 'roles');
+        const canUpdateRoles = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'roles');
 
         if (canUpdateRoles) {
           return hook;
@@ -30,7 +30,7 @@ module.exports = function (options) {
       }
 
       if (!_.isNil(disabled) && (disabled != user.disabled)) {
-        const canDisable = await roles.can(models, redis, hook.params.user.id, 'user', 'update', 'disabled');
+        const canDisable = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'disabled');
 
         if (canDisable) {
           return hook;
@@ -40,7 +40,7 @@ module.exports = function (options) {
       }
 
       if (options) {
-        const canUpdateDoNotDisturb = await roles.can(models, redis, hook.params.user.id, 'user', 'update', 'doNotDisturb');
+        const canUpdateDoNotDisturb = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'doNotDisturb');
 
         if (user.options) {
           if (!_.isNil(options.doNotDisturb) && (options.doNotDisturb != user.options.doNotDisturb)) {            
