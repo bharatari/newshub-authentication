@@ -18,9 +18,11 @@ module.exports = function (options) {
       where: {
         id: hook.id,
       },
-    }).then((user) => {
+    }).then(async (user) => {
       if (roles && (roles != user.roles)) {
-        if (roles.can(models, redis, hook.params.user.id, 'user', 'update', 'roles')) {
+        const canUpdateRoles = await roles.can(models, redis, hook.params.user.id, 'user', 'update', 'roles');
+
+        if (canUpdateRoles) {
           return hook;
         } else {
           throw new errors.NotAuthenticated('You do not have the permission to update roles');
@@ -28,7 +30,9 @@ module.exports = function (options) {
       }
 
       if (!_.isNil(disabled) && (disabled != user.disabled)) {
-        if (roles.can(models, redis, hook.params.user.id, 'user', 'update', 'disabled')) {
+        const canDisable = await roles.can(models, redis, hook.params.user.id, 'user', 'update', 'disabled');
+
+        if (canDisable) {
           return hook;
         } else {
           throw new errors.NotAuthenticated('You do not have the permission to update disabled status');
@@ -36,16 +40,18 @@ module.exports = function (options) {
       }
 
       if (options) {
+        const canUpdateDoNotDisturb = await roles.can(models, redis, hook.params.user.id, 'user', 'update', 'doNotDisturb');
+
         if (user.options) {
-          if (!_.isNil(options.doNotDisturb) && (options.doNotDisturb != user.options.doNotDisturb)) {
-            if (roles.can(models, redis, hook.params.user.id, 'user', 'update', 'doNotDisturb')) {
+          if (!_.isNil(options.doNotDisturb) && (options.doNotDisturb != user.options.doNotDisturb)) {            
+            if (canUpdateDoNotDisturb) {
               return hook;
             } else {
               throw new errors.NotAuthenticated('You do not have the permission to update do not disturb status');
             }
           }
         } else if (!_.isNil(options.doNotDisturb)) {
-          if (roles.can(models, redis, hook.params.user.id, 'user', 'update', 'doNotDisturb')) {
+          if (canUpdateDoNotDisturb) {
             return hook;
           } else {
             throw new errors.NotAuthenticated('You do not have the permission to update do not disturb status');

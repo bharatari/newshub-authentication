@@ -4,7 +4,7 @@ module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
 
-    models.reservation.count()
+    return models.reservation.count()
       .then(function (count) {
         hook.result.total = count;
         

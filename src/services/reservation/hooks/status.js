@@ -20,10 +20,12 @@ module.exports = function (options) {
         include: [{
           model: models.user,
         }],
-      }).then(function (reservation) {
+      }).then(async function (reservation) {
         if (approved && !reservation.approved) {
           if (_.isNil(specialRequests) && _.isNil(reservation.specialRequests)) {
-            if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'approved')) {
+            const canApprove = await roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'approved')
+
+            if (canApprove) {
               hook.data.approvedById = hook.params.user.id;
 
               return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
@@ -37,7 +39,9 @@ module.exports = function (options) {
               throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
             }
           } else {
-            if (roles.has(models, redis, hook.params.user.id, 'reservation:special-requests')) {
+            const canApproveSpecialRequests = await roles.has(models, redis, hook.params.user.id, 'reservation:special-requests');
+
+            if (canApproveSpecialRequests) {
               hook.data.approvedById = hook.params.user.id;
 
               return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
@@ -54,7 +58,9 @@ module.exports = function (options) {
         }
 
         if (checkedOut && !reservation.checkedOut) {
-          if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedOut')) {
+          const canCheckOut = await roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedOut');
+
+          if (canCheckOut) {
             hook.data.checkedOutById = hook.params.user.id;
 
             return email.sendEmail(hook.app, reservation.user.email, null, 'checked out', 'USER_RESERVATION_RESPONSE')
@@ -70,7 +76,9 @@ module.exports = function (options) {
         }
 
         if (checkedIn && !reservation.checkedIn) {
-          if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedIn')) {
+          const canCheckIn = await roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedIn');
+
+          if (canCheckIn) {
             hook.data.checkedInById = hook.params.user.id;
 
             return email.sendEmail(hook.app, reservation.user.email, null, 'checked in', 'USER_RESERVATION_RESPONSE')
@@ -86,7 +94,9 @@ module.exports = function (options) {
         }
 
         if (adminNotes && (reservation.adminNotes !== adminNotes)) {
-          if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'adminNotes')) {
+          const canUpdateAdminNotes = await roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'adminNotes');
+
+          if (canUpdateAdminNotes) {
             return email.sendEmail(hook.app, reservation.user.email, null, adminNotes, 'USER_RESERVATION_ADMIN_NOTES')
               .then(function (response) {
                 return hook;
@@ -100,7 +110,9 @@ module.exports = function (options) {
         }
 
         if (disabled && !reservation.disabled) {
-          if (roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'disabled')) {
+          const canDisable = await roles.can(models, redis, hook.params.user.id, 'reservation', 'update', 'disabled');
+
+          if (canDisable) {
             hook.data.disabledById = hook.params.user.id;
 
             return email.sendEmail(hook.app, reservation.user.email, null, 'rejected', 'USER_RESERVATION_RESPONSE')
