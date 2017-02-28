@@ -4,16 +4,16 @@ const user = require('../../user/utils');
 const errors = require('feathers-errors');
 const email = require('../../../utils/email');
 const _ = require('lodash');
-const access = require('../../../utils/access');
+const roles = require('../../../utils/roles');
 
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');
-    const { approved, checkedOut, checkedIn, adminNotes, disabled, specialRequests } = hook.data;
+    const { approved, adminNotes, disabled, specialRequests } = hook.data;
 
-    if (approved || checkedOut || checkedIn || adminNotes || disabled) {
-      return models.reservation.findOne({
+    if (approved || adminNotes || disabled) {
+      return models.roomReservation.findOne({
         where: {
           id: hook.id,
         },
@@ -23,8 +23,8 @@ module.exports = function (options) {
       }).then(async function (reservation) {
         if (approved && !reservation.approved) {
           if (_.isNil(specialRequests) && _.isNil(reservation.specialRequests)) {
-            const canApprove = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'approved')
-
+            const canApprove = await roles.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'approved');
+            
             if (canApprove) {
               hook.data.approvedById = hook.params.user.id;
 
@@ -39,9 +39,9 @@ module.exports = function (options) {
               throw new errors.NotAuthenticated('Must have permission to update reservation status.');
             }
           } else {
-            const canApproveSpecialRequests = await access.has(models, redis, hook.params.user.id, 'reservation:special-requests');
+            const hasSpecialRequests = await roles.has(models, redis, hook.params.user.id, 'roomReservation:special-requests');
 
-            if (canApproveSpecialRequests) {
+            if (hasSpecialRequests) {
               hook.data.approvedById = hook.params.user.id;
 
               return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
@@ -57,44 +57,8 @@ module.exports = function (options) {
           }
         }
 
-        if (checkedOut && !reservation.checkedOut) {
-          const canCheckOut = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedOut');
-
-          if (canCheckOut) {
-            hook.data.checkedOutById = hook.params.user.id;
-
-            return email.sendEmail(hook.app, reservation.user.email, null, 'checked out', 'USER_RESERVATION_RESPONSE')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must have permission to update reservation status.');
-          }
-        }
-
-        if (checkedIn && !reservation.checkedIn) {
-          const canCheckIn = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedIn');
-
-          if (canCheckIn) {
-            hook.data.checkedInById = hook.params.user.id;
-
-            return email.sendEmail(hook.app, reservation.user.email, null, 'checked in', 'USER_RESERVATION_RESPONSE')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must have permission to update reservation status.');
-          }          
-        }
-
         if (adminNotes && (reservation.adminNotes !== adminNotes)) {
-          const canUpdateAdminNotes = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'adminNotes');
+          const canUpdateAdminNotes = await roles.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'adminNotes');
 
           if (canUpdateAdminNotes) {
             return email.sendEmail(hook.app, reservation.user.email, null, adminNotes, 'USER_RESERVATION_ADMIN_NOTES')
@@ -110,9 +74,9 @@ module.exports = function (options) {
         }
 
         if (disabled && !reservation.disabled) {
-          const canDisable = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'disabled');
+          const canUpdateDisabled = await roles.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'disabled');
 
-          if (canDisable) {
+          if (canUpdateDisabled) {
             hook.data.disabledById = hook.params.user.id;
 
             return email.sendEmail(hook.app, reservation.user.email, null, 'rejected', 'USER_RESERVATION_RESPONSE')
