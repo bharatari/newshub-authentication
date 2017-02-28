@@ -1,6 +1,5 @@
 'use strict';
 
-const user = require('../../user/utils');
 const errors = require('feathers-errors');
 const email = require('../../../utils/email');
 const _ = require('lodash');

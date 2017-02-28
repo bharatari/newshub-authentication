@@ -1,7 +1,6 @@
 'use strict';
 
 const errors = require('feathers-errors');
-const user = require('../../user/utils');
 const roles = require('../../../utils/roles');
 
 module.exports = function (options) {

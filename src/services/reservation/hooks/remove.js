@@ -1,7 +1,6 @@
 'use strict';
 
 const errors = require('feathers-errors');
-const user = require('../../user/utils');
 const access = require('../../../utils/access');
 
 module.exports = function (options) {

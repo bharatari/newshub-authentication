@@ -2,7 +2,6 @@
 
 /* eslint eqeqeq: 0 */
 
-const userUtils = require('../../user/utils');
 const errors = require('feathers-errors');
 const moment = require('moment');
 const _ = require('lodash');

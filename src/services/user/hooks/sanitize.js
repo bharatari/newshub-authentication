@@ -1,6 +1,5 @@
 'use strict';
 
-const userUtils = require('../../user/utils');
 const access = require('../../../utils/access');
 
 module.exports = function (options) {
