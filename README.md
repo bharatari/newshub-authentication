@@ -36,6 +36,12 @@ $ feathers generate model                 # Generate a new Model
 $ feathers help                           # Show all commands
 ```
 
+## Features
+
+### Access Control System
+
+Our access control system, located primarily in the `/utils/access.js` file, is designed to be flexible, scalable and extensible. Roles act as user groups and permission presets while permissions are granular levels of access control. Roles can also generally refer to both roles and permissions in certain cases. For example, the field to include a user's roles and permissions on a user record is simply called `roles`.
+
 ## Help
 
 For more information on all the things you can do with Feathers visit [docs.feathersjs.com](http://docs.feathersjs.com).

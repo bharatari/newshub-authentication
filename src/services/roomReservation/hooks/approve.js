@@ -1,13 +1,13 @@
 'use strict';
 
-const roles = require('../../../utils/roles');
+const access = require('../../../utils/access');
 
 module.exports = function (options) {
   return async function (hook) {
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');
 
-    const hasAutoApprove = await roles.has(models, redis, hook.params.user.id, 'roomReservation:auto-approve');
+    const hasAutoApprove = await access.has(models, redis, hook.params.user.id, 'roomReservation:auto-approve');
 
     if (hasAutoApprove) {
       hook.data.approved = true;

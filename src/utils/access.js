@@ -129,18 +129,19 @@ module.exports = {
       });
   },
 
+
+  resolve(models, redis, userId) {
+    // spit out all the permissions the user does have, resolve roles but don't remove them.
+    // Handle all overlapping permissions and everything.
+  },
+
   /**
    * Checks if there is a deny permission for the given
-   * permission. Does not handle owner flags as owner permissions
-   * cannot be denied, deny the entire permission instead.
+   * permission.
    * 
    * @private
    */
   cannot(models, redis, userId, permission, model, id) {
-    // We can handle owner flags here by checking for a separate owner
-    // permission and if that permission exists with a deny flag,
-    // we check if the user owns the record,
-    // and if they own it, they don't have permission.
     const denyPermission = this.convertToDenyPermission(permission);
 
     return this.is(models, userId, 'master')

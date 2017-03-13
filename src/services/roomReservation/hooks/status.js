@@ -3,7 +3,7 @@
 const errors = require('feathers-errors');
 const email = require('../../../utils/email');
 const _ = require('lodash');
-const roles = require('../../../utils/roles');
+const access = require('../../../utils/access');
 
 module.exports = function (options) {
   return function (hook) {
@@ -22,7 +22,7 @@ module.exports = function (options) {
       }).then(async function (reservation) {
         if (approved && !reservation.approved) {
           if (_.isNil(specialRequests) && _.isNil(reservation.specialRequests)) {
-            const canApprove = await roles.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'approved');
+            const canApprove = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'approved');
             
             if (canApprove) {
               hook.data.approvedById = hook.params.user.id;
@@ -38,7 +38,7 @@ module.exports = function (options) {
               throw new errors.NotAuthenticated('Must have permission to update reservation status.');
             }
           } else {
-            const hasSpecialRequests = await roles.has(models, redis, hook.params.user.id, 'roomReservation:special-requests');
+            const hasSpecialRequests = await access.has(models, redis, hook.params.user.id, 'roomReservation:special-requests');
 
             if (hasSpecialRequests) {
               hook.data.approvedById = hook.params.user.id;
@@ -57,7 +57,7 @@ module.exports = function (options) {
         }
 
         if (adminNotes && (reservation.adminNotes !== adminNotes)) {
-          const canUpdateAdminNotes = await roles.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'adminNotes');
+          const canUpdateAdminNotes = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'adminNotes');
 
           if (canUpdateAdminNotes) {
             return email.sendEmail(hook.app, reservation.user.email, null, adminNotes, 'USER_RESERVATION_ADMIN_NOTES')
@@ -73,7 +73,7 @@ module.exports = function (options) {
         }
 
         if (disabled && !reservation.disabled) {
-          const canUpdateDisabled = await roles.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'disabled');
+          const canUpdateDisabled = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'disabled');
 
           if (canUpdateDisabled) {
             hook.data.disabledById = hook.params.user.id;
