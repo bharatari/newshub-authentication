@@ -8,21 +8,34 @@ module.exports = function (options) {
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');
 
-    if (access.isPermission(hook.params.query.role)) {
-      const result = await access.has(models, hook.params.user.id, hook.params.query.role);
+    const role = hook.data.role;
+    const roles = hook.data.roles;
 
-      hook.result = result;
+    if (role) {
+      if (access.isPermission(role)) {
+        const result = await access.has(models, hook.params.user.id, role);
 
-      return hook;
-    } else if (access.isRole(hook.params.query.permission)) {
-      const result = await access.is(models, hook.params.user.id, hook.params.query.role);
+        hook.result = result;
 
-      hook.result = result;
+        return hook;
+      } else if (access.isRole(role)) {
+        const result = await access.is(models, hook.params.user.id, role);
+
+        hook.result = result;
+
+        return hook;
+      } else {
+        hook.result = false;
+
+        return hook;
+      }
+    } else if (roles === 'all') {
+      const userRoles = await access.resolve(models, redis, hook.params.user.id);
+
+      hook.result = userRoles;
 
       return hook;
     } else {
-      hook.result = false;
-
       return hook;
     }
   };

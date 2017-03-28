@@ -4,6 +4,7 @@ const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
 const process = require('./process');
+const clean = require('./clean');
 
 exports.before = {
   all: [
@@ -12,7 +13,7 @@ exports.before = {
     auth.restrictToAuthenticated(),
   ],
   find: [
-    process(),
+    clean(),
   ],
   get: [
     hooks.disable(),
@@ -33,7 +34,9 @@ exports.before = {
 
 exports.after = {
   all: [],
-  find: [],
+  find: [
+    process(),
+  ],
   get: [],
   create: [],
   update: [],

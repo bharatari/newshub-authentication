@@ -351,6 +351,12 @@ describe('access utils', () => {
     });
   });
 
+  describe('#resolve', () => {
+    it('should not remove roles', () => {
+
+    });
+  });
+
   describe('#populateRoles', () => {
     it('should replace a single role with corresponding permission', () => {
       const models = app.get('sequelize').models;

@@ -16,9 +16,7 @@ module.exports = {
     // for create, check deny permissions for properties
     // the user is allowed or not allowed to create
 
-
     // check for standard roles otherwise
-    // 
   },
 
   /**
@@ -31,60 +29,43 @@ module.exports = {
    * @param {string} method
    * @returns {Promise}
    */
-  can(models, redis, userId, service, method, property, id) {
+  async can(models, redis, userId, service, method, property, id) {
     const permission = this.convertToPermission(service, method, property);
 
     if (!_.isNil(property)) {
       const upperPermission = this.convertToUpperPermission(permission);
 
-      return this.has(models, redis, userId, permission, service, id)
-        .then((result) => {
-          if (result) {
-            return this.cannot(models, redis, userId, permission, service, id)
-              .then((deny) => {
-                return !deny;
-              });
-          } else {
-            return this.has(models, redis, userId, upperPermission, service, id)
-              .then((upper) => {
-                if (upper) {
-                  return this.cannot(models, redis, userId, upperPermission, service, id)
-                    .then((deny) => {
-                      if (!deny) {
-                        return this.cannot(models, redis, userId, permission, service, id)
-                          .then((deny) => {
-                            return !deny;
-                          });
-                      } else {
-                        return false;
-                      }
-                    });
-                } else {
-                  return false;
-                }
-              });
-          }
-        })
-        .catch((err) => {
-          throw err;
-        });
-    }
-    
-    return this.has(models, redis, userId, permission, service, id)
-      .then((result) => {
-        if (result) {
+      try {
+        const hasPermission = await this.has(models, redis, userId, permission, service, id);
+        const cannotPermission = await this.cannot(models, redis, userId, permission, service, id);
 
-          return this.cannot(models, redis, userId, permission, service, id)
-            .then((deny) => {
-              return !deny;
-            });
+        const hasUpperPermission = await this.has(models, redis, userId, upperPermission, service, id);
+        const cannotUpperPermission = await this.cannot(models, redis, userId, upperPermission, service, id);
+
+        if (hasPermission && !cannotPermission) {
+          return true;
+        } else if (hasUpperPermission && !cannotUpperPermission && !cannotPermission) {
+          return true;
+        } else {
+          return false;
         }
+      } catch (e) {
+        throw e;
+      }
+    }
 
-        return false;
-      })
-      .catch((err) => {
-        throw err;
-      });
+    try {
+      const hasPermission = await this.has(models, redis, userId, permission, service, id);
+      const cannotPermission = await this.cannot(models, redis, userId, permission, service, id);
+
+      if (hasPermission && !cannotPermission) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      throw e;
+    }
   },
 
   /**
@@ -129,10 +110,18 @@ module.exports = {
       });
   },
 
+  async resolve(models, redis, userId) {
+    const roles = await this.getUserRoles(models, userId);
+    const permissions = await this.populateRoles(models, redis, roles);
 
-  resolve(models, redis, userId) {
-    // spit out all the permissions the user does have, resolve roles but don't remove them.
-    // Handle all overlapping permissions and everything.
+    if (roles) {
+      const rolesArray = roles.split(', ');
+      rolesArray.concat(permissions);
+
+      return rolesArray;
+    }
+
+    return [];
   },
 
   /**
@@ -407,7 +396,7 @@ module.exports = {
         return user.roles;
       }
 
-      throw '';
+      throw new Error();
     }).catch((err) => {
       throw err;
     });
