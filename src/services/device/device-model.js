@@ -35,6 +35,10 @@ module.exports = function (sequelize) {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
+    specialApproval: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
     disabled: {
       type: Sequelize.BOOLEAN,
       allowNull: false,

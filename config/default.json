@@ -1,7 +1,7 @@
 {
   "host": "localhost",
   "port": 3030,
-  "postgres": "postgres://postgres:postgres@localhost:5432/newshub_server_development",
+  "postgres": "DATABASE_URL",
   "public": "../public/",
   "auth": {
     "token": {

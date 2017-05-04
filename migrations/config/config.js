@@ -1,10 +1,12 @@
-const app = require('../../src/app');
 const env = process.env.NODE_ENV || 'development';
 
 module.exports = {
   [env]: {
-    url: app.get('db_url'),
-    dialect: app.get('db_dialect'),
+    username: "postgres",
+    password: "postgres",
+    database: "newshub_server_development",
+    url: process.env.DATABASE_URL,
+    dialect: 'postgres',
     migrationStorageTableName: '_migrations'
   }
 };
