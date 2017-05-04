@@ -78,18 +78,108 @@ describe('reservation service', () => {
       .set('Accept', 'application/json')
       .set('Authorization', 'Bearer '.concat(user))
       .send({
-        "devices": [{
-          "id": device.id,
-          "availableQuantity": 1,
-          "reservedQuantity": 1
+        devices: [{
+          id: device.id,
+          availableQuantity: 1,
+          reservedQuantity: 1
         }],
-        "startDate": "2017-02-01T01:00",
-        "endDate": "2017-03-01T13:00",
-        "purpose": "News"
+        startDate: '2017-02-01T01:00',
+        endDate: '2017-03-01T13:00',
+        purpose: 'News'
       })
       .end((err, res) => {
         res.should.have.status(201);
         done();
       });
+  });
+
+  it('should allow user to create a reservation with special requests', async (done) => {
+    const device = await app.get('sequelize').models.device.findOne();
+
+    chai.request(app)
+      .post('/api/reservation')
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .send({
+        devices: [{
+          id: device.id,
+          availableQuantity: 1,
+          reservedQuantity: 1
+        }],
+        startDate: '2017-02-01T01:00',
+        endDate: '2017-03-01T13:00',
+        purpose: 'News',
+        specialRequests: 'Need special level of access to approve this'
+      })
+      .end((err, res) => {
+        res.should.have.status(201);
+        done();
+      });
+  });
+
+  it('should allow authorized user to approve a reservation', async () => {
+    const reservation = await app.get('sequelize').models.reservation.findOne({
+      where: {
+        notes: 'VIDEO_SHOOT',
+      },
+    });
+
+    chai.request(app)
+      .patch('/api/reservation')
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(admin))
+      .send({
+        id: reservation.id,
+        approved: true,
+      })
+      .end((err, res) => {
+        res.should.have.status(201);
+        done();
+      });
+  });
+
+  it('should not allow normal user to approve a reservation', async () => {
+    const reservation = await app.get('sequelize').models.reservation.findOne({
+      where: {
+        notes: 'VIDEO_SHOOT2',
+      },
+    });
+
+    chai.request(app)
+      .patch('/api/reservation')
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .send({
+        id: reservation.id,
+        approved: true,
+      })
+      .end((err, res) => {
+        res.should.have.status(400);
+        done();
+      });
+  });
+
+  it('should allow authorized user to approve a reservation with special requests', () => {
+
+  });
+
+  it('should not allow user to approve reservation with special requests without appropriate access', () => {
+
+  });
+
+  it('should allow authorized user to check out a reservation', () => {
+
+  });
+
+  it('should not allow normal user to check out a reservation', () => {
+
+  });
+
+  it('should allow authorized user to check in a reservation', () => {
+
+  });
+
+  it('should not allow normal user to check in a reservation', () => {
+
   });
 });
