@@ -59,24 +59,24 @@ describe('device service', function () {
                 })
                 .end((err, res) => {
                   master = res.body.token;
+
                   done();
                 });
             });
         });
     });
   });
+
   after((done) => {
-    User.remove(null, () => {
-      Device.remove(null, () => {
-        this.server.close(() => {
-          done();
-        });
-      });
-    });
+    this.server.close(() => {
+      done();
+    }); 
   });
+
   it('registered the device service', () => {
     assert.ok(app.service('/api/device'));
   });
+
   it('should allow masters to create a device', (done) => {
     chai.request(app)
       .post('/api/device')
@@ -93,6 +93,7 @@ describe('device service', function () {
         done();
       });
   });
+
   it('should not allow admins to create a device', (done) => {
     chai.request(app)
       .post('/api/device')
@@ -109,6 +110,7 @@ describe('device service', function () {
         done();
       });
   });
+
   it('should not allow normal users to create a device', (done) => {
     chai.request(app)
       .post('/api/device')
