@@ -4,7 +4,7 @@ const service = require('feathers-sequelize');
 const activity = require('./activity-model');
 const hooks = require('./hooks');
 
-module.exports = function(){
+module.exports = function () {
   const app = this;
 
   const options = {
@@ -16,10 +16,10 @@ module.exports = function(){
   };
 
   // Initialize our service with any options it requires
-  app.use('/activities', service(options));
+  app.use('/api/activity', service(options));
 
   // Get our initialize service to that we can bind hooks
-  const activityService = app.service('/activities');
+  const activityService = app.service('/api/activity');
 
   // Set up our before hooks
   activityService.before(hooks.before);

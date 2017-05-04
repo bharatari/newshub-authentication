@@ -8,7 +8,7 @@
 const Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
-  const activity = sequelize.define('activities', {
+  const activity = sequelize.define('activity', {
     text: {
       type: Sequelize.STRING,
       allowNull: false
