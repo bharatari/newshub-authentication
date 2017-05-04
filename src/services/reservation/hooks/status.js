@@ -4,12 +4,23 @@ const errors = require('feathers-errors');
 const email = require('../../../utils/email');
 const _ = require('lodash');
 const access = require('../../../utils/access');
+const utils = require('../utils');
 
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');
-    const { approved, checkedOut, checkedIn, adminNotes, disabled, specialRequests } = hook.data;
+    const { 
+      approved,
+      checkedOut,
+      checkedIn,
+      adminNotes,
+      disabled,
+      specialRequests,
+      approvedById,
+      checkedOutById,
+      checkedInById
+    } = hook.data;
 
     if (approved || checkedOut || checkedIn || adminNotes || disabled) {
       return models.reservation.findOne({
@@ -20,110 +31,48 @@ module.exports = function (options) {
           model: models.user,
         }],
       }).then(async function (reservation) {
+        if (approvedById && (reservation.approvedById !== approvedById)) {
+          throw new errors.BadRequest('CANNOT_UPDATE_ID_FIELDS');
+        }
+
+        if (checkedOutById && (reservation.checkedOutById !== checkedOutById)) {
+          throw new errors.BadRequest('CANNOT_UPDATE_ID_FIELDS');
+        }
+
+        if (checkedInById && (reservation.checkedInById !== checkedInById)) {
+          throw new errors.BadRequest('CANNOT_UPDATE_ID_FIELDS');
+        }
+
         if (approved && !reservation.approved) {
-          if (_.isNil(specialRequests) && _.isNil(reservation.specialRequests)) {
-            const canApprove = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'approved')
-
-            if (canApprove) {
-              hook.data.approvedById = hook.params.user.id;
-
-              return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
-                .then(function (response) {
-                  return hook;
-                }).catch(function (err) {
-                  // Don't throw error just because email didn't send
-                  return hook;
-                });
-            } else {
-              throw new errors.NotAuthenticated('Must have permission to update reservation status.');
-            }
-          } else {
-            const canApproveSpecialRequests = await access.has(models, redis, hook.params.user.id, 'reservation:special-requests');
-
-            if (canApproveSpecialRequests) {
-              hook.data.approvedById = hook.params.user.id;
-
-              return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
-                .then(function (response) {
-                  return hook;
-                }).catch(function (err) {
-                  // Don't throw error just because email didn't send
-                  return hook;
-                });
-            } else {
-              throw new errors.NotAuthenticated('MASTER_SPECIAL_REQUEST');
-            }
-          }
+          hook = await utils.approve(hook, models, redis, hook.params.user.id, reservation, hook.data);
         }
 
         if (checkedOut && !reservation.checkedOut) {
-          const canCheckOut = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedOut');
-
-          if (canCheckOut) {
-            hook.data.checkedOutById = hook.params.user.id;
-
-            return email.sendEmail(hook.app, reservation.user.email, null, 'checked out', 'USER_RESERVATION_RESPONSE')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must have permission to update reservation status.');
-          }
+          hook = await utils.checkOut(hook, models, redis, hook.params.user.id, reservation, hook.data);
         }
 
         if (checkedIn && !reservation.checkedIn) {
-          const canCheckIn = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'checkedIn');
-
-          if (canCheckIn) {
-            hook.data.checkedInById = hook.params.user.id;
-
-            return email.sendEmail(hook.app, reservation.user.email, null, 'checked in', 'USER_RESERVATION_RESPONSE')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must have permission to update reservation status.');
-          }          
+          hook = await utils.checkIn(hook, models, redis, hook.params.user.id, reservation, hook.data);
         }
 
         if (adminNotes && (reservation.adminNotes !== adminNotes)) {
-          const canUpdateAdminNotes = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'adminNotes');
-
-          if (canUpdateAdminNotes) {
-            return email.sendEmail(hook.app, reservation.user.email, null, adminNotes, 'USER_RESERVATION_ADMIN_NOTES')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must have permission to update reservation admin notes.');
-          }
+          hook = await utils.adminNotes(hook, models, redis, hook.params.user.id, reservation, hook.data);
         }
 
         if (disabled && !reservation.disabled) {
-          const canDisable = await access.can(models, redis, hook.params.user.id, 'reservation', 'update', 'disabled');
+          hook = await utils.disable(hook, models, redis, hook.params.user.id, reservation, hook.data);
+        }
 
-          if (canDisable) {
-            hook.data.disabledById = hook.params.user.id;
+        if ((approved === false) && reservation.approved) {
+          throw new errors.BadRequest('STATUS_ROLLBACK');
+        }
+        
+        if ((checkedOut === false) && reservation.checkedOut) {
+          throw new errors.BadRequest('STATUS_ROLLBACK');
+        }
 
-            return email.sendEmail(hook.app, reservation.user.email, null, 'rejected', 'USER_RESERVATION_RESPONSE')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must have permission to update reservation status.');
-          }
+        if ((checkedIn === false) && reservation.checkedIn) {
+          throw new errors.BadRequest('STATUS_ROLLBACK');
         }
 
         return hook;
