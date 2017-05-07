@@ -1,5 +1,7 @@
 module.exports = function (models) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
+    const user = await models.user.findOne();
+
     return models.reservation.destroy({ where: {} })
       .then(() => {
         resolve([
@@ -15,6 +17,7 @@ module.exports = function (models) {
               checkedOut: false,
               checkedIn: false,
               disabled: false,
+              userId: user.id,
             },
           },
           {
@@ -29,6 +32,7 @@ module.exports = function (models) {
               checkedOut: false,
               checkedIn: false,
               disabled: false,
+              userId: user.id,
             },
           },
         ]);

@@ -24,7 +24,6 @@ module.exports = {
 
       return false;
     }).catch((err) => {
-      console.log(err);
       throw new errors.GeneralError();
     });
   },

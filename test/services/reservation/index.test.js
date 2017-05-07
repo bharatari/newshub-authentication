@@ -117,7 +117,7 @@ describe('reservation service', () => {
       });
   });
 
-  it('should allow authorized user to approve a reservation', async () => {
+  it('should allow authorized user to approve a reservation', async (done) => {
     const reservation = await app.get('sequelize').models.reservation.findOne({
       where: {
         notes: 'VIDEO_SHOOT',
@@ -125,20 +125,19 @@ describe('reservation service', () => {
     });
 
     chai.request(app)
-      .patch('/api/reservation')
+      .patch(`/api/reservation/${reservation.id}`)
       .set('Accept', 'application/json')
-      .set('Authorization', 'Bearer '.concat(admin))
+      .set('Authorization', 'Bearer '.concat(master))
       .send({
-        id: reservation.id,
         approved: true,
       })
       .end((err, res) => {
-        res.should.have.status(201);
+        res.should.have.status(200);
         done();
       });
   });
 
-  it('should not allow normal user to approve a reservation', async () => {
+  it('should not allow normal user to approve a reservation', async (done) => {
     const reservation = await app.get('sequelize').models.reservation.findOne({
       where: {
         notes: 'VIDEO_SHOOT2',
@@ -146,15 +145,14 @@ describe('reservation service', () => {
     });
 
     chai.request(app)
-      .patch('/api/reservation')
+      .patch(`/api/reservation/${reservation.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', 'Bearer '.concat(user))
       .send({
-        id: reservation.id,
         approved: true,
       })
       .end((err, res) => {
-        res.should.have.status(400);
+        res.should.have.status(401);
         done();
       });
   });
