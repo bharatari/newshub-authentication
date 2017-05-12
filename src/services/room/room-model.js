@@ -6,6 +6,7 @@
 // for more of what you can do here.
 
 const Sequelize = require('sequelize');
+const modelUtils = require('../../utils/models');
 
 module.exports = function(sequelize) {
   const room = sequelize.define('room', {
@@ -40,7 +41,9 @@ module.exports = function(sequelize) {
     classMethods: {
       associate(models) {
         room.belongsTo(models.building);
-        room.belongsToMany(models.organization);
+        room.belongsToMany(models.organization, {
+          through: modelUtils.organizationRoom(sequelize),
+        });
       },
     },
   });

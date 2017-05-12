@@ -6,6 +6,7 @@
 // for more of what you can do here.
 
 const Sequelize = require('sequelize');
+const modelUtils = require('../../utils/models');
 
 module.exports = function(sequelize) {
   const building = sequelize.define('building', {
@@ -22,7 +23,9 @@ module.exports = function(sequelize) {
     freezeTableName: true,
     classMethods: {
       associate(models) {
-        building.belongsToMany(models.organization);
+        building.belongsToMany(models.organization, {
+          through: modelUtils.organizationBuilding(sequelize),
+        });
       },
     },
   });

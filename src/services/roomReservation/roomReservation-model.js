@@ -52,7 +52,9 @@ module.exports = function (sequelize) {
         roomReservation.belongsTo(models.user, { as: 'approvedBy' });
         roomReservation.belongsTo(models.user, { as: 'disabledBy' });
         roomReservation.belongsTo(models.user);
-        roomReservation.belongsToMany(models.organization);
+        roomReservation.belongsToMany(models.organization, {
+          through: modelUtils.organizationRoomReservation(sequelize),
+        });
       },
     },
   });

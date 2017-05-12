@@ -6,6 +6,7 @@
 // for more of what you can do here.
 
 const Sequelize = require('sequelize');
+const modelUtils = require('../../utils/models');
 
 module.exports = function (sequelize) {
   const user = sequelize.define('user', {
@@ -57,7 +58,9 @@ module.exports = function (sequelize) {
     },
     classMethods: {
       associate(models) {
-        user.belongsToMany(models.organization);
+        user.belongsToMany(models.organization, {
+          through: modelUtils.organizationUser(sequelize),
+        });
       },
     },
   });
