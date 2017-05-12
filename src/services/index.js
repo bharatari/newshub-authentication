@@ -1,5 +1,6 @@
 'use strict';
 
+const organization = require('./organization');
 const activity = require('./activity');
 const building = require('./building');
 const roomReservation = require('./roomReservation');
@@ -54,6 +55,7 @@ module.exports = function () {
   app.configure(roomReservation);
   app.configure(building);
   app.configure(activity);
+  app.configure(organization);
 
   const models = sequelize.models;
 
