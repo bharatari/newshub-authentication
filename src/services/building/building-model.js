@@ -19,7 +19,12 @@ module.exports = function(sequelize) {
       allowNull: false,
     },
   }, {
-    freezeTableName: true
+    freezeTableName: true,
+    classMethods: {
+      associate(models) {
+        building.belongsToMany(models.organization);
+      },
+    },
   });
 
   return building;

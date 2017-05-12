@@ -55,6 +55,11 @@ module.exports = function (sequelize) {
         return `${this.firstName} ${this.lastName}`;
       },
     },
+    classMethods: {
+      associate(models) {
+        user.belongsToMany(models.organization);
+      },
+    },
   });
 
   return user;

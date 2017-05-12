@@ -22,6 +22,11 @@ module.exports = function(sequelize) {
     classMethods: {
       associate(models) {
         organization.belongsToMany(models.user);
+        organization.belongsToMany(models.roomReservation);
+        organization.belongsToMany(models.reservation);
+        organization.belongsToMany(models.device);
+        organization.belongsToMany(models.room);
+        organization.belongsToMany(models.building);
       },
     },
   });  

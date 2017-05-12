@@ -64,6 +64,7 @@ module.exports = function (sequelize) {
         reservation.belongsTo(models.user, { as: 'checkedInBy' });
         reservation.belongsTo(models.user, { as: 'disabledBy' });
         reservation.belongsTo(models.user);
+        reservation.belongsToMany(models.organization);
       },
     },
   });

@@ -40,6 +40,7 @@ module.exports = function(sequelize) {
     classMethods: {
       associate(models) {
         room.belongsTo(models.building);
+        room.belongsToMany(models.organization);
       },
     },
   });

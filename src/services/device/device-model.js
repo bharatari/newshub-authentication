@@ -52,6 +52,7 @@ module.exports = function (sequelize) {
         device.belongsToMany(models.reservation, {
           through: modelUtils.reservationDevices(sequelize),
         });
+        device.belongsToMany(models.organization);
       },
     },
   });
