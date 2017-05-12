@@ -1,14 +1,26 @@
 'use strict';
 
-const user = require('../../user/utils');
 const errors = require('feathers-errors');
 const email = require('../../../utils/email');
 const _ = require('lodash');
+const access = require('../../../utils/access');
+const utils = require('../utils');
 
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
-    const { approved, checkedOut, checkedIn, adminNotes, disabled, specialRequests } = hook.data;
+    const redis = hook.app.get('redis');
+    const { 
+      approved,
+      checkedOut,
+      checkedIn,
+      adminNotes,
+      disabled,
+      specialRequests,
+      approvedById,
+      checkedOutById,
+      checkedInById
+    } = hook.data;
 
     if (approved || checkedOut || checkedIn || adminNotes || disabled) {
       return models.reservation.findOne({
@@ -18,99 +30,49 @@ module.exports = function (options) {
         include: [{
           model: models.user,
         }],
-      }).then(function (reservation) {
+      }).then(async function (reservation) {
+        if (approvedById && (reservation.approvedById !== approvedById)) {
+          throw new errors.BadRequest('CANNOT_UPDATE_ID_FIELDS');
+        }
+
+        if (checkedOutById && (reservation.checkedOutById !== checkedOutById)) {
+          throw new errors.BadRequest('CANNOT_UPDATE_ID_FIELDS');
+        }
+
+        if (checkedInById && (reservation.checkedInById !== checkedInById)) {
+          throw new errors.BadRequest('CANNOT_UPDATE_ID_FIELDS');
+        }
+
         if (approved && !reservation.approved) {
-          if (_.isNil(specialRequests) && _.isNil(reservation.specialRequests)) {
-            if (user.isAdmin(hook.params.user)) {
-              hook.data.approvedById = hook.params.user.id;
-
-              return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
-                .then(function (response) {
-                  return hook;
-                }).catch(function (err) {
-                  // Don't throw error just because email didn't send
-                  return hook;
-                });
-            } else {
-              throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
-            }
-          } else {
-            if (user.isMaster(hook.params.user)) {
-              hook.data.approvedById = hook.params.user.id;
-
-              return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
-                .then(function (response) {
-                  return hook;
-                }).catch(function (err) {
-                  // Don't throw error just because email didn't send
-                  return hook;
-                });
-            } else {
-              throw new errors.NotAuthenticated('MASTER_SPECIAL_REQUEST');
-            }
-          }
+          hook = await utils.approve(hook, models, redis, hook.params.user.id, reservation, hook.data);
         }
 
         if (checkedOut && !reservation.checkedOut) {
-          if (user.isAdmin(hook.params.user)) {
-            hook.data.checkedOutById = hook.params.user.id;
-
-            return email.sendEmail(hook.app, reservation.user.email, null, 'checked out', 'USER_RESERVATION_RESPONSE')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
-          }
+          hook = await utils.checkOut(hook, models, redis, hook.params.user.id, reservation, hook.data);
         }
 
         if (checkedIn && !reservation.checkedIn) {
-          if (user.isAdmin(hook.params.user)) {
-            hook.data.checkedInById = hook.params.user.id;
-
-            return email.sendEmail(hook.app, reservation.user.email, null, 'checked in', 'USER_RESERVATION_RESPONSE')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
-          }          
+          hook = await utils.checkIn(hook, models, redis, hook.params.user.id, reservation, hook.data);
         }
 
         if (adminNotes && (reservation.adminNotes !== adminNotes)) {
-          if (user.isAdmin(hook.params.user)) {
-            return email.sendEmail(hook.app, reservation.user.email, null, adminNotes, 'USER_RESERVATION_ADMIN_NOTES')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must be an admin to update reservation admin notes.');
-          }
+          hook = await utils.adminNotes(hook, models, redis, hook.params.user.id, reservation, hook.data);
         }
 
         if (disabled && !reservation.disabled) {
-          if (user.isAdmin(hook.params.user)) {
-            hook.data.disabledById = hook.params.user.id;
+          hook = await utils.disable(hook, models, redis, hook.params.user.id, reservation, hook.data);
+        }
 
-            return email.sendEmail(hook.app, reservation.user.email, null, 'rejected', 'USER_RESERVATION_RESPONSE')
-              .then(function (response) {
-                return hook;
-              }).catch(function (err) {
-                // Don't throw error just because email didn't send
-                return hook;
-              });
-          } else {
-            throw new errors.NotAuthenticated('Must be an admin to update reservation status.');
-          }
+        if ((approved === false) && reservation.approved) {
+          throw new errors.BadRequest('STATUS_ROLLBACK');
+        }
+        
+        if ((checkedOut === false) && reservation.checkedOut) {
+          throw new errors.BadRequest('STATUS_ROLLBACK');
+        }
+
+        if ((checkedIn === false) && reservation.checkedIn) {
+          throw new errors.BadRequest('STATUS_ROLLBACK');
         }
 
         return hook;

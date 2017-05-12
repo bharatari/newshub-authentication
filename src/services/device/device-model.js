@@ -35,6 +35,10 @@ module.exports = function (sequelize) {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
+    specialApproval: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
     disabled: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
@@ -47,6 +51,9 @@ module.exports = function (sequelize) {
         device.belongsTo(models.image, { as: 'thumbnail' });
         device.belongsToMany(models.reservation, {
           through: modelUtils.reservationDevices(sequelize),
+        });
+        device.belongsToMany(models.organization, {
+          through: modelUtils.organizationDevice(sequelize),
         });
       },
     },
