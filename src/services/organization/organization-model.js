@@ -12,12 +12,24 @@ module.exports = function(sequelize) {
   const organization = sequelize.define('organization', {
     name: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
     },
     label: {
       type: Sequelize.STRING,
-      allowNull: false
-    }
+      allowNull: false,
+    },
+    link: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    logo: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    meta: {
+      type: Sequelize.JSONB,
+      allowNull: false,
+    },
   }, {
     freezeTableName: true,
     classMethods: {
