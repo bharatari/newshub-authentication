@@ -7,6 +7,7 @@ const token = require('./token');
 const master = require('./master');
 const normalize = require('./normalize');
 const sanitize = require('./sanitize');
+const associate = require('./associate');
 
 exports.before = {
   all: [],
@@ -44,7 +45,9 @@ exports.after = {
   all: [hooks.remove('password')],
   find: [],
   get: [],
-  create: [],
+  create: [
+    associate(),
+  ],
   update: [],
   patch: [],
   remove: [],

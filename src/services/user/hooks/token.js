@@ -19,7 +19,11 @@ module.exports = function (options) {
           } else {
             return response.update({
               hasBeenUsed: true,
-            }).then(response => hook).catch((err) => {
+            }).then(() => {
+              hook.data.currentOrganizationId = response.organizationId;
+
+              return hook;
+            }).catch((err) => {
               throw new errors.GeneralError('Unknown signup token error');
             });
           }

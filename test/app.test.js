@@ -15,6 +15,8 @@ const resetPasswordToken = require('./fixtures/resetPasswordToken');
 const role = require('./fixtures/role');
 const reservation = require('./fixtures/reservation');
 const device = require('./fixtures/device');
+const signupToken = require('./fixtures/signupToken');
+const organization = require('./fixtures/organization');
 const mockery = require('mockery');
 const sendgrid = require('./mocks/sendgrid');
 
@@ -31,12 +33,13 @@ describe('Feathers application tests', () => {
     this.server.once('listening', async () => {
       const models = app.get('sequelize').models;
 
+      await fixtures.loadFixtures(organization(models), models);
       await fixtures.loadFixtures(user(models), models);
       await fixtures.loadFixtures(resetPasswordToken(models), models)
       await fixtures.loadFixtures(role(models), models);
       await fixtures.loadFixtures(reservation(models), models);
       await fixtures.loadFixtures(device(models), models);
-
+      await fixtures.loadFixtures(signupToken(models), models);
       done();
     });
   });

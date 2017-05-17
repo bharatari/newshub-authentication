@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 
-module.exports = function (models) {
+module.exports = async function (models) {
+  const organization = await models.organization.findOne();
+  
   return new Promise((resolve, reject) => models.user.destroy({ where: {} })
       .then(() => {
         bcrypt.genSalt(10, (error, salt) => {
@@ -18,6 +20,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -31,6 +34,7 @@ module.exports = function (models) {
                   disabled: false,
                   options: {},
                   roles: 'admin',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -44,6 +48,7 @@ module.exports = function (models) {
                   disabled: false,
                   options: {},
                   roles: 'master',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -57,6 +62,7 @@ module.exports = function (models) {
                   disabled: false,
                   options: {},
                   roles: 'master, deny!user:update',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -70,6 +76,7 @@ module.exports = function (models) {
                   disabled: false,
                   options: {},
                   roles: 'device:create',
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -83,6 +90,7 @@ module.exports = function (models) {
                   disabled: false,
                   options: {},
                   roles: 'admin, reservation:approve',
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -96,6 +104,7 @@ module.exports = function (models) {
                   disabled: false,
                   options: {},
                   roles: 'admin, advisor',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -109,6 +118,7 @@ module.exports = function (models) {
                   disabled: false,
                   options: {},
                   roles: 'deny!user:update, user:update',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -121,7 +131,8 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'user:update, deny!user:update!owner'
+                  roles: 'user:update, deny!user:update!owner',
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -134,7 +145,8 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'user:update!owner, deny!user:roles:update!owner'
+                  roles: 'user:update!owner, deny!user:roles:update!owner',
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -147,7 +159,8 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'user:update, deny!user:update!owner, user:roles:update!owner'
+                  roles: 'user:update, deny!user:update!owner, user:roles:update!owner',
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -160,7 +173,8 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'reservation:update, deny!reservation:update!owner'
+                  roles: 'reservation:update, deny!reservation:update!owner',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -173,7 +187,8 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'reservation:update, deny!reservation:approved:update!owner'
+                  roles: 'reservation:update, deny!reservation:approved:update!owner',
+                  currentOrganizationId: organization.id,
                 },
               }
             ]);
