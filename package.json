@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "async": "^2.0.0-rc.6",
+    "azure-storage": "^2.1.0",
     "body-parser": "^1.15.2",
     "chance": "^1.0.3",
     "compression": "^1.6.2",

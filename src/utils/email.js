@@ -1,7 +1,9 @@
 const sendgrid = require('sendgrid');
 const helper = require('sendgrid').mail;
+const azure = require('azure-storage');
 
 module.exports = {
+  emailReservationCreatedQueue: 'email-reservation-created',
   templates: {
     UTD_TV_SIGNUP: '7f610a12-21fe-4b50-a4ae-c8f974598d3c',
     ADMIN_ACTION: '2c6c78f3-784c-4663-9709-766963c5617d',
@@ -9,6 +11,29 @@ module.exports = {
     USER_RESERVATION_ADMIN_NOTES: '5c3be594-714a-41c8-b07d-f646fd267867',
     CREATED_RESERVATION: '9cb91814-4954-4be8-83c6-d5ac609063c3',
     RESET_PASSWORD: 'a5f46d68-9542-4448-9040-f4514346ebe8',
+  },
+  queueEmails(to, subject, body, template) {
+    return new Promise((resolve, reject) => {
+      const service = azure.createQueueService();
+      const messsage = {
+        users: to,
+        subject,
+        body,
+        template: this.templates[template],
+      };
+
+      service.createQueueIfNotExists(this.emailReservationCreatedQueue, (error, result, response) => {
+        if (!error) {
+          service.createMessage(this.emailReservationCreatedQueue, message, (error, result, response) => {
+            if (!error) {
+              resolve();
+            } else {
+              reject();
+            }
+          });
+        }
+      });
+    });
   },
   sendEmail(app, to, subject, body, template) {
     return new Promise((resolve, reject) => {
