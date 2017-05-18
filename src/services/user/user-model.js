@@ -32,13 +32,7 @@ module.exports = function (sequelize) {
       type: Sequelize.TEXT,
       allowNull: false,
     },
-    title: {
-      type: Sequelize.TEXT,
-    },
     notes: {
-      type: Sequelize.TEXT,
-    },
-    roles: {
       type: Sequelize.TEXT,
     },
     disabled: {

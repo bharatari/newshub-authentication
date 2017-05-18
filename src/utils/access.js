@@ -384,16 +384,19 @@ module.exports = {
    * @param {string} userId
    * @returns {Promise}
    */
-  getUserRoles(models, userId) {
-    return models.user.findOne({
+  async getUserRoles(models, userId) {
+    const user = await models.user.findOne({ where: { id: userId } });
+
+    return models.organization_user.findOne({
       where: {
-        id: userId,
+        userId: userId,
+        organizationId: user.currentOrganizationId,
       },
     }).then((result) => {
-      const user = JSON.parse(JSON.stringify(result));
+      const data = JSON.parse(JSON.stringify(result));
 
-      if (user) {
-        return user.roles;
+      if (data) {
+        return data.roles;
       }
 
       throw new Error();

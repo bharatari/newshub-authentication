@@ -9,7 +9,7 @@ module.exports = function (models) {
             model: 'signupToken',
             data: {
               token: 'TOKEN_1',
-              expires: moment().add('hour', 1).toDate(),
+              expires: moment().add(1, 'hour').toDate(),
               hasBeenUsed: false
             },
           },
@@ -17,7 +17,7 @@ module.exports = function (models) {
             model: 'signupToken',
             data: {
               token: 'TOKEN_2',
-              expires: moment().add('hour', 1).toDate(),
+              expires: moment().add(1, 'hour').toDate(),
               hasBeenUsed: false
             },
           },

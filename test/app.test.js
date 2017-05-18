@@ -17,6 +17,7 @@ const reservation = require('./fixtures/reservation');
 const device = require('./fixtures/device');
 const signupToken = require('./fixtures/signupToken');
 const organization = require('./fixtures/organization');
+const associate = require('./fixtures/associate');
 const mockery = require('mockery');
 const sendgrid = require('./mocks/sendgrid');
 
@@ -40,6 +41,8 @@ describe('Feathers application tests', () => {
       await fixtures.loadFixtures(reservation(models), models);
       await fixtures.loadFixtures(device(models), models);
       await fixtures.loadFixtures(signupToken(models), models);
+      await associate(models);
+
       done();
     });
   });

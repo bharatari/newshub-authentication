@@ -19,6 +19,11 @@ module.exports = function (sequelize) {
     },
   }, {
     freezeTableName: true,
+    classMethods: {
+      associate(models) {
+        role.belongsTo(models.organization);
+      },
+    },
   });
 
   return role;
