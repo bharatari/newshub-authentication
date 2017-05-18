@@ -357,10 +357,12 @@ describe('access utils', () => {
     });
   });
 
-  describe('#populateRoles', () => {
-    it('should replace a single role with corresponding permission', () => {
+  describe('#populateRoles', async () => {
+    it('should replace a single role with corresponding permission', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'admin' } });
 
       return models.role.findOne({
         where: {
@@ -369,15 +371,17 @@ describe('access utils', () => {
       }).then((data) => {
         const role = JSON.parse(JSON.stringify(data));
 
-        return assert.becomes(utils.populateRole(models, redis, 'admin'), role.permissions.split(', '));
+        return assert.becomes(utils.populateRole(models, redis, 'admin', user.id), role.permissions.split(', '));
       }).catch((err) => {
         assert.fail();
       });
     });
 
-    it('should replace all roles with corresponding permissions', () => {
+    it('should replace all roles with corresponding permissions', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'admin' } });
 
       return models.role.findOne({
         where: {
@@ -386,7 +390,7 @@ describe('access utils', () => {
       }).then((data) => {
         const role = JSON.parse(JSON.stringify(data));
 
-        return utils.populateRole(models, redis, 'admin, advisor')
+        return utils.populateRole(models, redis, 'admin, advisor', user.id)
           .then((result) => {
             return _.includes(result, 'user:delete');
           });
@@ -395,11 +399,13 @@ describe('access utils', () => {
       });
     });
 
-    it('should not throw error for non-existent roles', () => {
+    it('should not throw error for non-existent roles', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      return assert.becomes(utils.populateRole(models, redis, 'doesnotexist'), []);
+      const user = await models.user.findOne({ where: { username: 'admin' } });
+
+      return assert.becomes(utils.populateRole(models, redis, 'doesnotexist', user.id), []);
     });
 
     it('should support roles with empty permissions property', () => {
@@ -429,14 +435,18 @@ describe('access utils', () => {
       
     })
   });
+
   describe('#retrieveRole', () => {
-    it('should retrieve role from database', () => {
+    it('should retrieve role from database', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      return assert.isFulfilled(utils.retrieveRole(models, redis, 'admin'));
+      const user = await models.user.findOne({ where: { username: 'admin' } });
+
+      return assert.isFulfilled(utils.retrieveRole(models, redis, 'admin', user.id));
     });
   });
+
   describe('#getPermissions', () => {
     it('should return user roles', () => {
       const models = app.get('sequelize').models;
@@ -454,6 +464,7 @@ describe('access utils', () => {
       });
     });
   });
+
   describe('#isRole', () => {
     it('should return true for a role', () => {
       const result = utils.isRole('admin');
@@ -476,6 +487,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#isPermission', () => {
     it('should return true for a standard role', () => {
       const result = utils.isPermission('reservation:read');
@@ -493,6 +505,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#isPropertyPermission', () => {
     it('should return true for a property permission', () => {
       const result = utils.isPropertyPermission('reservation:purpose:update');
@@ -510,6 +523,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#isCustomPermission', () => {
     it('should return true for custom permission', () => {
       const result = utils.isCustomPermission('reservation:approve');
@@ -527,6 +541,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#isCRUDAction', () => {
     it('should return true for create', () => {
       const result = utils.isCRUDAction('create');
@@ -554,6 +569,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#convertToCRUD', () => {
     it('should convert find', () => {
       const action = utils.convertToCRUD('find');
@@ -586,6 +602,7 @@ describe('access utils', () => {
       assert.equal(action, 'delete');
     });
   });
+
   describe('#split', () => {
     it('should split standard roles', () => {
       const role = 'reservation:read';

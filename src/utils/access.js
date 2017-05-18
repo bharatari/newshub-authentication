@@ -84,7 +84,7 @@ module.exports = {
 
         return this.getUserRoles(models, userId)
           .then(roles =>
-            this.populateRoles(models, redis, roles)
+            this.populateRoles(models, redis, roles, userId)
           )
           .then(permissionsArray =>
             this.includesPermission(models, permissionsArray, permission, userId, model, id)
@@ -112,7 +112,7 @@ module.exports = {
 
   async resolve(models, redis, userId) {
     const roles = await this.getUserRoles(models, userId);
-    const permissions = await this.populateRoles(models, redis, roles);
+    const permissions = await this.populateRoles(models, redis, roles, userId);
 
     if (roles) {
       const rolesArray = roles.split(', ');
@@ -141,7 +141,7 @@ module.exports = {
 
         return this.getUserRoles(models, userId)
           .then(roles =>
-            this.populateRoles(models, redis, roles)
+            this.populateRoles(models, redis, roles, userId)
           )
           .then((permissionsArray) => {
             return this.includesPermission(models, permissionsArray, denyPermission, userId, model, id)
@@ -250,7 +250,7 @@ module.exports = {
    * @param {string} permissions
    * @returns {Array}
    */
-  populateRoles(models, redis, roles) {
+  populateRoles(models, redis, roles, userId) {
     let original;
 
     if (roles && _.isString(roles)) {
@@ -266,7 +266,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       async.each(original, (role, callback) => {
         if (this.isRole(role)) {
-          this.populateRole(models, redis, role)
+          this.populateRole(models, redis, role, userId)
             .then((newPermissions) => {
               _.remove(permissions, n =>
                 n === role
@@ -301,10 +301,14 @@ module.exports = {
    * @param {string} role - Role to replace
    * @returns {Promise}
    */
-  populateRole(models, redis, role) {
+  async populateRole(models, redis, role, userId) {
+    const user = await models.user.findOne({ where: { id: userId } });
+    const organizationId = user.currentOrganizationId;
+
     return models.role.find({
       where: {
         name: role,
+        organizationId,
       },
     }).then((data) => {
       const role = JSON.parse(JSON.stringify(data));
@@ -332,11 +336,14 @@ module.exports = {
    * @param {string} role
    * @returns {Object}
    */
-  getRole(models, redis, role) {
+  async getRole(models, redis, role, userId) {
+    const user = await models.user.findOne({ where: { id: userId } });
+    const organizationId = user.currentOrganizationId;
+
     return new Promise((resolve, reject) => {
-      redis.hget('role', role, function (err, permissions) {
+      redis.hget('role', this.constructRoleForRedis(role, organizationId), function (err, permissions) {
         if (err || !permissions) {
-          return this.retrieveRole(models, redis, role)
+          return this.retrieveRole(models, redis, role, userId)
             .then((result) => {
               resolve(result);
             })
@@ -360,15 +367,19 @@ module.exports = {
    * @param {string} role
    * @returns {string}
    */
-  retrieveRole(models, redis, role) {
+  async retrieveRole(models, redis, role, userId) {
+    const user = await models.user.findOne({ where: { id: userId } });
+    const organizationId = user.currentOrganizationId;
+
     return models.role.find({
       where: {
         name: role,
+        organizationId,
       },
     }).then((data) => {
       const result = JSON.parse(JSON.stringify(data));
 
-      redis.hset('role', result.name, result.permissions);
+      redis.hset('role', this.constructRoleForRedis(result.name, organizationId), result.permissions);
 
       return result.permissions;
     }).catch((err) => {
@@ -403,6 +414,10 @@ module.exports = {
     }).catch((err) => {
       throw err;
     });
+  },
+
+  constructRoleForRedis(role, organizationId) {
+    return `${organizationId}:${role}`;
   },
 
   /**

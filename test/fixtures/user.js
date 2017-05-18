@@ -1,7 +1,11 @@
 const bcrypt = require('bcryptjs');
 
 module.exports = async function (models) {
-  const organization = await models.organization.findOne();
+  const organization = await models.organization.findOne({
+    where: {
+      name: 'utdtv',
+    },
+  });
   
   return new Promise((resolve, reject) => models.user.destroy({ where: {} })
       .then(() => {
