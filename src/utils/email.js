@@ -3,7 +3,7 @@ const helper = require('sendgrid').mail;
 const azure = require('azure-storage');
 
 module.exports = {
-  emailReservationCreatedQueue: 'email-reservation-created',
+  emailQueue: 'emails-to-send',
   templates: {
     UTD_TV_SIGNUP: '7f610a12-21fe-4b50-a4ae-c8f974598d3c',
     ADMIN_ACTION: '2c6c78f3-784c-4663-9709-766963c5617d',
@@ -15,22 +15,26 @@ module.exports = {
   queueEmails(to, subject, body, template) {
     return new Promise((resolve, reject) => {
       const service = azure.createQueueService();
-      const messsage = {
+
+      const message = {
         users: to,
         subject,
         body,
         template: this.templates[template],
+        environment: process.env.NODE_ENV,
       };
 
-      service.createQueueIfNotExists(this.emailReservationCreatedQueue, (error, result, response) => {
+      service.createQueueIfNotExists(this.emailQueue, (error, result, response) => {
         if (!error) {
-          service.createMessage(this.emailReservationCreatedQueue, message, (error, result, response) => {
+          service.createMessage(this.emailQueue, JSON.stringify(message), (error, result, response) => {
             if (!error) {
               resolve();
             } else {
               reject();
             }
           });
+        } else {
+          reject();
         }
       });
     });

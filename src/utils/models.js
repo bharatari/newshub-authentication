@@ -26,5 +26,8 @@ module.exports = {
   },
   organizationBuilding(sequelize) {
     return sequelize.define('organization_building');
+  },
+  organizationImage(sequelize) {
+    return sequelize.define('organization_image');
   }
 };

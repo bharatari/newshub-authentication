@@ -36,6 +36,7 @@ module.exports = function (sequelize) {
       associate(models) {
         notification.belongsTo(models.user, { as: 'recipient' });
         notification.belongsTo(models.user, { as: 'sender' });
+        notification.belongsTo(models.organization);
       },
     },
   });

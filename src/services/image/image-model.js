@@ -6,6 +6,7 @@
 // for more of what you can do here.
 
 const Sequelize = require('sequelize');
+const modelUtils = require('../../utils/models');
 
 module.exports = function (sequelize) {
   const image = sequelize.define('image', {
@@ -22,6 +23,9 @@ module.exports = function (sequelize) {
     classMethods: {
       associate(models) {
         image.belongsTo(models.user);
+        image.belongsToMany(models.organization, {
+          through: modelUtils.organizationImage(sequelize),
+        });
       },
     },
     getterMethods: {

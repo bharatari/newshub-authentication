@@ -33,6 +33,9 @@ module.exports = function (options) {
           ],
         },
       },
+      include: [{
+        model: hook.app.get('sequelize').models.organization,
+      }],
     }).then(async (data) => {
       const users = JSON.parse(JSON.stringify(data));
 
