@@ -1,6 +1,5 @@
 'use strict';
 
-const async = require('async');
 const email = require('../../../utils/email');
 const access = require('../../../utils/access');
 
@@ -16,9 +15,17 @@ module.exports = function (options) {
     } else {
       return hook.app.get('sequelize').models.user.findAll({
         where: {
+          '$organizations.organization_user.organizationId$': hook.params.user.currentOrganizationId,
           $or: [
             {
-              roles: 'master',
+              '$organizations.organization_user.roles$': {
+                $like: '%admin%',
+              },
+            },
+            {
+              '$organizations.organization_user.roles$': {
+                $like: '%master%',
+              }
             },
           ],
           options: {
@@ -34,23 +41,21 @@ module.exports = function (options) {
             ],
           },
         },
-      }).then(users => new Promise((resolve, reject) => {
-        async.each(users, (user, callback) => {
-          email.sendEmail(hook.app, user.dataValues.email, null, hook.params.user.fullName, 'CREATED_ROOM_RESERVATION')
-              .then((response) => {
-                callback();
-              }).catch((err) => {
-                // Don't throw error just because email didn't send
-                callback();
-              });
-        }, (err) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
-      }));
+        include: [{
+          model: hook.app.get('sequelize').models.organization,
+        }],
+      }).then(async (data) => {
+        const users = JSON.parse(JSON.stringify(data));
+
+        try {
+          await email.queueEmails(users, null, hook.params.user.fullName, 'CREATED_ROOM_RESERVATION');
+
+          return hook;
+        } catch (e) {
+          // Don't throw error just because email didn't send
+          return hook;
+        }
+      });
     }
   };
 };

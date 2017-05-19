@@ -1,6 +1,5 @@
 'use strict';
 
-const async = require('async');
 const email = require('../../../utils/email');
 
 module.exports = function (options) {
