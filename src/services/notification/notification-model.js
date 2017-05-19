@@ -30,6 +30,9 @@ module.exports = function (sequelize) {
     actionId: {
       type: Sequelize.TEXT,
     },
+    read: {
+      type: Sequelize.BOOLEAN,
+    },
   }, {
     freezeTableName: true,
     classMethods: {
@@ -37,6 +40,7 @@ module.exports = function (sequelize) {
         notification.belongsTo(models.user, { as: 'recipient' });
         notification.belongsTo(models.user, { as: 'sender' });
         notification.belongsTo(models.organization);
+        notification.belongsTo(models.activity);
       },
     },
   });
