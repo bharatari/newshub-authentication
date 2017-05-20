@@ -18,14 +18,9 @@ const device = require('./fixtures/device');
 const signupToken = require('./fixtures/signupToken');
 const organization = require('./fixtures/organization');
 const associate = require('./fixtures/associate');
-const mockery = require('mockery');
 
 describe('Feathers application tests', () => {
   before(function (done) {
-    mockery.enable({
-      warnOnUnregistered: false,
-    });
-
     chai.use(chaiAsPromised);
 
     this.server = app.listen(3030);
