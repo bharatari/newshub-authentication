@@ -6,8 +6,10 @@ module.exports = function (options) {
 
     if (hook.type === 'before') {
       const include = [{
-        model: models.image,
-        as: 'thumbnail',
+        model: models.organization,
+      }, {
+        model: models.organization,
+        as: 'currentOrganization',
       }];
 
       if (hook.params.sequelize) {
@@ -15,9 +17,6 @@ module.exports = function (options) {
       } else {
         hook.params.sequelize = {
           include,
-          where: {
-            '$organizations.organization_device.organizationId$': hook.params.user.currentOrganizationId,
-          },
         };
       }
     }
