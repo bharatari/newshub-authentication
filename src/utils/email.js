@@ -1,5 +1,3 @@
-const sendgrid = require('sendgrid');
-const helper = require('sendgrid').mail;
 const azure = require('azure-storage');
 
 module.exports = {
@@ -35,40 +33,6 @@ module.exports = {
           });
         } else {
           reject();
-        }
-      });
-    });
-  },
-  sendEmail(app, to, subject, body, template) {
-    return new Promise((resolve, reject) => {
-      const client = sendgrid.SendGrid(app.get('keys').SENDGRID_KEY);
-
-      const fromEmail = new helper.Email('technology@utdtv.com');
-      const toEmail = new helper.Email(to);
-      const content = new helper.Content('text/html', body);
-      const mail = new helper.Mail();
-
-      mail.setSubject(subject);
-      mail.addContent(content);
-      mail.setFrom(fromEmail);
-      mail.setTemplateId(this.templates[template]);
-
-      const personalization = new helper.Personalization();
-      personalization.addTo(toEmail);
-      mail.addPersonalization(personalization);
-
-      const requestBody = mail.toJSON();
-      const request = client.emptyRequest();
-
-      request.method = 'POST';
-      request.path = '/v3/mail/send';
-      request.body = requestBody;
-
-      client.API(request, (response) => {
-        if (response.statusCode >= 300) {
-          reject(response);
-        } else {
-          resolve(response);
         }
       });
     });

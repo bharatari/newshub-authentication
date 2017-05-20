@@ -19,14 +19,12 @@ const signupToken = require('./fixtures/signupToken');
 const organization = require('./fixtures/organization');
 const associate = require('./fixtures/associate');
 const mockery = require('mockery');
-const sendgrid = require('./mocks/sendgrid');
 
 describe('Feathers application tests', () => {
   before(function (done) {
     mockery.enable({
       warnOnUnregistered: false,
     });
-    mockery.registerMock('sendgrid', sendgrid);
 
     chai.use(chaiAsPromised);
 
