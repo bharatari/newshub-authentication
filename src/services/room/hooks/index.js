@@ -9,7 +9,8 @@ exports.before = {
   all: [
     auth.verifyToken(),
     auth.populateUser(),
-    auth.restrictToAuthenticated()
+    auth.restrictToAuthenticated(),
+    globalHooks.protectOrganization({ model: 'reservation', belongsToMany: true }),
   ],
   find: [
     populate(),

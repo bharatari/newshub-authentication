@@ -8,6 +8,7 @@ const master = require('./master');
 const normalize = require('./normalize');
 const sanitize = require('./sanitize');
 const associate = require('./associate');
+const populate = require('./populate');
 
 exports.before = {
   all: [],
@@ -15,12 +16,16 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
+    globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
+    populate(),
     sanitize(),
   ],
   get: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
+    globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
+    populate(),
   ],
   create: [
     normalize(),
@@ -34,6 +39,7 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
+    globalHooks.protectOrganization({ model: 'user', belongsToMany: true  }),
     master(),
   ],
   remove: [

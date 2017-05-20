@@ -11,6 +11,7 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
+    globalHooks.protectOrganization({ model: 'image' , belongsToMany: true }),
   ],
   find: [],
   get: [],

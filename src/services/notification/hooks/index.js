@@ -9,6 +9,7 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
+    globalHooks.protectOrganization({ model: 'notification' }),
   ],
   find: [],
   get: [],
