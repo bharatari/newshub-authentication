@@ -6,6 +6,12 @@ module.exports = async function (models) {
       name: 'utdtv',
     },
   });
+
+  const alternate = await models.organization.findOne({
+    where: {
+      name: 'themercury'
+    },
+  });
   
   return new Promise((resolve, reject) => models.user.destroy({ where: {} })
       .then(() => {
@@ -181,6 +187,19 @@ module.exports = async function (models) {
                   disabled: false,
                   options: {},
                   currentOrganizationId: organization.id,
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'mercury',
+                  firstName: 'Mercury',
+                  lastName: 'User',
+                  email: 'mercuryUser@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: alternate.id,
                 },
               }
             ]);

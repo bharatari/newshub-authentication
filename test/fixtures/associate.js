@@ -26,4 +26,28 @@ module.exports = async function (models) {
   } catch (e) {
     throw e;
   }
+
+  const reservations = [
+    { notes: 'VIDEO_SHOOT', organizations: ['utdtv'] },
+    { notes: 'VIDEO_SHOOT2', organizations: ['utdtv'] },
+    { notes: 'MERCURY', organizations: ['themercury'] },
+  ];
+
+  try {
+    for (let i = 0; i < reservations.length; i++) {
+      const notes = reservations[i].notes;
+      const reservation = await models.reservation.findOne({ where: { notes } });
+      
+      for (let e = 0; e < reservations[i].organizations.length ; e++) {
+        const name = reservations[i].organizations[e];
+        const organization = await models.organization.findOne({ where: { name } })
+        
+        await reservation.addOrganization(organization.id, {
+          owner: true,
+        });
+      }
+    }
+  } catch (e) {
+    throw e;
+  }
 };
