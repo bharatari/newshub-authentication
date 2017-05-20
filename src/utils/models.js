@@ -13,19 +13,29 @@ module.exports = {
     });
   },
   organizationRoomReservation(sequelize) {
-    return sequelize.define('organization_roomReservation');
+    return sequelize.define('organization_roomReservation', {
+      owner: Sequelize.BOOLEAN,
+    });
   },
   organizationReservation(sequelize) {
-    return sequelize.define('organization_reservation');
+    return sequelize.define('organization_reservation', {
+      owner: Sequelize.BOOLEAN,
+    });
   },
   organizationDevice(sequelize) {
-    return sequelize.define('organization_device');
+    return sequelize.define('organization_device', {
+      owner: Sequelize.BOOLEAN,
+    });
   },
   organizationRoom(sequelize) {
-    return sequelize.define('organization_room');
+    return sequelize.define('organization_room', {
+      owner: Sequelize.BOOLEAN,
+    });
   },
   organizationBuilding(sequelize) {
-    return sequelize.define('organization_building');
+    return sequelize.define('organization_building', {
+      owner: Sequelize.BOOLEAN,
+    });
   },
   organizationImage(sequelize) {
     return sequelize.define('organization_image');
