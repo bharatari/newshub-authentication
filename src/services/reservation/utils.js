@@ -17,7 +17,7 @@ module.exports = {
       }],
     }).then((reservation) => {
       for (let i = 0; i < reservation.devices.length; i++) {
-        if (reservation.devices[i].specialApproval != null) {
+        if (reservation.devices[i].specialApproval) {
           return true;
         }
       }
