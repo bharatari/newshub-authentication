@@ -40,9 +40,32 @@ module.exports = async function (models) {
       
       for (let e = 0; e < reservations[i].organizations.length ; e++) {
         const name = reservations[i].organizations[e];
-        const organization = await models.organization.findOne({ where: { name } })
+        const organization = await models.organization.findOne({ where: { name } });
         
         await reservation.addOrganization(organization.id, {
+          owner: true,
+        });
+      }
+    }
+  } catch (e) {
+    throw e;
+  }
+
+  const devices = [
+    { name: 'Mixer 1 Tascam', organizations: ['utdtv'] },
+    { name: 'Zoom H4', organizations: ['utdtv'] },
+  ];
+
+  try {
+    for (let i = 0; i < devices.length; i++) {
+      const name = devices[i].name;
+      const device = await models.device.findOne({ where: { name } });
+      
+      for (let e = 0; e < devices[i].organizations.length ; e++) {
+        const name = devices[i].organizations[e];
+        const organization = await models.organization.findOne({ where: { name } });
+        
+        await device.addOrganization(organization.id, {
           owner: true,
         });
       }
