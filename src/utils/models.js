@@ -1,6 +1,37 @@
 const Sequelize = require('sequelize');
 
 module.exports = {
+  mergeQuery(query, where, include) {
+    if (query) {
+      if (where && query.where) {
+        const combinedWhere = Object.assign({}, where, query.where);
+        const combinedInclude = [
+          ...query.include,
+          include,
+        ];
+
+        return {
+          where: combinedWhere,
+          include: combinedInclude,
+        };
+      }
+
+      return {
+        include: combinedInclude,
+      };
+    }
+
+    if (where) {
+      return {
+        where,
+        include,
+      };
+    }
+
+    return {
+      include,
+    };
+  },
   reservationDevices(sequelize) {
     return sequelize.define('reservation_devices', {
       quantity: Sequelize.INTEGER,

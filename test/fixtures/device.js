@@ -29,6 +29,19 @@ module.exports = function (models) {
               disabled: true,
             },
           },
+          {
+            model: 'device',
+            data: {
+              name: 'Zoom H6',
+              label: 'Zoom 3s',
+              description: null,
+              notes: 'Mercury Device',
+              type: 'Recorders',
+              meta: null,
+              quantity: 1,
+              disabled: false,
+            },
+          },
         ]);
       });
   });

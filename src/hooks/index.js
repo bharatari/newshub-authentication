@@ -8,6 +8,7 @@
 
 const access = require('../utils/access');
 const errors = require('feathers-errors');
+const modelUtils = require('../utils/models');
 
 exports.checkAccess = function (options) {
   return function (hook) {
@@ -35,80 +36,70 @@ exports.checkAccess = function (options) {
 exports.protectOrganization = function (options) {
   return async function (hook) {
     const models = hook.app.get('sequelize').models;
+    
+    if (hook.params.provider) {
+      if (hook.method === 'update' || hook.method === 'patch' || hook.method === 'get') {
+        if (options.belongsToMany) {
+          const query = `$organizations.organization_${options.model}.organizationId$`;
 
-    /*
-    if (hook.method === 'update' || 'patch' || 'get') {
-      if (options.belongsToMany) {
-        let object;
-
-        try {
-          object = await models[options.model].findOne({
+          return models[options.model].findOne({
             where: {
-              id: hook.id
+              id: hook.id,
+              [query]: hook.params.user.currentOrganizationId,
             },
             include: [{
               model: models.organization,
-              where: {
-                id: hook.params.user.currentOrganizationId,
-              },
-            }]
+            }],
+          }).then((object) => {
+            if (object) {
+              return hook;
+            } else {
+              throw new errors.NotAuthenticated();
+            }
+          }).catch((e) => {
+            throw e;
           });
-        } catch (e) {
-          throw e;
-        }
-
-        if (object.organizations) {
-          if (object.organizations[0]) {
-            return hook;
-          } else {
-            throw new errors.NotAuthenticated();
-          }
         } else {
-          throw new errors.NotAuthenticated();
-        }
-        
-        return hook;
-      } else {
-        let object;
-
-        try {
-          object = await models[options.model].findOne({
+          return models[options.model].findOne({
             where: {
               id: hook.id
             }
+          }).then((object) => {
+            if (object.organizationId !== hook.params.user.currentOrganizationId) {
+              throw new errors.NotAuthenticated();
+            }
+
+            return hook;
+          }).catch((e) => {
+            throw e;
           });
-        } catch (e) {
-          throw e;
         }
-
-        if (object.organizationId !== hook.params.user.currentOrganizationId) {
-          throw new errors.NotAuthenticated();
-        }
-        
-        return hook;
-      }
-    } else if (hook.method === 'find') {
-      const query = `$organizations.organization_${options.model}.organizationId$`;
-  
-      if (options.belongsToMany) {
-        hook.params.sequelize = {
-          // ...hook.params.sequelize,
-          where: {
+      } else if (hook.method === 'find') {
+        const query = `$organizations.organization_${options.model}.organizationId$`;
+    
+        if (options.belongsToMany) {
+          const where = {
             [query]: hook.params.user.currentOrganizationId,
-          },
-        };
-      } else {
-        hook.params.sequelize = {
-          // ...hook.params.sequelize,
-          where: {
-            // ...hook.params.sequelize.where,
-            organizationId: hook.params.user.currentOrganizationId,
-          }
-        };
-      }
-    }*/
+          };
+          const include = [{
+            model: models.organization,
+          }];
 
-    return hook;
+          hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, query, include);
+        } else {
+          const where = {
+            organizationId: hook.params.user.currentOrganizationId,
+          };
+          const include = [{
+            model: models.organization,
+          }];
+
+          hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, query, include);
+        }
+      }
+
+      return hook;
+    }
   }
 }
 

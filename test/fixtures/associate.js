@@ -15,6 +15,7 @@ module.exports = async function (models) {
     { username: 'ownerDenyOverlap', roles: 'user:update, deny!user:update!owner, user:roles:update!owner' },
     { username: 'ownerDenyReservation', roles: 'reservation:update, deny!reservation:update!owner' },
     { username: 'ownerDenyReservationProperty', roles: 'reservation:update, deny!reservation:approved:update!owner' },
+    { username: 'editroles', roles: 'member'}
   ];
 
   try {
@@ -54,6 +55,7 @@ module.exports = async function (models) {
   const devices = [
     { name: 'Mixer 1 Tascam', organizations: ['utdtv'] },
     { name: 'Zoom H4', organizations: ['utdtv'] },
+    { name: 'Zoom H6', organizations: ['themercury'] },
   ];
 
   try {

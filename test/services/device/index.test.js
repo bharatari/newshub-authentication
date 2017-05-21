@@ -127,4 +127,38 @@ describe('device service', function () {
         done();
       });
   });
+
+  it('should not return devices within organization', async (done) => {
+    const device = await app.get('sequelize').models.device.findOne({
+      where: {
+        name: 'Zoom H6'
+      }
+    });
+
+    chai.request(app)
+      .get(`/api/device/${device.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(401);
+        done();
+      });
+  });
+
+  it('should return devices within organization', async (done) => {
+    const device = await app.get('sequelize').models.device.findOne({
+      where: {
+        name: 'Mixer 1 Tascam'
+      }
+    });
+
+    chai.request(app)
+      .get(`/api/device/${device.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      });
+  });
 });

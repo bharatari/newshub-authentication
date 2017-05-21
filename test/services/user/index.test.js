@@ -118,4 +118,43 @@ describe('user service', () => {
         done();
       });
   });
+
+  it('should allow for editing multiple protected fields at once', () => {
+
+  });
+
+  it('should allow editing for roles for authorized users', async (done) => {
+    const user = await app.get('sequelize').models.user.findOne({
+      where: {
+        username: 'editroles',
+      },
+    });
+
+    chai.request(app)
+      .patch(`/api/user/${user.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(master))
+      .send({
+        roles: 'admin'
+      })
+      .end(async (err, res) => {
+        res.should.have.status(200);
+
+        const updatedUser = await app.get('sequelize').models.user.findOne({
+          where: {
+            id: user.id,
+          },
+          include: [{
+            model: app.get('sequelize').models.organization,
+            where: {
+              '$organizations.organization_user.organizationId$': user.currentOrganizationId,
+            },
+          }]
+        });
+
+        assert.equal(updatedUser.organizations[0].organization_user.roles, 'admin');
+
+        done();
+      });
+  });
 });
