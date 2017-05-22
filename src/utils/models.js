@@ -1,8 +1,11 @@
+'use strict'
+
 const Sequelize = require('sequelize');
+const _ = require('lodash');
 
 module.exports = {
   mergeQuery(query, where, include) {
-    if (query) {
+    if (!_.isEmpty(query)) {
       let combinedWhere = null;
       let combinedInclude = null;
       let result = {};
