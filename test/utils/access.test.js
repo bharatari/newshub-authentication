@@ -352,8 +352,29 @@ describe('access utils', () => {
   });
 
   describe('#resolve', () => {
-    it('should not remove roles', () => {
+    it('should resolve roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      const user = await models.user.findOne({ where: { username: 'admin' } });
+
+      const expected = 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled';
+      const array = ['admin'];
+
+      array.push(...expected.split(', '));
+
+      return assert.becomes(utils.resolve(models, redis, user.id), array);
+    });
+
+    it('should handle user with no roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'normal' } });
+
+      const expected = [];
+
+      return assert.becomes(utils.resolve(models, redis, user.id), expected);
     });
   });
 
@@ -426,6 +447,7 @@ describe('access utils', () => {
 
     });
   });
+
   describe('#getRole', () => {
     it('should get permissions from corresponding role', () => {
 
