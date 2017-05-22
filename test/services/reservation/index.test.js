@@ -6,6 +6,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const authentication = require('feathers-authentication/client');
 const bodyParser = require('body-parser');
+const _ = require('lodash');
 
 let user;
 let admin;
@@ -178,6 +179,98 @@ describe('reservation service', () => {
   });
 
   it('should not allow normal user to check in a reservation', () => {
+
+  });
+
+  it('should allow find requests', (done) => {
+    chai.request(app)
+      .get(`/api/reservation`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        done();
+      });
+  });
+
+  it('should sort by start date', (done) => {
+    chai.request(app)
+      .get(`/api/reservation?$sort[startDate]=-1&$limit=10&$skip=0`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        const data = res.body.data;
+
+        const sorted = _.every(data, (value, index, array) => {
+          return index === 0 || new Date(array[index - 1].startDate) >= new Date(array[index].startDate);
+        });
+
+        sorted.should.equal(true);
+
+        done();
+      });
+  });
+
+  it('should sort by user', (done) => {
+    chai.request(app)
+      .get(`/api/reservation?$sort[user.fullName]=-1&$limit=10&$skip=0`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        const data = res.body.data;
+
+        const sorted = _.every(data, (value, index, array) => {
+          return index === 0 || array[index - 1].user.fullName >= array[index].user.fullName;
+        });
+
+        sorted.should.equal(true);
+
+        done();
+      });
+  });
+
+  it('should sort by reservation status', () => {
+
+  });
+
+  it('should only return reservations in the same organization', async (done) => {
+    const orgUser = await app.get('sequelize').models.user.findOne({
+      where: {
+        username: 'normal',
+      },
+    });
+
+    chai.request(app)
+      .get(`/api/reservation?$limit=10`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        const data = res.body.data;
+
+        const inOrg = _.every(data, (value, index, array) => {
+          for (let i = 0; i < value.organizations.length; i++) {
+            if (value.organizations[i].id === orgUser.currentOrganizationId) {
+              return true;
+            }
+          }
+
+          return false;
+        });
+
+        inOrg.should.equal(true);
+
+        done();
+      });
+  });
+
+  it('should not return reservation that is not in organization', () => {
 
   });
 });
