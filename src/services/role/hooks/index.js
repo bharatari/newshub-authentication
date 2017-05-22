@@ -11,8 +11,6 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    globalHooks.protectOrganization({ model: 'role' }),
-    globalHooks.restrictChangeOrganization({ model: 'role'}),
   ],
   find: [
     clean(),

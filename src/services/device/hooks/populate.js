@@ -10,8 +10,6 @@ module.exports = function (options) {
       const include = [{
         model: models.image,
         as: 'thumbnail',
-      }, {
-        model: models.organization,
       }];
 
       hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, null, include);

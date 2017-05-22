@@ -81,20 +81,20 @@ exports.protectOrganization = function (options) {
           const where = {
             [query]: hook.params.user.currentOrganizationId,
           };
+
           const include = [{
             model: models.organization,
           }];
 
-          hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, query, include);
+          hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, where, include);
         } else {
-          const where = {
-            organizationId: hook.params.user.currentOrganizationId,
-          };
+          hook.data.organizationId = hook.params.user.currentOrganizationId;
+
           const include = [{
             model: models.organization,
           }];
 
-          hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, query, include);
+          hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, null, include);
         }
       }
 

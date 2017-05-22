@@ -116,9 +116,8 @@ module.exports = {
 
     if (roles) {
       const rolesArray = roles.split(', ');
-      rolesArray.concat(permissions);
 
-      return rolesArray;
+      return rolesArray.concat(permissions);
     }
 
     return [];
