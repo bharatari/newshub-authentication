@@ -8,6 +8,8 @@ module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
 
+    hook.params.query.organizationId = hook.params.user.currentOrganizationId;
+
     if (hook.type === 'before') {
       if (hook.params.query.startDate && hook.params.query.endDate) {
         const { startDate, endDate } = hook.params.query;

@@ -146,8 +146,10 @@ exports.restrictChangeOrganization = function (options) {
           }
         }
       } else {
-        if (hook.data.organizationId !== object.organizationId) {
-          throw new errors.BadRequest();
+        if (hook.data.organizationId) {
+          if (hook.data.organizationId !== object.organizationId) {
+            throw new errors.BadRequest();
+          }
         }
       }
     }   
