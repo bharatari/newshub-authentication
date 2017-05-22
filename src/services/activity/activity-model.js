@@ -9,7 +9,7 @@ const Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
   const activity = sequelize.define('activity', {
-    result: {
+    payload: {
       type: Sequelize.JSONB,
       allowNull: false,
     },
@@ -18,12 +18,15 @@ module.exports = function(sequelize) {
       allowNull: false,
     },
     service: {
-      type: Sequelize.JSONB,
+      type: Sequelize.STRING,
       allowNull: false,
     },
     method: {
-      type: Sequelize.JSONB,
+      type: Sequelize.STRING,
       allowNull: false,
+    },
+    objectId: {
+      type: Sequelize.INT,
     }
   }, {
     freezeTableName: true,
