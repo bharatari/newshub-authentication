@@ -9,15 +9,31 @@ const Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
   const activity = sequelize.define('activity', {
-    text: {
-      type: Sequelize.STRING,
-      allowNull: false
+    result: {
+      type: Sequelize.JSONB,
+      allowNull: false,
+    },
+    meta: {
+      type: Sequelize.JSONB,
+      allowNull: false,
+    },
+    service: {
+      type: Sequelize.JSONB,
+      allowNull: false,
+    },
+    method: {
+      type: Sequelize.JSONB,
+      allowNull: false,
     }
   }, {
-    freezeTableName: true
+    freezeTableName: true,
+    classMethods: {
+      associate(models) {
+        activity.belongsTo(models.user);
+        activity.belongsTo(models.organization);
+      },
+    },
   });
-
-  activity.sync();
 
   return activity;
 };

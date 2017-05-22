@@ -18,21 +18,20 @@ module.exports = function (sequelize) {
       allowNull: false,
     },
     type: {
-      type: Sequelize.TEXT,
+      type: Sequelize.ENUM,
       allowNull: false,
-    },
-    icon: {
-      type: Sequelize.TEXT,
-    },
-    sound: {
-      type: Sequelize.TEXT,
-    },
-    actionId: {
-      type: Sequelize.TEXT,
+      values: ['success', 'info', 'warning', 'error'],
     },
     read: {
       type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
+    meta: {
+      type: Sequelize.JSONB,
+      allowNull: false,
+      defaultValue: {},
+    }
   }, {
     freezeTableName: true,
     classMethods: {
