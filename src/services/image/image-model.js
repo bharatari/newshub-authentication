@@ -23,9 +23,7 @@ module.exports = function (sequelize) {
     classMethods: {
       associate(models) {
         image.belongsTo(models.user);
-        image.belongsToMany(models.organization, {
-          through: modelUtils.organizationImage(sequelize),
-        });
+        image.belongsTo(models.organization);
       },
     },
     getterMethods: {

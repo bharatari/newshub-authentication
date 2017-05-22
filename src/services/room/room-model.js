@@ -41,9 +41,7 @@ module.exports = function(sequelize) {
     classMethods: {
       associate(models) {
         room.belongsTo(models.building);
-        room.belongsToMany(models.organization, {
-          through: modelUtils.organizationRoom(sequelize),
-        });
+        room.belongsTo(models.organization);
       },
     },
   });

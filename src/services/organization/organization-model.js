@@ -37,21 +37,6 @@ module.exports = function(sequelize) {
         organization.belongsToMany(models.user, {
           through: modelUtils.organizationUser(sequelize),
         });
-        organization.belongsToMany(models.roomReservation, {
-          through: modelUtils.organizationRoomReservation(sequelize),
-        });
-        organization.belongsToMany(models.reservation, {
-          through: modelUtils.organizationReservation(sequelize),
-        });
-        organization.belongsToMany(models.device, {
-          through: modelUtils.organizationDevice(sequelize),
-        });
-        organization.belongsToMany(models.room, {
-          through: modelUtils.organizationRoom(sequelize),
-        });
-        organization.belongsToMany(models.building, {
-          through: modelUtils.organizationBuilding(sequelize),
-        });
       },
     },
   });  

@@ -39,7 +39,8 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    globalHooks.protectOrganization({ model: 'user', belongsToMany: true  }),
+    globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
+    globalHooks.restrictChangeOrganization({ model: 'user', belongsToMany: true }),
     master(),
   ],
   remove: [

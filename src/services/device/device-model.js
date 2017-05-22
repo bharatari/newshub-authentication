@@ -49,11 +49,9 @@ module.exports = function (sequelize) {
     classMethods: {
       associate(models) {
         device.belongsTo(models.image, { as: 'thumbnail' });
+        device.belongsTo(models.organization);
         device.belongsToMany(models.reservation, {
           through: modelUtils.reservationDevices(sequelize),
-        });
-        device.belongsToMany(models.organization, {
-          through: modelUtils.organizationDevice(sequelize),
         });
       },
     },

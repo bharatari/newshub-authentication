@@ -26,8 +26,8 @@ module.exports = function(sequelize) {
       allowNull: false,
     },
     objectId: {
-      type: Sequelize.INT,
-    }
+      type: Sequelize.INTEGER,
+    },
   }, {
     freezeTableName: true,
     classMethods: {

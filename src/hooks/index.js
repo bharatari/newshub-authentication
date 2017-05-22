@@ -116,28 +116,42 @@ exports.restrictChangeOrganization = function (options) {
       }]
     });
 
-    if (options.belongsToMany) {
-      if (hook.data.organizationIds) {
-        const oldIds = _.map(object.organizations, 'id'); 
-        const newIds = hook.data.organizationIds;
+    if (hook.method === 'patch' || hook.method === 'update') {
+      if (options.belongsToMany) {
+        if (hook.data.organizationIds) {
+          const oldIds = _.map(object.organizations, 'id'); 
+          const newIds = hook.data.organizationIds;
 
-        const added = _.difference(newIds, oldIds);
-        const removed = _.difference(oldIds, newIds);
+          const added = _.difference(newIds, oldIds);
+          const removed = _.difference(oldIds, newIds);
 
+          if (added.length > 1) {
+            throw new errors.BadRequest('Cannot add more than one organization at a time');
+          } else if (added.length === 1) {
+            let organization;
 
-        // check orgIds array against plucked array of org ids from object
+            try {
+              organization = await models.organization.findOne({
+                where: {
+                  id: added[0],
+                }
+              });
+            } catch (e) {
+              throw e;
+            }
 
-        // check that added orgs are valid
-
-        // theoretically someone who has access to an object in an org can "share" the object with another org
-        // so the user modifying this value must be part of one of the original orgs and also have the proper role to share with other orgs
+            if (!organization) {
+              throw new errors.BadRequest('Added organization does not exist');
+            }
+          }
+        }
+      } else {
+        if (hook.data.organizationId !== object.organizationId) {
+          throw new errors.BadRequest();
+        }
       }
-    } else {
-      if (hook.data.organizationId !== object.organizationId) {
-        throw new errors.BadRequest();
-      }
-    }
+    }   
 
-    return hook;
+    return hook;    
   }
 }

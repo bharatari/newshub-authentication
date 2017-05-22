@@ -19,7 +19,8 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    globalHooks.protectOrganization({ model: 'reservation', belongsToMany: true }),
+    globalHooks.protectOrganization({ model: 'reservation' }),
+    globalHooks.restrictChangeOrganization({ model: 'reservation' }),
   ],
   find: [
     validate(),

@@ -31,6 +31,7 @@ module.exports = function (sequelize) {
     classMethods: {
       associate(models) {
         resetPasswordToken.belongsTo(models.user);
+        resetPasswordToken.belongsTo(models.organization);
       },
     },
   });

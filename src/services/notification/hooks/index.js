@@ -10,6 +10,7 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated(),
     globalHooks.protectOrganization({ model: 'notification' }),
+    globalHooks.restrictChangeOrganization({ model: 'notification' }),
   ],
   find: [],
   get: [],

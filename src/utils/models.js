@@ -3,34 +3,39 @@ const Sequelize = require('sequelize');
 module.exports = {
   mergeQuery(query, where, include) {
     if (query) {
-      if (where && query.where) {
-        const combinedWhere = Object.assign({}, where, query.where);
-        const combinedInclude = [
-          ...query.include,
-          include,
-        ];
+      let combinedWhere = null;
+      let combinedInclude = null;
+      let result = {};
 
-        return {
-          where: combinedWhere,
-          include: combinedInclude,
-        };
+      if (where && query.where) {
+        combinedWhere = Object.assign({}, where, query.where);
+        
+        result.where = combinedWhere;
       }
 
-      return {
-        include: combinedInclude,
-      };
+      if (include && query.include) {
+        combinedInclude = [
+          ...query.include,
+          ...include,
+        ];
+
+        result.include = combinedInclude;
+      }
+
+      return result;
     }
+
+    let result = {};
 
     if (where) {
-      return {
-        where,
-        include,
-      };
+      result.where = where;
     }
 
-    return {
-      include,
-    };
+    if (include) {
+      result.include = include;
+    }
+
+    return result;
   },
   reservationDevices(sequelize) {
     return sequelize.define('reservation_devices', {
@@ -43,32 +48,4 @@ module.exports = {
       title: Sequelize.STRING,
     });
   },
-  organizationRoomReservation(sequelize) {
-    return sequelize.define('organization_roomReservation', {
-      owner: Sequelize.BOOLEAN,
-    });
-  },
-  organizationReservation(sequelize) {
-    return sequelize.define('organization_reservation', {
-      owner: Sequelize.BOOLEAN,
-    });
-  },
-  organizationDevice(sequelize) {
-    return sequelize.define('organization_device', {
-      owner: Sequelize.BOOLEAN,
-    });
-  },
-  organizationRoom(sequelize) {
-    return sequelize.define('organization_room', {
-      owner: Sequelize.BOOLEAN,
-    });
-  },
-  organizationBuilding(sequelize) {
-    return sequelize.define('organization_building', {
-      owner: Sequelize.BOOLEAN,
-    });
-  },
-  organizationImage(sequelize) {
-    return sequelize.define('organization_image');
-  }
 };

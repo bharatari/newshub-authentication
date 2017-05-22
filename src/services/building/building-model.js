@@ -23,9 +23,7 @@ module.exports = function(sequelize) {
     freezeTableName: true,
     classMethods: {
       associate(models) {
-        building.belongsToMany(models.organization, {
-          through: modelUtils.organizationBuilding(sequelize),
-        });
+        building.belongsTo(models.organization);
       },
     },
   });

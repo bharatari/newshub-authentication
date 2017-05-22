@@ -6,9 +6,21 @@ module.exports = function (models) {
       },
     });
 
-    const mercury = await models.user.findOne({
+    const mercuryUser = await models.user.findOne({
       where: {
         username: 'mercury',
+      },
+    });
+
+    const utdtv = await models.organization.findOne({
+      where: {
+        name: 'utdtv',
+      },
+    });
+
+    const mercury = await models.organization.findOne({
+      where: {
+        name: 'themercury',
       },
     });
 
@@ -28,6 +40,7 @@ module.exports = function (models) {
               checkedIn: false,
               disabled: false,
               userId: user.id,
+              organizationId: utdtv.id,
             },
           },
           {
@@ -43,6 +56,7 @@ module.exports = function (models) {
               checkedIn: false,
               disabled: false,
               userId: user.id,
+              organizationId: utdtv.id,
             },
           },
           {
@@ -57,7 +71,8 @@ module.exports = function (models) {
               checkedOut: false,
               checkedIn: false,
               disabled: false,
-              userId: mercury.id,
+              userId: mercuryUser.id,
+              organizationId: mercury.id,
             },
           },
         ]);
