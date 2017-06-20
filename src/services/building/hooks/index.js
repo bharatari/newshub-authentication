@@ -14,7 +14,9 @@ exports.before = {
   ],
   find: [],
   get: [],
-  create: [],
+  create: [
+    globalHooks.addToOrganization(),
+  ],
   update: [],
   patch: [],
   remove: []

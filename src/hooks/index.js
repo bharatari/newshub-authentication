@@ -88,7 +88,7 @@ exports.protectOrganization = function (options) {
 
           hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, where, include);
         } else {
-          hook.data.organizationId = hook.params.user.currentOrganizationId;
+          hook.params.organizationId = hook.params.user.currentOrganizationId;
 
           const include = [{
             model: models.organization,
@@ -153,6 +153,16 @@ exports.restrictChangeOrganization = function (options) {
         }
       }
     }   
+
+    return hook;    
+  }
+}
+
+exports.addToOrganization = function (options) {
+  return async function (hook) {
+    if (hook.method === 'create' && hook.type === 'before') {
+      hook.data.organizationId = hook.params.user.currentOrganizationId;
+    }
 
     return hook;    
   }

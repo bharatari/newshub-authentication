@@ -19,6 +19,7 @@ exports.before = {
   create: [
     upload(),
     normalize(),
+    globalHooks.addToOrganization(),
   ],
   update: [],
   patch: [],

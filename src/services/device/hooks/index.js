@@ -23,6 +23,7 @@ exports.before = {
   ],
   create: [
     globalHooks.checkAccess({ service: 'device' }),
+    globalHooks.addToOrganization(),
   ],
   update: [],
   patch: [],

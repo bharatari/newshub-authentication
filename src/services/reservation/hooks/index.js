@@ -34,6 +34,7 @@ exports.before = {
     process(),
     validate(),
     restrict(),
+    globalHooks.addToOrganization(),
   ],
   update: [
     hooks.disable(),
