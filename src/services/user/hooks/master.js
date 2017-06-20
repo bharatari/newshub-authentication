@@ -11,7 +11,7 @@ module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');
-    const { roles, disabled, options } = hook.data;
+    const { currentOrganizationId, roles, disabled, options } = hook.data;
 
     return models.user.findOne({
       where: {
@@ -67,6 +67,14 @@ module.exports = function (options) {
           if (!canUpdateDoNotDisturb) {
             throw new errors.NotAuthenticated('You do not have the permission to update do not disturb status');
           }
+        }
+      }
+
+      if (currentOrganizationId !== user.currentOrganizationId) {
+        const canSwitchOrganization = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'currentOrganizationId', hook.id);
+        
+        if (!canSwitchOrganization) {
+          throw new errors.NotAuthenticated('You do not have the permission to switch organizations.');
         }
       }
 
