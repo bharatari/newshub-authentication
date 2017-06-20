@@ -29,6 +29,7 @@ module.exports = function(sequelize) {
     meta: {
       type: Sequelize.JSONB,
       allowNull: false,
+      defaultValue: {},
     },
   }, {
     freezeTableName: true,
