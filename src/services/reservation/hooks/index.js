@@ -13,6 +13,7 @@ const validate = require('./validate');
 const remove = require('./remove');
 const restrict = require('./restrict');
 const count = require('./count');
+const specialApproval = require('./specialApproval');
 
 exports.before = {
   all: [
@@ -34,6 +35,7 @@ exports.before = {
     process(),
     validate(),
     restrict(),
+    specialApproval(),
     globalHooks.addToOrganization(),
   ],
   update: [

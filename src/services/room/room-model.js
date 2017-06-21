@@ -36,6 +36,10 @@ module.exports = function(sequelize) {
       allowNull: false,
       defaultValue: false,
     },
+    specialApproval: {
+      type: Sequelize.TEXT,
+      defaultValue: null,
+    },
   }, {
     freezeTableName: true,
     classMethods: {

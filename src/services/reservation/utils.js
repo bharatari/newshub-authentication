@@ -18,7 +18,7 @@ module.exports = {
     }).then((reservation) => {
       for (let i = 0; i < reservation.devices.length; i++) {
         if (reservation.devices[i].specialApproval) {
-          return true;
+          return reservation.devices[i].specialApproval;
         }
       }
 
@@ -43,7 +43,7 @@ module.exports = {
       const specialApproval = await this.checkSpecialApproval(models, reservation.id);
 
       if (specialApproval) {
-        const canApproveSpecialApproval = await access.has(models, redis, userId, 'reservation:special-approval');
+        const canApproveSpecialApproval = await access.has(models, redis, userId, specialApproval);
 
         if (canApproveSpecialApproval) {
           hook.data.approvedById = userId;
