@@ -49,7 +49,7 @@ module.exports = {
           hook.data.approvedById = userId;
 
           try {
-            await email.queueEmails([reservation.user], null, 'approved', 'USER_RESERVATION_RESPONSE')
+            await email.queueEmails([reservation.user], null, 'approved', 'USER_RESERVATION_RESPONSE');
 
             return hook;
           } catch (e) {
@@ -60,13 +60,13 @@ module.exports = {
           throw new errors.NotAuthenticated('MASTER_SPECIAL_REQUEST');
         }
       } else {
-        const canApprove = await access.can(models, redis, userId, 'reservation', 'update', 'approved')
+        const canApprove = await access.can(models, redis, userId, 'reservation', 'update', 'approved', hook.id);
 
         if (canApprove) {
           hook.data.approvedById = userId;
 
           try {
-            await email.queueEmails([reservation.user], null, 'approved', 'USER_RESERVATION_RESPONSE')
+            await email.queueEmails([reservation.user], null, 'approved', 'USER_RESERVATION_RESPONSE');
 
             return hook;
           } catch (e) {
@@ -84,7 +84,7 @@ module.exports = {
         hook.data.approvedById = userId;
 
         try {
-          await email.queueEmails([reservation.user], null, 'approved', 'USER_RESERVATION_RESPONSE')
+          await email.queueEmails([reservation.user], null, 'approved', 'USER_RESERVATION_RESPONSE');
 
           return hook;
         } catch (e) {
@@ -97,7 +97,7 @@ module.exports = {
     }
   },
   async checkOut(hook, models, redis, userId, reservation, data) {
-    const canCheckOut = await access.can(models, redis, userId, 'reservation', 'update', 'checkedOut');
+    const canCheckOut = await access.can(models, redis, userId, 'reservation', 'update', 'checkedOut', hook.id);
 
     if (canCheckOut) {
       hook.data.checkedOutById = userId;
@@ -115,7 +115,7 @@ module.exports = {
     }
   },
   async checkIn(hook, models, redis, userId, reservation, data) {
-    const canCheckIn = await access.can(models, redis, userId, 'reservation', 'update', 'checkedIn');
+    const canCheckIn = await access.can(models, redis, userId, 'reservation', 'update', 'checkedIn', hook.id);
 
     if (canCheckIn) {
       hook.data.checkedInById = userId;
@@ -133,7 +133,7 @@ module.exports = {
     }
   },
   async disable(hook, models, redis, userId, reservation, data) {
-    const canDisable = await access.can(models, redis, userId, 'reservation', 'update', 'disabled');
+    const canDisable = await access.can(models, redis, userId, 'reservation', 'update', 'disabled', hook.id);
 
     if (canDisable) {
       hook.data.disabledById = userId;
@@ -151,7 +151,7 @@ module.exports = {
     }
   },
   async adminNotes(hook, models, redis, userId, reservation, data) {
-    const canUpdateAdminNotes = await access.can(models, redis, userId, 'reservation', 'update', 'adminNotes');
+    const canUpdateAdminNotes = await access.can(models, redis, userId, 'reservation', 'update', 'adminNotes', hook.id);
 
     if (canUpdateAdminNotes) {
       try {

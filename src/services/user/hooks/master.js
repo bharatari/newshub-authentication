@@ -27,7 +27,7 @@ module.exports = function (options) {
       const currentRoles = user.get('organizations')[0].organization_user.roles;
 
       if (roles && (roles != currentRoles)) {
-        const canUpdateRoles = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'roles');
+        const canUpdateRoles = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'roles', hook.id);
 
         if (canUpdateRoles) {
           const organization = await user.getOrganizations({
@@ -47,7 +47,7 @@ module.exports = function (options) {
       }
 
       if (!_.isNil(disabled) && (disabled != user.disabled)) {
-        const canDisable = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'disabled');
+        const canDisable = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'disabled', hook.id);
 
         if (!canDisable) {
           throw new errors.NotAuthenticated('You do not have the permission to update disabled status');
@@ -55,7 +55,7 @@ module.exports = function (options) {
       }
 
       if (options) {
-        const canUpdateDoNotDisturb = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'doNotDisturb');
+        const canUpdateDoNotDisturb = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'doNotDisturb', hook.id);
 
         if (user.options) {
           if (!_.isNil(options.doNotDisturb) && (options.doNotDisturb != user.options.doNotDisturb)) {            

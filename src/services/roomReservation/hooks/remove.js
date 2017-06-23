@@ -13,7 +13,7 @@ module.exports = function (options) {
         id: hook.id,
       },
     }).then(async (reservation) => {
-      const canDelete = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'delete');
+      const canDelete = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'delete', hook.id);
 
       if (reservation.dataValues.approved) {
         if (canDelete) {

@@ -15,7 +15,7 @@ exports.checkAccess = function (options) {
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');
 
-    if (hook.type === 'before') {
+    if (hook.type === 'before' && (hook.method === 'get' || hook.method === 'find' || hook.method === 'create')) {
       return access.can(models, redis, hook.params.user.id, options.service, hook.method)
         .then((result) => {
           if (result) {

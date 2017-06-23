@@ -22,7 +22,7 @@ module.exports = function (options) {
       }).then(async function (reservation) {
         if (approved && !reservation.approved) {
           if (_.isNil(specialRequests) && _.isNil(reservation.specialRequests)) {
-            const canApprove = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'approved');
+            const canApprove = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'approved', hook.id);
             
             if (canApprove) {
               hook.data.approvedById = hook.params.user.id;
@@ -59,7 +59,7 @@ module.exports = function (options) {
         }
 
         if (adminNotes && (reservation.adminNotes !== adminNotes)) {
-          const canUpdateAdminNotes = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'adminNotes');
+          const canUpdateAdminNotes = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'adminNotes', hook.id);
 
           if (canUpdateAdminNotes) {
             try {
@@ -76,7 +76,7 @@ module.exports = function (options) {
         }
 
         if (disabled && !reservation.disabled) {
-          const canUpdateDisabled = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'disabled');
+          const canUpdateDisabled = await access.can(models, redis, hook.params.user.id, 'roomReservation', 'update', 'disabled', hook.id);
 
           if (canUpdateDisabled) {
             hook.data.disabledById = hook.params.user.id;

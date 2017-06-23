@@ -4,19 +4,92 @@
 
 const _ = require('lodash');
 const async = require('async');
+const diff = require('deep-diff').deep;
 
 module.exports = {
   userModel: 'user',
   userIdField: 'userId',
 
-  check(models, redis, userId, service, method, property, record, previousRecord) {
-    // detect differences in properties for update
-    // validate against roles
+  async check(models, redis, userId, service, method, record, previousRecord, id) {
+    if (method === 'update' || method === 'patch') {
+      const result = await this.checkUpdateOrPatch(models, redis, userId, service, method, record, previousRecord, id);
+      
+      return result;
+    }
 
-    // for create, check deny permissions for properties
-    // the user is allowed or not allowed to create
+    if (method === 'create') {
+      const result = await this.checkCreate(models, redis, userId, service, method, record, id);
+      
+      return result;
+    }
 
-    // check for standard roles otherwise
+    if (method === 'remove') {
+      const result = await this.can(models, redis, userId, service, method, null, id);
+
+      return result;
+    }
+
+    throw new Error('access.check() only works for update, patch, create and remove methods.')
+  },
+
+  async checkCreate(models, redis, userId, service, method, record, id) {
+    for (let property in record) {
+      if (record.hasOwnProperty(property)) {
+        let hasAccess;
+
+        try {
+          hasAccess = await this.can(models, redis, userId, service, method, property, id);
+        } catch (e) {
+          throw e;
+        }
+
+        if (!hasAccess) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  },
+
+  async checkUpdateOrPatch(models, redis, userId, service, method, record, previousRecord, id) {
+    if (method === 'update') {
+      differences = diff(record, previousRecord);
+    }
+
+    if (method === 'patch') {
+      const properties = [];
+
+      for (let property in record) {
+        if (record.hasOwnProperty(property)) {
+          properties.push(property);
+        }
+      }
+
+      // Only deal with properties being patched
+      const oldRecord = _.pick(previousRecord, properties);
+      
+      differences = diff(record, oldRecord);
+    }
+
+    // Pluck properties that are being changed
+    const properties = this.convertDifferences(differences);
+
+    for (let i = 0; i < properties.length; i++) {
+      let hasAccess;
+
+      try {
+        hasAccess = await this.can(models, redis, userId, service, method, properties[i], id);
+      } catch (e) {
+        throw e;
+      }
+
+      if (!hasAccess) {
+        return false;
+      }
+    }
+
+    return true;
   },
 
   /**
@@ -560,4 +633,34 @@ module.exports = {
   split(value) {
     return value.split(':');
   },
+
+  /**
+   * Converts deep-diff object.
+   *
+   * @private
+   * @param {Array} differences
+   * @returns {Array}
+   */
+  convertDifferences(differences) {
+    const result = [];
+
+    for (let i = 0; i < differences.length; i++) {
+      const path = this.constructPath(differences[i].path);
+
+      result.push(path);
+    }
+
+    return result;
+  },
+
+  constructPath(array) {
+    const path = array[0];
+
+    for (let i = 1; i < array.length; i++) {
+      path += '.' + array[i];
+    }
+
+    return path;
+  }
+  
 };
