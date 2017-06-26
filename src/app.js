@@ -13,6 +13,7 @@ const bodyParser = require('body-parser');
 const socketio = require('feathers-socketio');
 const middleware = require('./middleware');
 const services = require('./services');
+const appHooks = require('./app.hooks');
 const skipper = require('skipper');
 const redis = require('./utils/redis');
 
@@ -34,6 +35,7 @@ app.use(compress())
   .configure(socketio())
   .configure(services)
   .configure(middleware)
-  .configure(redis);
+  .configure(redis)
+  .hooks(appHooks);
 
 module.exports = app;

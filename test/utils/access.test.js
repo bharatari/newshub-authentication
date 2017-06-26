@@ -154,6 +154,8 @@ describe('access utils', () => {
       });
     });
 
+    it('should handle id')
+
     it('should not throw error for user with non-existent roles', () => {
 
     });

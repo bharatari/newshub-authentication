@@ -167,3 +167,16 @@ exports.addToOrganization = function (options) {
     return hook;    
   }
 }
+
+exports.recordActivity = function (options) {
+  return async function (hook) {
+    const method = hook.method;
+    const service = hook.service;
+    const id = hook.id;
+    const payload = hook.result;
+
+    // push to newshub-activity function
+    // need to pull activity service out of newshub-server
+    // make it a proxy service to the activity microservice
+  }
+}

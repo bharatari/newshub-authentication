@@ -28,6 +28,9 @@ module.exports = function(sequelize) {
     objectId: {
       type: Sequelize.INTEGER,
     },
+    tag: {
+      type: Sequelize.TEXT,
+    },
   }, {
     freezeTableName: true,
     classMethods: {
