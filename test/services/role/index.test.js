@@ -20,7 +20,7 @@ chai.use(chaiHttp);
 
 const should = chai.should();
 
-describe.only('role service', () => {
+describe('role service', () => {
   before((done) => {
     this.server = app.listen(3030);
 

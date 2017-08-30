@@ -31,6 +31,10 @@ module.exports = function(sequelize) {
       allowNull: false,
       defaultValue: {},
     },
+    defaultRoles: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
   }, {
     freezeTableName: true,
     classMethods: {

@@ -46,6 +46,7 @@ module.exports = function(sequelize) {
       associate(models) {
         room.belongsTo(models.building);
         room.belongsTo(models.organization);
+        room.belongsTo(models.user, { as: 'manager' });
       },
     },
   });

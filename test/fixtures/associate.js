@@ -1,8 +1,20 @@
 const async = require('async');
 
 module.exports = async function (models) {
+  const organization = await models.organization.findOne({
+    where: {
+      name: 'utdtv',
+    },
+  });
+
+  const alternate = await models.organization.findOne({
+    where: {
+      name: 'themercury'
+    },
+  });
+
   const roles = [
-    { username: 'normal', roles: null },
+    { username: 'normal', roles: null, organizations: [{ id: alternate.id, roles: null }] },
     { username: 'admin', roles: 'admin' },
     { username: 'master', roles: 'master' },
     { username: 'masterDeny', roles: 'master, deny!user:update' },
@@ -15,7 +27,7 @@ module.exports = async function (models) {
     { username: 'ownerDenyOverlap', roles: 'user:update, deny!user:update!owner, user:roles:update!owner' },
     { username: 'ownerDenyReservation', roles: 'reservation:update, deny!reservation:update!owner' },
     { username: 'ownerDenyReservationProperty', roles: 'reservation:update, deny!reservation:approved:update!owner' },
-    { username: 'editroles', roles: 'member'}
+    { username: 'editroles', roles: 'member' }
   ];
 
   try {
@@ -23,6 +35,12 @@ module.exports = async function (models) {
       const user = await models.user.findOne({ where: { username: roles[i].username } });
 
       await user.addOrganization(user.currentOrganizationId, { roles: roles[i].roles });
+    
+      if (roles[i].organizations) {
+        for (let e = 0; e < roles[i].organizations.length; e++) {
+          await user.addOrganization(roles[i].organizations[e].id, { roles: roles[i].organizations[e].roles });
+        }
+      }
     }
   } catch (e) {
     throw e;
