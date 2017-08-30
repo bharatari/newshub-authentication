@@ -4,6 +4,7 @@ const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
 const populate = require('./populate');
+const create = require('./create');
 
 exports.before = {
   all: [
@@ -19,7 +20,10 @@ exports.before = {
   get: [
     populate(),
   ],
-  create: [],
+  create: [
+    create(),
+    globalHooks.addToOrganization(),
+  ],
   update: [],
   patch: [],
   remove: []
