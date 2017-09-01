@@ -16,7 +16,7 @@ exports.checkAccess = function (options) {
     const redis = hook.app.get('redis');
 
     if (hook.type === 'before' && (hook.method === 'get' || hook.method === 'find' || hook.method === 'create')) {
-      return access.can(models, redis, hook.params.user.id, options.service, hook.method)
+      return access.can(models, redis, hook.params.user.id, options.service, hook.method, hook.id)
         .then((result) => {
           if (result) {
             return hook;
@@ -88,7 +88,7 @@ exports.protectOrganization = function (options) {
 
           hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, where, include);
         } else {
-          hook.params.organizationId = hook.params.user.currentOrganizationId;
+          hook.params.query.organizationId = hook.params.user.currentOrganizationId;
 
           const include = [{
             model: models.organization,

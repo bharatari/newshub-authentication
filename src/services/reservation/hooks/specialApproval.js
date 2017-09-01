@@ -2,6 +2,7 @@
 
 const utils = require('../utils');
 const errors = require('feathers-errors');
+const _ = require('lodash');
 
 module.exports = function (options) {
   return async function (hook) {
@@ -10,10 +11,10 @@ module.exports = function (options) {
 
     // Get devices from database, don't trust
     // data coming from client
-    for (let i = 0; i < hook.data.devices.length; i++) {
+    for (let i = 0; i < hook.params.devices.length; i++) {
       const device = await models.device.findOne({
         where: {
-          id: hook.data.devices[i].id,
+          id: hook.params.devices[i].id,
         },
       });
 
