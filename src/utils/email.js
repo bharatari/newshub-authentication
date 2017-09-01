@@ -10,7 +10,7 @@ module.exports = {
     CREATED_RESERVATION: '9cb91814-4954-4be8-83c6-d5ac609063c3',
     RESET_PASSWORD: 'a5f46d68-9542-4448-9040-f4514346ebe8',
   },
-  queueEmails(to, subject, body, template) {
+  queueEmails(to, subject, body, template, attachments) {
     return new Promise((resolve, reject) => {
       const service = azure.createQueueService();
 
@@ -20,6 +20,7 @@ module.exports = {
         body,
         template: this.templates[template],
         environment: process.env.NODE_ENV,
+        attachments,
       };
 
       service.createQueueIfNotExists(this.emailQueue, (error, result, response) => {

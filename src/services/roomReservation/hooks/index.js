@@ -14,6 +14,7 @@ const restrict = require('./restrict');
 const count = require('./count');
 const approve = require('./approve');
 const available = require('./available');
+const manager = require('./manager');
 
 exports.before = {
   all: [
@@ -57,6 +58,7 @@ exports.after = {
   get: [],
   create: [
     email(),
+    manager(),
   ],
   update: [],
   patch: [],

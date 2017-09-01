@@ -11,6 +11,8 @@ module.exports = function (options) {
     const hasAutoApprove = await access.has(models, redis, hook.params.user.id, 'roomReservation:auto-approve');
 
     if (hasAutoApprove) {
+      await email.queueEmails([ /* room manager */], null, hook.params.user.fullName, 'ROOM_MANAGER_NOTIFICATION');
+
       return hook;
     } else {
       return hook.app.get('sequelize').models.user.findAll({
