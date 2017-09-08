@@ -1,6 +1,6 @@
 {
   "host": "localhost",
-  "port": 3030,
+  "port": "PORT",
   "postgres": "TEST_DB",
   "public": "../public/",
   "auth": {
