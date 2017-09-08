@@ -8,7 +8,6 @@ const room = require('./room');
 const resetPassword = require('./resetPassword');
 const meta = require('./meta');
 const role = require('./role');
-const project = require('./project');
 const image = require('./image');
 const signupToken = require('./signupToken');
 const notification = require('./notification');
@@ -47,7 +46,6 @@ module.exports = function () {
   app.configure(notification);
   app.configure(signupToken);
   app.configure(image);
-  app.configure(project);
   app.configure(role);
   app.configure(meta);
   app.configure(resetPassword);
