@@ -11,11 +11,15 @@ module.exports = function () {
         username: hook.data.username,
       },
     }).then((user) => {
-      if (user.disabled) {
-        throw new errors.NotAuthenticated('USER_DISABLED');
+      if (user) {
+        if (user.disabled) {
+          throw new errors.NotAuthenticated('USER_DISABLED');
+        } else {
+          return hook;
+        }
       } else {
-        return hook;
-      }
+        throw new errors.BadRequest('USER_DOES_NOT_EXIST');
+      } 
     }).catch((err) => {
       throw err;
     });
