@@ -43,6 +43,17 @@ module.exports = function (sequelize) {
     options: {
       type: Sequelize.JSONB,
     },
+    barcode: {
+      type: Sequelize.STRING,
+      unique: true,
+    },
+    meta: {
+      type: Sequelize.JSONB,
+      allowNull: false,
+      defaultValue: {
+        code: null,
+      },
+    },
   }, {
     freezeTableName: true,
     getterMethods: {
