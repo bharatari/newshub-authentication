@@ -11,11 +11,11 @@ const modelUtils = require('../../utils/models');
 module.exports = function (sequelize) {
   const image = sequelize.define('image', {
     cdn: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     fileName: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
   }, {

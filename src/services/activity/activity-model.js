@@ -18,11 +18,11 @@ module.exports = function(sequelize) {
       allowNull: false,
     },
     service: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     method: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     objectId: {

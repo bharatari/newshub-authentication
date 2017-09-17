@@ -10,11 +10,11 @@ const Sequelize = require('sequelize');
 module.exports = function (sequelize) {
   const role = sequelize.define('role', {
     name: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     permissions: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
   }, {

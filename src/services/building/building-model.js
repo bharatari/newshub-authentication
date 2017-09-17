@@ -11,12 +11,12 @@ const modelUtils = require('../../utils/models');
 module.exports = function(sequelize) {
   const building = sequelize.define('building', {
     name: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
       unique: true,
     },
     label: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
   }, {

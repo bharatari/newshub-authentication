@@ -47,8 +47,8 @@ module.exports = {
   },
   organizationUser(sequelize) {
     return sequelize.define('organization_user', {
-      roles: Sequelize.STRING,
-      title: Sequelize.STRING,
+      roles: Sequelize.TEXT,
+      title: Sequelize.TEXT,
     });
   },
 };

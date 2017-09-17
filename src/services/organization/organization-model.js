@@ -11,19 +11,19 @@ const modelUtils = require('../../utils/models');
 module.exports = function(sequelize) {
   const organization = sequelize.define('organization', {
     name: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     label: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     link: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     logo: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     meta: {
@@ -32,7 +32,7 @@ module.exports = function(sequelize) {
       defaultValue: {},
     },
     defaultRoles: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
   }, {

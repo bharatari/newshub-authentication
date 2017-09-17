@@ -10,7 +10,7 @@ const Sequelize = require('sequelize');
 module.exports = function (sequelize) {
   const resetPasswordToken = sequelize.define('resetPasswordToken', {
     token: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     expires: {
@@ -23,7 +23,7 @@ module.exports = function (sequelize) {
       allowNull: false,
     },
     email: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
   }, {

@@ -44,7 +44,7 @@ module.exports = function (sequelize) {
       type: Sequelize.JSONB,
     },
     barcode: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       unique: true,
     },
     meta: {

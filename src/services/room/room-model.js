@@ -11,16 +11,16 @@ const modelUtils = require('../../utils/models');
 module.exports = function(sequelize) {
   const room = sequelize.define('room', {
     name: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
       unique: true,
     },
     label: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     description: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
     },
     capacity: {
       type: Sequelize.INTEGER,
