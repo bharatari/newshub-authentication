@@ -19,8 +19,6 @@ module.exports = function (options) {
       hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, where, include);
     }
 
-    console.log(hook.params.sequelize);
-
     return hook;
   };
 };
