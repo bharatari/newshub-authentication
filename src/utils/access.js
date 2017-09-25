@@ -142,7 +142,7 @@ module.exports = {
   },
 
   /**
-   * Checks if user has the given permission. Used by
+   * Checks if user has the specific given permission. Used by
    * the can function and also can be used for checking
    * and custom permissions.
    * 
@@ -197,7 +197,7 @@ module.exports = {
   },
 
   /**
-   * Checks if there is a deny permission for the given
+   * Checks if there is a deny permission for the specific given
    * permission.
    * 
    * @private
@@ -468,6 +468,8 @@ module.exports = {
    * @returns {Promise}
    */
   async getUserRoles(models, userId) {
+    // if roles is null
+    // return organization's defaultRoles
     const user = await models.user.findOne({ where: { id: userId } });
 
     return models.organization_user.findOne({
