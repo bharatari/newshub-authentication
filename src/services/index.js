@@ -21,21 +21,22 @@ module.exports = function () {
   const app = this;
 
   let sequelize;
+  let ssl;
 
-  if (app.get('env') === 'development') {
-    sequelize = new Sequelize(app.get('postgres'), {
-      dialect: 'postgres',
-      logging: false,
-    });
+  if (app.get('DATABASE_SSL') === 'true') {
+    ssl = true;
   } else {
-    sequelize = new Sequelize(app.get('postgres'), {
-      dialect: 'postgres',
-      logging: false,
-      dialectOptions: {
-        ssl: true,
-      },
-    });
+    ssl = false;
   }
+
+  sequelize = new Sequelize(app.get('postgres'), {
+    dialect: 'postgres',
+    logging: false,
+    dialectOptions: {
+      ssl,
+    },
+  });
+  
 
   app.set('sequelize', sequelize);
 

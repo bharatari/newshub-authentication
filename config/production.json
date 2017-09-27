@@ -2,6 +2,7 @@
   "host": "newshub-utdtv.herokuapp.com",
   "port": "PORT",
   "postgres": "DATABASE_URL",
+  "DATABASE_SSL": "DATABASE_SSL",
   "public": "../public/",
   "auth": {
     "idField": "id",

@@ -2,6 +2,7 @@
   "host": "localhost",
   "port": "PORT",
   "postgres": "DATABASE_URL",
+  "DATABASE_SSL": "DATABASE_SSL",
   "public": "../public/",
   "auth": {
     "token": {
