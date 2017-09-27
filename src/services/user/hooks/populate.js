@@ -7,12 +7,21 @@ module.exports = function (options) {
     const models = hook.app.get('sequelize').models;
 
     if (hook.type === 'before') {
-      const include = [{
-        model: models.organization,
-      }, {
-        model: models.organization,
-        as: 'currentOrganization',
-      }];
+      let include;
+
+      if (hook.method === 'get') {
+        include = [{
+          model: models.organization,
+        }, {
+          model: models.organization,
+          as: 'currentOrganization',
+        }];
+      } else if (hook.method === 'find') {
+        include = [{
+          model: models.organization,
+          as: 'currentOrganization',
+        }];
+      }
 
       const where = hook.params.query;
     
