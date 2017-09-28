@@ -16,16 +16,18 @@ module.exports = function (options) {
           model: models.organization,
           as: 'currentOrganization',
         }];
+
+        hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, null, include);
       } else if (hook.method === 'find') {
         include = [{
           model: models.organization,
           as: 'currentOrganization',
         }];
-      }
 
-      const where = hook.params.query;
+        const where = hook.params.query;
     
-      hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, where, include);
+        hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, where, include);
+      }
     }
 
     return hook;
