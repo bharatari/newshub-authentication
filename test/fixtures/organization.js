@@ -10,7 +10,8 @@ module.exports = function (models) {
               label: 'UTD TV',
               link: 'http://www.utdtv.com',
               logo: 'http://www.utdtv.com',
-              meta: {}
+              meta: {},
+              defaultRoles: '',
             },
           },
           {
@@ -20,7 +21,8 @@ module.exports = function (models) {
               label: 'The Mercury',
               link: 'http://www.utdmercury.com',
               logo: 'http://www.utdmercury.com',
-              meta: {}
+              meta: {},
+              defaultRoles: '',
             },
           },
         ]);
