@@ -10,6 +10,8 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const _ = require('lodash');
 
+// CHECK DEFAULT ROLES
+
 describe('access utils', () => {
   before((done) => {
     chai.use(chaiAsPromised);
@@ -154,14 +156,51 @@ describe('access utils', () => {
       });
     });
 
-    it('should handle id')
+    it('should handle id', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
-    it('should not throw error for user with non-existent roles', () => {
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT3',
+        },
+      });
+      
+      const user = await models.user.findOne({
+        where: {
+          username: 'ownerDenyReservation',
+        }
+      });
 
+      assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null), true);
+
+      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null, reservation.id), false);
     });
 
-    it('should not throw error for user with non-existent permissions', () => {
+    it('should not throw error for user with non-existent roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      const user = await models.user.findOne({
+        where: {
+          username: 'normal',
+        }
+      });
+
+      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update'), false);
+    });
+
+    it('should not throw error for user with non-existent permissions', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({
+        where: {
+          username: 'normal',
+        }
+      });
+
+      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update'), false);
     });
   });
 
@@ -258,66 +297,84 @@ describe('access utils', () => {
       });
     });
 
-    it.skip('should deny access to own record with deny permission', () => {
+    it('should deny access to own record with deny permission', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      return models.user.findOne({
+      const user = await models.user.findOne({
         where: {
           username: 'ownerDenyReservation',
         },
-      }).then((data) => {
-        const user = JSON.parse(JSON.stringify(data));
-
-        return models.reservation.findOne({
-          where: {
-            username: 'admin',
-          },
-        }).then((result) => {
-          const reservation = JSON.parse(JSON.stringify(result));
-
-          return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), false);
-        });
-      }).catch((err) => {
-        assert.fail();
       });
+
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT3',
+        },
+      });
+
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), true);
     });
 
-    it.skip('should deny access to own record with deny property permission', () => {
+    it('should deny access to own record with deny property permission', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      return models.user.findOne({
+      const user = await models.user.findOne({
         where: {
           username: 'ownerDenyReservationProperty',
         },
-      }).then((data) => {
-        const user = JSON.parse(JSON.stringify(data));
-
-        return models.reservation.findOne({
-          where: {
-            username: 'admin',
-          },
-        }).then((result) => {
-          const reservation = JSON.parse(JSON.stringify(result));
-
-          return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), false);
-        });
-      }).catch((err) => {
-        assert.fail();
       });
+
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT4',
+        },
+      });
+
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), true);
     });
 
-    it('should not deny access to other record with deny permission', () => {
+    it-.skip('should not deny access to other record with deny permission', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      const user = await models.user.findOne({
+        where: {
+          username: 'ownerDenyReservation',
+        },
+      });
+
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT',
+        },
+      });
+
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), false);
     });
 
-    it('should not deny access to other record with deny property permission', () => {
+    it('should not deny access to other record with deny property permission', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      const user = await models.user.findOne({
+        where: {
+          username: 'ownerDenyReservationProperty',
+        },
+      });
+
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT',
+        },
+      });
+
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), true);
     });
 
     it('should handle overlap by making deny flag take precedence', () => {
-
+      
     });
   });
 

@@ -11,6 +11,7 @@ const _ = require('lodash');
 let user;
 let admin;
 let master;
+let mercury;
 
 app
   .use(bodyParser.json())
@@ -55,7 +56,18 @@ describe('reservation service', () => {
               .end((err, res) => {
                 master = res.body.token;
 
-                done();
+                chai.request(app)
+                  .post('/api/login')
+                  .set('Accept', 'application/json')
+                  .send({
+                    username: 'mercury',
+                    password: 'password',
+                  })
+                  .end((err, res) => {
+                    mercury = res.body.token;
+
+                    done();
+                  });
               });
           });
       });
@@ -260,7 +272,21 @@ describe('reservation service', () => {
       });
   });
 
-  it('should not return reservation that is not in organization', () => {
+  it('should not return reservation that is not in organization', async (done) => {
+    const reservation = await app.get('sequelize').models.reservation.findOne({
+      where: {
+        notes: 'VIDEO_SHOOT',
+      },
+    });
 
+    chai.request(app)
+      .get(`/api/reservation/${reservation.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(mercury))
+      .end((err, res) => {
+        res.should.have.status(401);
+
+        done();
+      });
   });
 });

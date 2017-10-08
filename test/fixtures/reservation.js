@@ -12,6 +12,18 @@ module.exports = function (models) {
       },
     });
 
+    const ownerDenyReservation = await models.user.findOne({
+      where: {
+        username: 'ownerDenyReservation',
+      },
+    });
+
+    const ownerDenyReservationProperty = await models.user.findOne({
+      where: {
+        username: 'ownerDenyReservationProperty',
+      },
+    });
+
     const utdtv = await models.organization.findOne({
       where: {
         name: 'utdtv',
@@ -56,6 +68,38 @@ module.exports = function (models) {
               checkedIn: false,
               disabled: false,
               userId: user.id,
+              organizationId: utdtv.id,
+            },
+          },
+          {
+            model: 'reservation',
+            data: {
+              purpose: 'Video Shoot',
+              notes: 'VIDEO_SHOOT3',
+              startDate: '2016-10-03 00:00:00+00',
+              endDate: '2016-10-07 00:00:00+00',
+              meta: {},
+              approved: false,
+              checkedOut: false,
+              checkedIn: false,
+              disabled: false,
+              userId: ownerDenyReservation.id,
+              organizationId: utdtv.id,
+            },
+          },
+          {
+            model: 'reservation',
+            data: {
+              purpose: 'Video Shoot',
+              notes: 'VIDEO_SHOOT4',
+              startDate: '2016-10-03 00:00:00+00',
+              endDate: '2016-10-07 00:00:00+00',
+              meta: {},
+              approved: false,
+              checkedOut: false,
+              checkedIn: false,
+              disabled: false,
+              userId: ownerDenyReservationProperty.id,
               organizationId: utdtv.id,
             },
           },
