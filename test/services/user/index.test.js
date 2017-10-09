@@ -158,7 +158,7 @@ describe('user service', () => {
       });
   });
 
-  it.only('should allow admin to add users to organization', async (done) => {
+  it('should allow admin to add users to organization', async (done) => {
     const models = app.get('sequelize').models;
 
     const user = await models.user.findOne({
@@ -183,11 +183,6 @@ describe('user service', () => {
       .end(async (err, res) => {
         res.should.have.status(200);
 
-        done();
-      })
-      .catch((err) => {
-        assert.fail(err);
-        
         done();
       });
   });
