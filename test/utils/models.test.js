@@ -128,5 +128,70 @@ describe('models utils', () => {
 
       assert.deepEqual(utils.mergeQuery(query, null, include), expected);
     });
+
+    it('should handle merging in where', () => {
+      const query = {
+        include: [{
+          model: 'organization',
+        }],
+      };
+
+      const where = {
+        name: 'Zoom',
+      };
+
+      const expected = {
+        where: {
+          name: 'Zoom',
+        },
+        include: [{
+          model: 'organization',
+        }],
+      };
+
+      assert.deepEqual(utils.mergeQuery(query, where), expected);
+    });
+
+    it('should handle existing values with order', async () => {
+      const query = {
+        where: {
+          id: 1,
+        },
+        include: [{
+          model: 'user',
+        }],
+      };
+
+      const include = [{
+        model: 'organization',
+      }];
+      
+      const where = {
+        name: 'Zoom',
+      };
+
+      const order = [
+        [{ model: 'user' }, 'firstName', 'DESC'],
+        [{ model: 'user' }, 'lastName', 'DESC'],
+      ];
+
+      const expected = {
+        where: {
+          id: 1,
+          name: 'Zoom',
+        },
+        include: [{
+          model: 'user',
+        }, {
+          model: 'organization',
+        }],
+        order: [
+          [{ model: 'user' }, 'firstName', 'DESC'],
+          [{ model: 'user' }, 'lastName', 'DESC'],
+        ]
+      };
+
+      assert.deepEqual(utils.mergeQuery(query, where, include, order), expected);
+    });
   });
 });
