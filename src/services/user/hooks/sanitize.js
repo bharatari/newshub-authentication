@@ -14,9 +14,7 @@ module.exports = function (options) {
 
         if (!canViewDisabled) {
           hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, {
-            where: {
-              disabled: false,
-            },
+            disabled: false,
           });
         }
       }
