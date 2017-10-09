@@ -9,7 +9,7 @@ const normalize = require('./normalize');
 const sanitize = require('./sanitize');
 const associate = require('./associate');
 const populate = require('./populate');
-
+const organization = require('./organization');
 exports.before = {
   all: [],
   find: [
@@ -39,6 +39,7 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
+    organization(),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     globalHooks.restrictChangeOrganization({ model: 'user', belongsToMany: true }),
     master(),

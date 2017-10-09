@@ -157,4 +157,38 @@ describe('user service', () => {
         done();
       });
   });
+
+  it.only('should allow admin to add users to organization', async (done) => {
+    const models = app.get('sequelize').models;
+
+    const user = await models.user.findOne({
+      where: {
+        username: 'editorganizations',
+      },
+    });
+
+    const organization = await models.organization.findOne({
+      where: {
+        name: 'utdtv',
+      },
+    });
+
+    chai.request(app)
+      .patch(`/api/user/${user.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(master))
+      .send({
+        organizationId: organization.id,
+      })
+      .end(async (err, res) => {
+        res.should.have.status(200);
+
+        done();
+      })
+      .catch((err) => {
+        assert.fail(err);
+        
+        done();
+      });
+  });
 });

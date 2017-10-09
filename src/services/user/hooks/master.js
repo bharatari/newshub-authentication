@@ -13,6 +13,10 @@ module.exports = function (options) {
     const redis = hook.app.get('redis');
     const { currentOrganizationId, roles, disabled, options } = hook.data;
 
+    if (hook.params.skip) {
+      return hook;  
+    }
+
     return models.user.findOne({
       where: {
         id: hook.id,

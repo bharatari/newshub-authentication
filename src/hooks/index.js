@@ -37,6 +37,10 @@ exports.protectOrganization = function (options) {
   return async function (hook) {
     const models = hook.app.get('sequelize').models;
     
+    if (hook.params.skip) {
+      return hook;  
+    }
+
     if (hook.params.provider) {
       if (hook.method === 'update' || hook.method === 'patch' || hook.method === 'get') {
         if (options.belongsToMany) {
@@ -107,6 +111,10 @@ exports.restrictChangeOrganization = function (options) {
   return async function (hook) {
     const models = hook.app.get('sequelize').models;
 
+    if (hook.params.skip) {
+      return hook;  
+    }
+    
     const object = await models[options.model].findOne({
       where: {
         id: hook.id,

@@ -214,6 +214,19 @@ module.exports = async function (models) {
                   options: {},
                   currentOrganizationId: organization.id,
                 },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'editorganizations',
+                  firstName: 'Edit',
+                  lastName: 'Organizations',
+                  email: 'editOrganizations@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: alternate.id,
+                },
               }
             ]);
           });
