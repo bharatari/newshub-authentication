@@ -335,7 +335,7 @@ describe('access utils', () => {
       return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), true);
     });
 
-    it-.skip('should not deny access to other record with deny permission', async () => {
+    it.skip('should not deny access to other record with deny permission', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
@@ -354,7 +354,7 @@ describe('access utils', () => {
       return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), false);
     });
 
-    it('should not deny access to other record with deny property permission', async () => {
+    it.skip('should not deny access to other record with deny property permission', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
