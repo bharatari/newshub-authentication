@@ -10,14 +10,15 @@ const chaiAsPromised = require('chai-as-promised');
 const request = require('request');
 const app = require('../src/app');
 const fixtures = require('sequelize-fixtures');
+const organization = require('./fixtures/organization');
 const user = require('./fixtures/user');
 const resetPasswordToken = require('./fixtures/resetPasswordToken');
 const role = require('./fixtures/role');
 const reservation = require('./fixtures/reservation');
 const roomReservation = require('./fixtures/roomReservation');
+const room = require('./fixtures/room');
 const device = require('./fixtures/device');
 const signupToken = require('./fixtures/signupToken');
-const organization = require('./fixtures/organization');
 const associate = require('./fixtures/associate');
 
 describe('Feathers application tests', () => {
@@ -34,6 +35,7 @@ describe('Feathers application tests', () => {
       await fixtures.loadFixtures(role(models), models);
       await fixtures.loadFixtures(reservation(models), models);
       await fixtures.loadFixtures(roomReservation(models), models);
+      await fixturse.loadFixtures(room(models), models);
       await fixtures.loadFixtures(device(models), models);
       await fixtures.loadFixtures(signupToken(models), models);
       await associate(models);

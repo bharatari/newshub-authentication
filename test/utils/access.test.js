@@ -417,7 +417,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({ where: { username: 'admin' } });
 
-      const expected = 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled';
+      const expected = 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, reservation:approve, roomReservation:create, roomReservation:read, roomReservation:delete, roomReservation:update, roomReservation:approve, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled';
       const array = ['admin'];
 
       array.push(...expected.split(', '));
