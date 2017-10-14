@@ -13,7 +13,7 @@ module.exports = async function (models) {
             model: 'role',
             data: {
               name: 'admin',
-              permissions: 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled',
+              permissions: 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, reservation:approve, roomReservation:create, roomReservation:read, roomReservation:delete, roomReservation:update, roomReservation:approve, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled',
               organizationId: organization.id,
             },
           },
