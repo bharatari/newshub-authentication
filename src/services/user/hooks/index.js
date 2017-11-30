@@ -10,6 +10,8 @@ const sanitize = require('./sanitize');
 const associate = require('./associate');
 const populate = require('./populate');
 const organization = require('./organization');
+const result = require('./result');
+
 exports.before = {
   all: [],
   find: [
@@ -57,6 +59,8 @@ exports.after = {
     associate(),
   ],
   update: [],
-  patch: [],
+  patch: [
+    result(),
+  ],
   remove: [],
 };
