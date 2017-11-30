@@ -1,6 +1,6 @@
 'use strict';
 
-const authentication = require('feathers-authentication');
+const authentication = require('@feathersjs/authentication');
 const hooks = require('./hooks');
 
 module.exports = function () {

@@ -9,7 +9,7 @@ const app = require('../../../src/app');
 const User = app.service('/api/user');
 const Device = app.service('/api/device');
 const Token = app.service('/api/signup-token');
-const authentication = require('feathers-authentication/client');
+const authentication = require('@feathersjs/authentication-client');
 const bodyParser = require('body-parser');
 
 let user;

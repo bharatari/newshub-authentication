@@ -2,7 +2,7 @@
 
 /* eslint eqeqeq: 0 */
 
-const errors = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 const moment = require('moment');
 const _ = require('lodash');
 const access = require('../../../utils/access');

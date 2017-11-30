@@ -18,11 +18,6 @@ module.exports = function (options) {
       activityId: activity.id,
       type: 'info'
     });
-
-    // create notification, emits event, passes through filter
-    // set recipient here
-    // filter checks recipient against connection.user_id
-    // client listens for notifications
   };
 };
 
