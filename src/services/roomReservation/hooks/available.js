@@ -12,9 +12,9 @@ module.exports = function () {
       .then((result) => {
         if (result) {
           return hook;
-        }
-
-        throw new errors.BadRequest('ROOM_UNAVAILABLE');
+        } else {
+          throw new errors.BadRequest('ROOM_UNAVAILABLE');
+        }        
       })
       .catch((err) => {
         throw err;
