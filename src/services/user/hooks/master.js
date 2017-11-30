@@ -75,11 +75,9 @@ module.exports = function (options) {
       }
 
       if (currentOrganizationId !== user.currentOrganizationId) {
-        const canSwitchOrganization = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'currentOrganizationId', hook.id);
-        
-        if (!canSwitchOrganization) {
+        if (hook.params.user.id != hook.id) {
           throw new errors.NotAuthenticated('You do not have the permission to switch organizations.');
-        }
+        }        
       }
 
       return hook;
