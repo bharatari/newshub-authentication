@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const serveStatic = require('@feathersjs/feathers').static;
 const express = require('@feathersjs/express');
 const favicon = require('serve-favicon');
 const compress = require('compression');
@@ -25,8 +24,8 @@ app.use(compress())
   .options('*', cors())
   .use(cors())
   .use(favicon(path.join(app.get('public'), 'favicon.ico')))
-  .use('/', express(serveStatic(app.get('public'))))
-  .use('/app/*', express(serveStatic(app.get('public'))))
+  .use('/', express.static(app.get('public')))
+  .use('/app/*', express.static(app.get('public')))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .use(skipper())
