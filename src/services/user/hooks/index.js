@@ -2,7 +2,7 @@
 
 const globalHooks = require('../../../hooks');
 const auth = require('@feathersjs/authentication').hooks;
-const local = require('feathers-authentication-local').hooks;
+const local = require('@feathersjs/authentication-local').hooks;
 const hooks = require('feathers-hooks-common');
 const token = require('./token');
 const master = require('./master');

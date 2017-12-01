@@ -7,9 +7,7 @@ const create = require('./create');
 
 exports.before = {
   all: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
+    auth.authenticate('jwt'),
     globalHooks.protectOrganization({ model: 'room' }),
     globalHooks.restrictChangeOrganization({ model: 'room' }),
   ],

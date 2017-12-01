@@ -1,8 +1,8 @@
 'use strict';
 
 const authentication = require('@feathersjs/authentication');
-const jwt = require('feathers-authentication-jwt');
-const local = require('feathers-authentication-local');
+const jwt = require('@feathersjs/authentication-jwt');
+const local = require('@feathersjs/authentication-local');
 const hooks = require('./hooks');
 
 module.exports = function () {
