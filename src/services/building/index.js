@@ -21,9 +21,5 @@ module.exports = function(){
   // Get our initialize service to that we can bind hooks
   const buildingService = app.service('/buildings');
 
-  // Set up our before hooks
-  buildingService.before(hooks.before);
-
-  // Set up our after hooks
-  buildingService.after(hooks.after);
+  buildingService.hooks(hooks);
 };

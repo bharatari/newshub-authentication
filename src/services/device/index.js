@@ -17,9 +17,5 @@ module.exports = function () {
   // Get our initialize service to that we can bind hooks
   const deviceService = app.service('/api/device');
 
-  // Set up our before hooks
-  deviceService.before(hooks.before);
-
-  // Set up our after hooks
-  deviceService.after(hooks.after);
+  deviceService.hooks(hooks);
 };

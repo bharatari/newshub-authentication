@@ -33,11 +33,7 @@ module.exports = function () {
   // Get our initialize service to that we can bind hooks
   const metaService = app.service('/api/meta');
 
-  // Set up our before hooks
-  metaService.before(hooks.before);
-
-  // Set up our after hooks
-  metaService.after(hooks.after);
+  metaService.hooks(hooks);
 };
 
 module.exports.Service = Service;
