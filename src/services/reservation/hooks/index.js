@@ -2,6 +2,7 @@
 
 const globalHooks = require('../../../hooks');
 const auth = require('@feathersjs/authentication').hooks;
+const hooks = require('feathers-common-hooks');
 const associate = require('./associate');
 const populate = require('./populate');
 const process = require('./process');
@@ -16,9 +17,7 @@ const specialApproval = require('./specialApproval');
 
 exports.before = {
   all: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
+    auth.authenticate('jwt'),
     globalHooks.protectOrganization({ model: 'reservation' }),
     globalHooks.restrictChangeOrganization({ model: 'reservation' }),
   ],
@@ -38,7 +37,7 @@ exports.before = {
     globalHooks.addToOrganization(),
   ],
   update: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
   patch: [
     status(),

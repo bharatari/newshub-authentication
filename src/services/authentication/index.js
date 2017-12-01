@@ -1,6 +1,8 @@
 'use strict';
 
 const authentication = require('@feathersjs/authentication');
+const jwt = require('feathers-authentication-jwt');
+const local = require('feathers-authentication-local');
 const hooks = require('./hooks');
 
 module.exports = function () {
@@ -9,21 +11,20 @@ module.exports = function () {
   const auth = app.get('auth');
 
   const config = {
-    userEndpoint: '/api/user',
-    localEndpoint: '/api/login',
-    successRedirect: false,
-    failureRedirect: false,
-    shouldSetupSuccessRoute: false,
-    shouldSetupFailureRoute: false,
-    idField: 'id',
+    path: '/api/login',
+    entity: 'user',
+    service: '/api/user',
     local: {
       usernameField: 'username',
+      service: '/api/user',
     },
   };
 
   Object.assign(config, auth);
 
-  app.configure(authentication(config));
+  app.configure(authentication(config))
+     .configure(jwt())
+     .configure(local());
 
   // Get our initialize service to that we can bind hooks
   const service = app.service('/api/login');

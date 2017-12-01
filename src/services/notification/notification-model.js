@@ -31,7 +31,10 @@ module.exports = function (sequelize) {
       type: Sequelize.JSONB,
       allowNull: false,
       defaultValue: {},
-    }
+    },
+    activityId: {
+      type: Sequelize.NUMBER,
+    },
   }, {
     freezeTableName: true,
     classMethods: {
@@ -39,7 +42,6 @@ module.exports = function (sequelize) {
         notification.belongsTo(models.user, { as: 'recipient' });
         notification.belongsTo(models.user, { as: 'sender' });
         notification.belongsTo(models.organization);
-        notification.belongsTo(models.activity);
       },
     },
   });

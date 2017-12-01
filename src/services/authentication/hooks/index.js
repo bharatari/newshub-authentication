@@ -12,6 +12,7 @@ exports.before = {
   create: [
     normalize(),
     disabled(),
+    auth.authenticate(['jwt', 'local']),
   ],
   update: [],
   patch: [],
