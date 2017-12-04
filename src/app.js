@@ -10,12 +10,10 @@ const logger = require('winston');
 const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');
 const rest = require('@feathersjs/express/rest');
-const authentication = require('@feathersjs/authentication');
-const jwt = require('@feathersjs/authentication-jwt');
-const local = require('@feathersjs/authentication-local');
 const socketio = require('@feathersjs/socketio');
 
 const middleware = require('./middleware');
+const authentication = require('./authentication');
 const channels = require('./channels');
 const services = require('./services');
 const appHooks = require('./app.hooks');
@@ -40,32 +38,17 @@ app.use('/app/*', express.static(app.get('public')));
 
 app.use(skipper());
 
-const authConfig = {
-  ...app.get('auth'),
-  path: '/api/login',
-  entity: 'user',
-  service: '/api/user',
-  local: {
-    usernameField: 'username',
-    service: '/api/user',
-  },
-};
-
-app.configure(authentication(authConfig))
-   .configure(local())
-   .configure(jwt());
-
 // Set up Plugins and providers
 app.configure(express.rest());
 app.configure(socketio());
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
+app.configure(authentication);
 // Set up our services (see `services/index.js`)
 app.configure(services);
 // Set up event channels (see channels.js)
 app.configure(channels);
-
 app.configure(redis);
 
 // Configure a middleware for 404s and the error handler
