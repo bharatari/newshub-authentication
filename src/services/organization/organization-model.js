@@ -37,14 +37,13 @@ module.exports = function(sequelize) {
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        organization.belongsToMany(models.user, {
-          through: modelUtils.organizationUser(sequelize),
-        });
-      },
-    },
-  });  
+  });
+
+  organization.associate = function (models) {
+    organization.belongsToMany(models.user, {
+      through: modelUtils.organizationUser(sequelize),
+    });
+  };
 
   return organization;
 };

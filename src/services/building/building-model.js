@@ -22,11 +22,13 @@ module.exports = function(sequelize) {
   }, {
     freezeTableName: true,
     classMethods: {
-      associate(models) {
-        building.belongsTo(models.organization);
-      },
+      
     },
   });
+
+  building.associate = function (models) {
+    building.belongsTo(models.organization);
+  };
 
   return building;
 };

@@ -20,18 +20,17 @@ module.exports = function (sequelize) {
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        image.belongsTo(models.user);
-        image.belongsTo(models.organization);
-      },
-    },
     getterMethods: {
       url() {
         return this.cdn + this.fileName;
       },
     },
   });
+
+  image.associate = function (models) {
+    image.belongsTo(models.user);
+    image.belongsTo(models.organization);
+  };
 
   return image;
 };

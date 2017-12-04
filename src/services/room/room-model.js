@@ -42,14 +42,13 @@ module.exports = function(sequelize) {
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        room.belongsTo(models.building);
-        room.belongsTo(models.organization);
-        room.belongsTo(models.user, { as: 'manager' });
-      },
-    },
   });
+
+  room.associate = function (models) {
+    room.belongsTo(models.building);
+    room.belongsTo(models.organization);
+    room.belongsTo(models.user, { as: 'manager' });
+  };
 
   return room;
 };

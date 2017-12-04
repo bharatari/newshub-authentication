@@ -32,19 +32,19 @@ module.exports = function (sequelize) {
       allowNull: false,
       defaultValue: {},
     },
+    /*
     activityId: {
       type: Sequelize.NUMBER,
-    },
+    },*/
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        notification.belongsTo(models.user, { as: 'recipient' });
-        notification.belongsTo(models.user, { as: 'sender' });
-        notification.belongsTo(models.organization);
-      },
-    },
   });
+
+  notification.associate = function (models) {
+    notification.belongsTo(models.user, { as: 'recipient' });
+    notification.belongsTo(models.user, { as: 'sender' });
+    notification.belongsTo(models.organization);
+  };
 
   return notification;
 };

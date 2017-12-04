@@ -46,16 +46,15 @@ module.exports = function (sequelize) {
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        device.belongsTo(models.image, { as: 'thumbnail' });
-        device.belongsTo(models.organization);
-        device.belongsToMany(models.reservation, {
-          through: modelUtils.reservationDevices(sequelize),
-        });
-      },
-    },
   });
+
+  device.associate = function (models) {
+    device.belongsTo(models.image, { as: 'thumbnail' });
+    device.belongsTo(models.organization);
+    device.belongsToMany(models.reservation, {
+      through: modelUtils.reservationDevices(sequelize),
+    });
+  };
 
   return device;
 };
