@@ -12,6 +12,7 @@ const configuration = require('@feathersjs/configuration');
 const rest = require('@feathersjs/express/rest');
 const socketio = require('@feathersjs/socketio');
 
+const sequelize = require('./sequelize');
 const middleware = require('./middleware');
 const authentication = require('./authentication');
 const channels = require('./channels');
@@ -41,6 +42,8 @@ app.use(skipper());
 // Set up Plugins and providers
 app.configure(express.rest());
 app.configure(socketio());
+
+app.configure(sequelize);
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
