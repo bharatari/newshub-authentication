@@ -41,6 +41,7 @@
     "dotenv": "^2.0.0",
     "feathers-hooks-common": "^3.10.0",
     "feathers-sequelize": "^1.4.5",
+    "helmet": "^3.9.0",
     "icalendar": "^0.7.1",
     "lodash": "^4.13.1",
     "moment": "^2.14.1",
