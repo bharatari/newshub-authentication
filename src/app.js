@@ -19,7 +19,7 @@ const channels = require('./channels');
 const services = require('./services');
 const appHooks = require('./app.hooks');
 const skipper = require('skipper');
-const redis = require('./utils/redis');
+const redis = require('./redis');
 
 const app = express(feathers());
 
