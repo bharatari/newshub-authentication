@@ -5,31 +5,31 @@ const hooks = require('./hooks/authentication');
 
 module.exports = function (app) {
   const config = {
-  ...app.get('auth'),
-  strategies: [
-    'jwt',
-    'local'
-  ],
-  path: '/api/login',
-  entity: 'user',
-  service: '/api/user',
-  jwt: {
-    header: {
-      typ: 'access'
-    },
-    audience: "http://newshub.sitrea.com",
-    subject: 'anonymous',
-    issuer: 'feathers',
-    algorithm: 'HS256',
-    expiresIn: '1d',
-  },
-  local: {
+    ...app.get('auth'),
+    strategies: [
+      'jwt',
+      'local',
+    ],
+    path: '/api/login',
     entity: 'user',
-    usernameField: 'username',
-    passwordField: 'password',
     service: '/api/user',
-  },
-};
+    jwt: {
+      header: {
+        typ: 'access'
+      },
+      audience: "http://newshub.sitrea.com",
+      subject: 'anonymous',
+      issuer: 'feathers',
+      algorithm: 'HS256',
+      expiresIn: '1d',
+    },
+    local: {
+      entity: 'user',
+      usernameField: 'username',
+      passwordField: 'password',
+      service: '/api/user',
+    },
+  };
 
   // Set up authentication with the secret
   app.configure(authentication(config));
