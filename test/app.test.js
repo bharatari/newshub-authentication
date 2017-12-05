@@ -5,11 +5,17 @@ if (!process.env.S3_API_KEY) {
 }
 
 const assert = require('assert');
+const request = require('request');
+const fixtures = require('sequelize-fixtures');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const request = require('request');
+const chaiHttp = require('chai-http');
+const authentication = require('@feathersjs/authentication');
+const jwt = require('@feathersjs/authentication-jwt');
+const local = require('@feathersjs/authentication-local');
+const bodyParser = require('body-parser');
+
 const app = require('../src/app');
-const fixtures = require('sequelize-fixtures');
 const organization = require('./fixtures/organization');
 const user = require('./fixtures/user');
 const resetPasswordToken = require('./fixtures/resetPasswordToken');
@@ -20,6 +26,8 @@ const room = require('./fixtures/room');
 const device = require('./fixtures/device');
 const signupToken = require('./fixtures/signupToken');
 const associate = require('./fixtures/associate');
+
+chai.use(chaiHttp);
 
 describe('Feathers application tests', () => {
   before(function (done) {

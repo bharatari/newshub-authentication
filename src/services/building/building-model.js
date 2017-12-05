@@ -21,9 +21,6 @@ module.exports = function(sequelize) {
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      
-    },
   });
 
   building.associate = function (models) {

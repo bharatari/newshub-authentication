@@ -3,16 +3,6 @@
 const assert = require('assert');
 const app = require('../../../src/app');
 const chai = require('chai');
-const chaiHttp = require('chai-http');
-const authentication = require('@feathersjs/authentication-client');
-const bodyParser = require('body-parser');
-
-app
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-  .configure(authentication());
-
-chai.use(chaiHttp);
 
 const should = chai.should();
   

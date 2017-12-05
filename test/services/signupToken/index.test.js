@@ -3,20 +3,10 @@
 const assert = require('assert');
 const app = require('../../../src/app');
 const chai = require('chai');
-const chaiHttp = require('chai-http');
-const authentication = require('@feathersjs/authentication-client');
-const bodyParser = require('body-parser');
 
 let user;
 let admin;
 let master;
-
-app
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-  .configure(authentication());
-
-chai.use(chaiHttp);
 
 const should = chai.should();
 
@@ -28,31 +18,34 @@ describe('signupToken service', () => {
       .post('/api/login')
       .set('Accept', 'application/json')
       .send({
+        strategy: 'local',
         username: 'normal',
         password: 'password',
       })
       .end((err, res) => {
-        user = res.body.token;
+        user = res.body.accessToken;
 
         chai.request(app)
           .post('/api/login')
           .set('Accept', 'application/json')
           .send({
+            strategy: 'local',
             username: 'admin',
             password: 'password',
           })
           .end((err, res) => {
-            admin = res.body.token;
+            admin = res.body.accessToken;
 
             chai.request(app)
               .post('/api/login')
               .set('Accept', 'application/json')
               .send({
+                strategy: 'local',
                 username: 'master',
                 password: 'password',
               })
               .end((err, res) => {
-                master = res.body.token;
+                master = res.body.accessToken;
 
                 done();
               });
