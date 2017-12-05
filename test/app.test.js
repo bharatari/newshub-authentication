@@ -32,22 +32,27 @@ chai.use(chaiHttp);
 describe('Feathers application tests', () => {
   before(function (done) {
     chai.use(chaiAsPromised);
-
+      
     this.server = app.listen(3030);
     this.server.once('listening', async () => {
-      const models = app.get('sequelize').models;
-
-      await fixtures.loadFixtures(organization(models), models);
-      await fixtures.loadFixtures(user(models), models);
-      await fixtures.loadFixtures(resetPasswordToken(models), models)
-      await fixtures.loadFixtures(role(models), models);
-      await fixtures.loadFixtures(reservation(models), models);
-      await fixtures.loadFixtures(roomReservation(models), models);
-      await fixturse.loadFixtures(room(models), models);
-      await fixtures.loadFixtures(device(models), models);
-      await fixtures.loadFixtures(signupToken(models), models);
-      await associate(models);
-
+      try {
+        const models = app.get('sequelize').models;
+        
+        await fixtures.loadFixtures(organization(models), models);
+        await fixtures.loadFixtures(user(models), models);
+        await fixtures.loadFixtures(resetPasswordToken(models), models)
+        await fixtures.loadFixtures(role(models), models);
+        await fixtures.loadFixtures(reservation(models), models);
+        await fixtures.loadFixtures(roomReservation(models), models);
+        await fixtures.loadFixtures(room(models), models);
+        await fixtures.loadFixtures(device(models), models);
+        await fixtures.loadFixtures(signupToken(models), models);
+        
+        await associate(models);
+      } catch (e) {
+        throw e;
+      }
+  
       done();
     });
   });
