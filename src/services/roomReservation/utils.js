@@ -1,6 +1,7 @@
 'use strict';
 
 const icalendar = require('icalendar');
+const _ = require('lodash');
 
 module.exports = {
   /**
