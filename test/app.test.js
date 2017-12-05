@@ -26,6 +26,7 @@ const room = require('./fixtures/room');
 const device = require('./fixtures/device');
 const signupToken = require('./fixtures/signupToken');
 const associate = require('./fixtures/associate');
+const building = require('./fixtures/building');
 
 chai.use(chaiHttp);
 
@@ -43,6 +44,7 @@ describe('Feathers application tests', () => {
         await fixtures.loadFixtures(resetPasswordToken(models), models)
         await fixtures.loadFixtures(role(models), models);
         await fixtures.loadFixtures(reservation(models), models);
+        await fixtures.loadFixtures(building(models), models);
         await fixtures.loadFixtures(roomReservation(models), models);
         await fixtures.loadFixtures(room(models), models);
         await fixtures.loadFixtures(device(models), models);
