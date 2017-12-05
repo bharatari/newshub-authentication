@@ -40,9 +40,3 @@ exports.normalize = function (options) {
     }
   };
 };
-
-exports.populate = function (options) {
-  return function (hook) {
-    hook.result.user = hooks.params.user;
-  };
-};

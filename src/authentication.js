@@ -50,10 +50,5 @@ module.exports = function (app) {
         authentication.hooks.authenticate('jwt'),
       ],
     },
-    after: {
-      create: [
-        hooks.populate(),
-      ],
-    },
   });
 };
