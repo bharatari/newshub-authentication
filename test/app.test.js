@@ -35,7 +35,7 @@ describe('Feathers application tests', () => {
       await fixtures.loadFixtures(role(models), models);
       await fixtures.loadFixtures(reservation(models), models);
       await fixtures.loadFixtures(roomReservation(models), models);
-      await fixturse.loadFixtures(room(models), models);
+      await fixtures.loadFixtures(room(models), models);
       await fixtures.loadFixtures(device(models), models);
       await fixtures.loadFixtures(signupToken(models), models);
       await associate(models);
