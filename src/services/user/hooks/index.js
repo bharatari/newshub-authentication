@@ -1,8 +1,9 @@
 'use strict';
 
 const globalHooks = require('../../../hooks');
-const hooks = require('feathers-hooks');
-const auth = require('feathers-authentication').hooks;
+const auth = require('@feathersjs/authentication').hooks;
+const local = require('@feathersjs/authentication-local').hooks;
+const hooks = require('feathers-hooks-common');
 const token = require('./token');
 const master = require('./master');
 const normalize = require('./normalize');
@@ -15,44 +16,38 @@ const result = require('./result');
 exports.before = {
   all: [],
   find: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
+    auth.authenticate('jwt'),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     populate(),
     sanitize(),
   ],
   get: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
+    auth.authenticate('jwt'),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     populate(),
   ],
   create: [
     normalize(),
-    auth.hashPassword(),
+    local.hashPassword({ passwordField: 'password' }),
     token(),
   ],
   update: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
   patch: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
+    auth.authenticate('jwt'),
     organization(),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     globalHooks.restrictChangeOrganization({ model: 'user', belongsToMany: true }),
     master(),
   ],
   remove: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
 };
 
 exports.after = {
-  all: [hooks.remove('password')],
+  all: [local.protect('password')],
   find: [],
   get: [],
   create: [

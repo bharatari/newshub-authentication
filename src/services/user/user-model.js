@@ -60,15 +60,14 @@ module.exports = function (sequelize) {
         return `${this.firstName} ${this.lastName}`;
       },
     },
-    classMethods: {
-      associate(models) {
-        user.belongsToMany(models.organization, {
-          through: modelUtils.organizationUser(sequelize),
-        });
-        user.belongsTo(models.organization, { as: 'currentOrganization' });
-      },
-    },
   });
+
+  user.associate = function (models) {
+    user.belongsToMany(models.organization, {
+      through: modelUtils.organizationUser(sequelize),
+    });
+    user.belongsTo(models.organization, { as: 'currentOrganization' });
+  };
 
   return user;
 };

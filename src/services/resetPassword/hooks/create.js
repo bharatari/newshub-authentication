@@ -3,7 +3,7 @@
 const Chance = require('chance');
 const chance = new Chance();
 const moment = require('moment');
-const errors = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 const email = require('../../../utils/email');
 
 module.exports = function (options) {

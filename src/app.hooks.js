@@ -1,8 +1,9 @@
 const globalHooks = require('./hooks');
+const logger = require('./hooks/logger');
 
 module.exports = {
   before: {
-    all: [],
+    all: [ logger() ],
     find: [],
     get: [],
     create: [],
@@ -12,7 +13,7 @@ module.exports = {
   },
 
   after: {
-    all: [ globalHooks.recordActivity() ],
+    all: [ logger(), globalHooks.recordActivity() ],
     find: [],
     get: [],
     create: [],
@@ -22,7 +23,7 @@ module.exports = {
   },
 
   error: {
-    all: [],
+    all: [ logger() ],
     find: [],
     get: [],
     create: [],

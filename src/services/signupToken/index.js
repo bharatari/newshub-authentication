@@ -21,9 +21,5 @@ module.exports = function () {
   // Get our initialize service to that we can bind hooks
   const signupTokenService = app.service('/api/signup-token');
 
-  // Set up our before hooks
-  signupTokenService.before(hooks.before);
-
-  // Set up our after hooks
-  signupTokenService.after(hooks.after);
+  signupTokenService.hooks(hooks);
 };

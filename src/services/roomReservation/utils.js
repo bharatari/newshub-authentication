@@ -1,6 +1,11 @@
 'use strict';
 
 const icalendar = require('icalendar');
+const _ = require('lodash');
+const errors = require('@feathersjs/errors');
+const email = require('../../utils/email');
+const access = require('../../utils/access');
+const async = require('async');
 
 module.exports = {
   /**

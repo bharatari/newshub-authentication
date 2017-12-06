@@ -12,34 +12,10 @@ const signupToken = require('./signupToken');
 const notification = require('./notification');
 const reservation = require('./reservation');
 const device = require('./device');
-const authentication = require('./authentication');
 const user = require('./user');
 const Sequelize = require('sequelize');
 
-module.exports = function () {
-  const app = this;
-
-  let sequelize;
-  let ssl;
-
-  if (app.get('DATABASE_SSL') === 'true') {
-    ssl = true;
-  } else {
-    ssl = false;
-  }
-
-  sequelize = new Sequelize(app.get('postgres'), {
-    dialect: 'postgres',
-    logging: false,
-    dialectOptions: {
-      ssl,
-    },
-  });
-  
-
-  app.set('sequelize', sequelize);
-
-  app.configure(authentication);
+module.exports = function (app) {
   app.configure(user);
   app.configure(device);
   app.configure(reservation);
@@ -53,13 +29,4 @@ module.exports = function () {
   app.configure(roomReservation);
   app.configure(building);
   app.configure(organization);
-
-  const models = sequelize.models;
-
-  Object.keys(models)
-    .map(name => models[name])
-    .filter(model => model.associate)
-    .forEach(model => model.associate(models));
-
-  sequelize.sync();
 };

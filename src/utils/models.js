@@ -62,7 +62,7 @@ module.exports = {
     let result = {};
 
     if (where) {
-      result.where = where;
+      result.where = _.omit(where, ['$limit', '$sort', '$skip', '$select', '$populate']);
     }
 
     if (include) {
