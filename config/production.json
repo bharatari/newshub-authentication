@@ -5,10 +5,7 @@
   "DATABASE_SSL": "DATABASE_SSL",
   "public": "../public/",
   "auth": {
-    "idField": "id",
-    "token": {
-      "secret": "FEATHERS_AUTH_SECRET"
-    }
+    "secret": "FEATHERS_AUTH_SECRET"
   },
   "keys": {
     "S3_API_KEY": "S3_API_KEY",

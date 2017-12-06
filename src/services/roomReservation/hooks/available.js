@@ -1,7 +1,7 @@
 'use strict';
 
 const utils = require('../utils');
-const errors = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 
 module.exports = function () {
   return function (hook) {

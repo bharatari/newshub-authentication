@@ -46,16 +46,15 @@ module.exports = function (sequelize) {
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        roomReservation.belongsTo(models.room);
-        roomReservation.belongsTo(models.user, { as: 'approvedBy' });
-        roomReservation.belongsTo(models.user, { as: 'disabledBy' });
-        roomReservation.belongsTo(models.user);
-        roomReservation.belongsTo(models.organization);
-      },
-    },
   });
+
+  roomReservation.associate = function (models) {
+    roomReservation.belongsTo(models.room);
+    roomReservation.belongsTo(models.user, { as: 'approvedBy' });
+    roomReservation.belongsTo(models.user, { as: 'disabledBy' });
+    roomReservation.belongsTo(models.user);
+    roomReservation.belongsTo(models.organization);
+  };
 
   return roomReservation;
 };

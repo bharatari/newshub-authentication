@@ -1,6 +1,6 @@
 'use strict';
 
-const errors = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 const email = require('../../utils/email');
 const _ = require('lodash');
 const access = require('../../utils/access');

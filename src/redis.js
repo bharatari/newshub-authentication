@@ -4,9 +4,7 @@
 
 const redis = require('redis');
 
-module.exports = function () {
-  const app = this;
-
+module.exports = function (app) {
   const client = redis.createClient({
     url: app.get('keys').REDIS_URL,
   });

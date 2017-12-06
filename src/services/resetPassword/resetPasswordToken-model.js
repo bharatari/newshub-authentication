@@ -28,13 +28,12 @@ module.exports = function (sequelize) {
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        resetPasswordToken.belongsTo(models.user);
-        resetPasswordToken.belongsTo(models.organization);
-      },
-    },
   });
+
+  resetPasswordToken.associate = function (models) {
+    resetPasswordToken.belongsTo(models.user);
+    resetPasswordToken.belongsTo(models.organization);
+  };
 
   return resetPasswordToken;
 };

@@ -1,11 +1,10 @@
-'use strict';
+const errors = require('@feathersjs/errors');
+const _ = require('lodash');
 
-const errors = require('feathers-errors');
-
-module.exports = function () {
+exports.disabled = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
-
+    
     return models.user.findOne({
       where: {
         username: hook.data.username,
@@ -23,5 +22,21 @@ module.exports = function () {
     }).catch((err) => {
       throw err;
     });
+    
+    return hook;
+  };
+};
+
+exports.normalize = function (options) {
+  return function (hook) {
+    if (hook.data.username) {
+      if (_.isString(hook.data.username)) {
+        hook.data.username = hook.data.username.toLowerCase().trim();
+      } else {
+        return errors.BadRequest();
+      }
+    } else {
+      return errors.BadRequest();
+    }
   };
 };

@@ -8,7 +8,6 @@ module.exports = function (models) {
             data: {
               name: 'STUDENT_MEDIA_SUITE_STUDIO',
               label: 'Student Media Studio',
-              buildingId: 1,
               capacity: 0,
             },
           },

@@ -21,9 +21,5 @@ module.exports = function () {
   // Get our initialize service to that we can bind hooks
   const resetPasswordService = app.service('/api/reset-password');
 
-  // Set up our before hooks
-  resetPasswordService.before(hooks.before);
-
-  // Set up our after hooks
-  resetPasswordService.after(hooks.after);
+  resetPasswordService.hooks(hooks);
 };

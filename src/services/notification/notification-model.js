@@ -31,18 +31,20 @@ module.exports = function (sequelize) {
       type: Sequelize.JSONB,
       allowNull: false,
       defaultValue: {},
-    }
+    },
+    /*
+    activityId: {
+      type: Sequelize.NUMBER,
+    },*/
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        notification.belongsTo(models.user, { as: 'recipient' });
-        notification.belongsTo(models.user, { as: 'sender' });
-        notification.belongsTo(models.organization);
-        notification.belongsTo(models.activity);
-      },
-    },
   });
+
+  notification.associate = function (models) {
+    notification.belongsTo(models.user, { as: 'recipient' });
+    notification.belongsTo(models.user, { as: 'sender' });
+    notification.belongsTo(models.organization);
+  };
 
   return notification;
 };

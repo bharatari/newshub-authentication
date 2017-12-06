@@ -7,7 +7,7 @@
 // on hooks.
 
 const access = require('../utils/access');
-const errors = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 const modelUtils = require('../utils/models');
 
 exports.checkAccess = function (options) {
