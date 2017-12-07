@@ -52,7 +52,9 @@ describe('resetPassword service', () => {
             email: 'normal@domain.com',
             used: false,
           },
-          order: '"createdAt" DESC',
+          order: [
+            ['createdAt', 'DESC'],
+          ],
         }).then((token) => {
           const data = JSON.parse(JSON.stringify(token));
 
