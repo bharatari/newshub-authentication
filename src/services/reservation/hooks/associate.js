@@ -8,7 +8,7 @@ module.exports = function (options) {
       if (hook.params.devices) {
         return hook.app.get('sequelize').models.reservation.findOne({
           where: {
-            id: hook.result.dataValues.id,
+            id: hook.result.id,
           },
         }).then(reservation => new Promise((resolve, reject) => {
           async.each(hook.params.devices, (device, callback) => {

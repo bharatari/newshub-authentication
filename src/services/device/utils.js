@@ -31,12 +31,12 @@ module.exports = {
     });
   },
   subtractQuantity(devices, id, quantity) {
-    const device = _.find(devices, item => item.dataValues.id === id);
+    const device = _.find(devices, item => item.id === id);
 
-    device.dataValues.availableQuantity = device.dataValues.availableQuantity - quantity;
+    device.availableQuantity = device.availableQuantity - quantity;
 
-    if (device.dataValues.availableQuantity < 0) {
-      device.dataValues.availableQuantity = 0;
+    if (device.availableQuantity < 0) {
+      device.availableQuantity = 0;
     }
 
     return devices;
