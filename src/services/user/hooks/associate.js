@@ -9,7 +9,7 @@ module.exports = function (options) {
         id: hook.result.id,
       },
     }).then(async (user) => {
-      await user.addOrganization(hook.result.currentOrganizationId);
+      await user.addOrganization(hook.result.currentOrganizationId, { roles: null });
     }).catch((err) => {
       throw err;
     });
