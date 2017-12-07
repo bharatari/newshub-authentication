@@ -13,6 +13,7 @@ module.exports = function () {
       default: 5,
       max: 25,
     },
+    raw: false,
   };
 
   // Initialize our service with any options it requires

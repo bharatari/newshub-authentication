@@ -12,14 +12,15 @@ module.exports = function(){
     paginate: {
       default: 5,
       max: 25
-    }
+    },
+    raw: false,
   };
 
   // Initialize our service with any options it requires
-  app.use('/buildings', service(options));
+  app.use('/api/building', service(options));
 
   // Get our initialize service to that we can bind hooks
-  const buildingService = app.service('/buildings');
+  const buildingService = app.service('/api/building');
 
   buildingService.hooks(hooks);
 };
