@@ -17,53 +17,43 @@ const should = chai.should();
 
 describe('device service', function () {
   before((done) => {
-    this.server = app.listen(3030);
+    chai.request(app)
+      .post('/api/login')
+      .set('Accept', 'application/json')
+      .send({
+        strategy: 'local',
+        username: 'normal',
+        password: 'password',
+      })
+      .end((err, res) => {
+        user = res.body.accessToken;
 
-    this.server.once('listening', () => {
-      chai.request(app)
-        .post('/api/login')
-        .set('Accept', 'application/json')
-        .send({
-          strategy: 'local',
-          username: 'normal',
-          password: 'password',
-        })
-        .end((err, res) => {
-          user = res.body.accessToken;
+        chai.request(app)
+          .post('/api/login')
+          .set('Accept', 'application/json')
+          .send({
+            strategy: 'local',
+            username: 'admin',
+            password: 'password',
+          })
+          .end((err, res) => {
+            admin = res.body.accessToken;
 
-          chai.request(app)
-            .post('/api/login')
-            .set('Accept', 'application/json')
-            .send({
-              strategy: 'local',
-              username: 'admin',
-              password: 'password',
-            })
-            .end((err, res) => {
-              admin = res.body.accessToken;
+            chai.request(app)
+              .post('/api/login')
+              .set('Accept', 'application/json')
+              .send({
+                strategy: 'local',
+                username: 'master',
+                password: 'password',
+              })
+              .end((err, res) => {
+                master = res.body.accessToken;
 
-              chai.request(app)
-                .post('/api/login')
-                .set('Accept', 'application/json')
-                .send({
-                  strategy: 'local',
-                  username: 'master',
-                  password: 'password',
-                })
-                .end((err, res) => {
-                  master = res.body.accessToken;
-
-                  done();
-                });
-            });
-        });
-    });
-  });
-
-  after((done) => {
-    this.server.close(() => {
-      done();
-    }); 
+                done();
+              });
+          });
+      });
   });
 
   it('registered the device service', () => {

@@ -35,6 +35,7 @@ describe('Feathers application tests', () => {
     chai.use(chaiAsPromised);
       
     this.server = app.listen(3030);
+    
     this.server.once('listening', async () => {
       try {
         const models = app.get('sequelize').models;

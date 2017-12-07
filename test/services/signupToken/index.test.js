@@ -12,8 +12,6 @@ const should = chai.should();
 
 describe('signupToken service', () => {
   before((done) => {
-    this.server = app.listen(3030);
-
     chai.request(app)
       .post('/api/login')
       .set('Accept', 'application/json')
@@ -51,12 +49,6 @@ describe('signupToken service', () => {
               });
           });
       });
-  });
-
-  after((done) => {
-    this.server.close(() => {
-      done();
-    });
   });
 
   it('registered the signupToken service', () => {

@@ -14,8 +14,6 @@ const should = chai.should();
 
 describe('reservation service', () => {
   before((done) => {
-    this.server = app.listen(3030);
-
     chai.request(app)
       .post('/api/login')
       .set('Accept', 'application/json')
@@ -65,12 +63,6 @@ describe('reservation service', () => {
               });
           });
       });
-  });
-
-  after((done) => {
-    this.server.close(() => {
-      done();
-    });
   });
 
   it('registered the reservation service', () => {

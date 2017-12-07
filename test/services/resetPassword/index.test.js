@@ -7,18 +7,6 @@ const chai = require('chai');
 const should = chai.should();
   
 describe('resetPassword service', () => {
-  before((done) => {
-    this.server = app.listen(3030);
-
-    this.server.once('listening', () => done());
-  });
-
-  after((done) => {
-    this.server.close(() => {
-      done();
-    });
-  });
-
   it('registered the resetPassword service', () => {
     assert.ok(app.service('/api/reset-password'));
   });

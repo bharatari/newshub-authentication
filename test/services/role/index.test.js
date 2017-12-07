@@ -12,8 +12,6 @@ const should = chai.should();
 
 describe('role service', () => {
   before((done) => {
-    this.server = app.listen(3030);
-
     chai.request(app)
       .post('/api/login')
       .set('Accept', 'application/json')
@@ -51,12 +49,6 @@ describe('role service', () => {
               });
           });
       });
-  });
-
-  after((done) => {
-    this.server.close(() => {
-      done();
-    });
   });
 
   it('registered the role service', () => {
