@@ -27,7 +27,9 @@ module.exports = async function (models) {
     { username: 'ownerDenyOverlap', roles: 'user:update, deny!user:update!owner, user:roles:update!owner' },
     { username: 'ownerDenyReservation', roles: 'reservation:update, deny!reservation:update!owner, roomReservation:update, deny!roomReservation:update!owner' },
     { username: 'ownerDenyReservationProperty', roles: 'reservation:update, deny!reservation:approved:update!owner, roomReservation:update, deny!roomReservation:approved:update!owner' },
-    { username: 'editroles', roles: 'member' }
+    { username: 'editroles', roles: 'member' },
+    { username: 'radiouser', roles: null },
+    { username: 'radioadmin', roles: 'reservation:update, roomReservation:update' },
   ];
 
   try {

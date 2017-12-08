@@ -25,6 +25,17 @@ module.exports = function (models) {
               defaultRoles: '',
             },
           },
+          {
+            model: 'organization',
+            data: {
+              name: 'radio',
+              label: 'Radio UTD',
+              link: 'http://www.radioutd.com',
+              logo: 'http://www.radioutd.com',
+              meta: {},
+              defaultRoles: 'roomReservation:create',
+            },
+          },
         ]);
       });
   });

@@ -13,6 +13,12 @@ module.exports = async function (models) {
     },
   });
   
+  const radio = await models.organization.findOne({
+    where: {
+      name: 'radio'
+    },
+  });
+
   return new Promise((resolve, reject) => models.user.destroy({ where: {} })
       .then(() => {
         bcrypt.genSalt(10, (error, salt) => {
@@ -226,6 +232,32 @@ module.exports = async function (models) {
                   disabled: false,
                   options: {},
                   currentOrganizationId: alternate.id,
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'radiouser',
+                  firstName: 'Radio',
+                  lastName: 'User',
+                  email: 'radioUser@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: radio.id,
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'radioadmin',
+                  firstName: 'Radio',
+                  lastName: 'Admin',
+                  email: 'radioAdmin@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: radio.id,
                 },
               }
             ]);

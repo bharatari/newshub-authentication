@@ -10,8 +10,6 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const _ = require('lodash');
 
-// CHECK DEFAULT ROLES
-
 describe('access utils', () => {
   before((done) => {
     chai.use(chaiAsPromised);
@@ -528,7 +526,7 @@ describe('access utils', () => {
     });
   });
 
-  describe('#getPermissions', () => {
+  describe('#getUserRoles', () => {
     it('should return user roles', () => {
       const models = app.get('sequelize').models;
 
@@ -543,6 +541,24 @@ describe('access utils', () => {
       }).catch((err) => {
         assert.fail();
       });
+    });
+
+    it('should handle default roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'radiouser' } });
+
+      return assert.becomes(utils.getUserRoles(models, user.id), 'roomReservation:create');
+    });
+
+    it('should not return default roles if user has roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'radioadmin' } });
+
+      return assert.becomes(utils.getUserRoles(models, user.id), 'reservation:update, roomReservation:update');
     });
   });
 
