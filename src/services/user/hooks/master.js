@@ -74,7 +74,7 @@ module.exports = function (options) {
         }
       }
 
-      if (currentOrganizationId !== user.currentOrganizationId) {
+      if (!_.isNil(currentOrganizationId) && (currentOrganizationId !== user.currentOrganizationId)) {
         if (hook.params.user.id != hook.id) {
           throw new errors.NotAuthenticated('You do not have the permission to switch organizations.');
         }        

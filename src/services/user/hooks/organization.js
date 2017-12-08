@@ -31,7 +31,7 @@ module.exports = function (options) {
             },
           });
 
-          await user.addOrganization(organizationId, { roles: null });
+          await user.addOrganization(organizationId, { through: { roles: null }});
           
           delete hook.data.organizationId;
 

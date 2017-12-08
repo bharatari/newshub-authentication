@@ -4,6 +4,7 @@
 
 const chai = require('chai');
 const assert = require('assert');
+const _ = require('lodash');
 const app = require('../../../src/app');
 const User = app.service('/api/user');
 const Device = app.service('/api/device');
@@ -111,7 +112,7 @@ describe('device service', function () {
       });
   });
 
-  it('should not return devices within organization', async (done) => {
+  it('should not return device within organization', async (done) => {
     const device = await app.get('sequelize').models.device.findOne({
       where: {
         name: 'Zoom H6'
@@ -128,7 +129,7 @@ describe('device service', function () {
       });
   });
 
-  it('should return devices within organization', async (done) => {
+  it('should return device within organization', async (done) => {
     const device = await app.get('sequelize').models.device.findOne({
       where: {
         name: 'Mixer 1 Tascam'
@@ -143,5 +144,35 @@ describe('device service', function () {
         res.should.have.status(200);
         done();
       });
+  });
+
+  it('should return devices within organization', async (done) => {
+    const orgUser = await app.get('sequelize').models.user.findOne({
+      where: {
+        username: 'normal',
+      },
+    });
+
+    chai.request(app)
+    .get(`/api/device?$limit=10`)
+    .set('Accept', 'application/json')
+    .set('Authorization', 'Bearer '.concat(user))
+    .end((err, res) => {
+      res.should.have.status(200);
+
+      const data = res.body.data;
+
+      const inOrg = _.every(data, (value, index, array) => {
+        if (value.organization.id === orgUser.currentOrganizationId) {
+          return true;
+        }
+
+        return false;
+      });
+
+      inOrg.should.equal(true);
+
+      done();
+    });
   });
 });

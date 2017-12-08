@@ -4,6 +4,7 @@ const globalHooks = require('../../../hooks');
 const auth = require('@feathersjs/authentication').hooks;
 const local = require('@feathersjs/authentication-local').hooks;
 const hooks = require('feathers-hooks-common');
+const dehydrate = require('feathers-sequelize/hooks/dehydrate');
 const token = require('./token');
 const master = require('./master');
 const normalize = require('./normalize');
@@ -47,15 +48,27 @@ exports.before = {
 };
 
 exports.after = {
-  all: [local.protect('password')],
-  find: [],
-  get: [],
+  all: [],
+  find: [
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
+  get: [
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
   create: [
     associate(),
+    dehydrate(),
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
   ],
-  update: [],
+  update: [
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
   patch: [
     result(),
+    dehydrate(),
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
   ],
-  remove: [],
+  remove: [
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
 };

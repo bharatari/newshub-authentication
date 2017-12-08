@@ -13,7 +13,9 @@ module.exports = function (options) {
         }).then(reservation => new Promise((resolve, reject) => {
           async.each(hook.params.devices, (device, callback) => {
             reservation.addDevice(device.id, {
-              quantity: device.reservedQuantity,
+              through: {
+                quantity: device.reservedQuantity,
+              },
             }).then((reservation) => {
               callback();
             }).catch((err) => {

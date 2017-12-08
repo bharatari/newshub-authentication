@@ -72,7 +72,7 @@ describe('roomReservation service', function() {
   it('should allow user to create a reservation', async (done) => {
     const room = await app.get('sequelize').models.room.findOne({
       where: {
-        label: 'STUDENT_MEDIA_SUITE_STUDIO', 
+        name: 'STUDENT_MEDIA_SUITE_STUDIO', 
       },
     });
 
@@ -95,7 +95,7 @@ describe('roomReservation service', function() {
   it('should allow user to create a reservation with special requests', async (done) => {
     const room = await app.get('sequelize').models.room.findOne({
       where: {
-        label: 'STUDENT_MEDIA_SUITE_STUDIO_2',
+        name: 'STUDENT_MEDIA_SUITE_STUDIO_2',
       },
     });
 

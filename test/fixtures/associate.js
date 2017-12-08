@@ -34,11 +34,11 @@ module.exports = async function (models) {
     for (let i = 0; i < roles.length; i++) {
       const user = await models.user.findOne({ where: { username: roles[i].username } });
 
-      await user.addOrganization(user.currentOrganizationId, { roles: roles[i].roles });
+      await user.addOrganization(user.currentOrganizationId, { through: { roles: roles[i].roles }});
     
       if (roles[i].organizations) {
         for (let e = 0; e < roles[i].organizations.length; e++) {
-          await user.addOrganization(roles[i].organizations[e].id, { roles: roles[i].organizations[e].roles });
+          await user.addOrganization(roles[i].organizations[e].id, { through: { roles: roles[i].organizations[e].roles }});
         }
       }
     }
