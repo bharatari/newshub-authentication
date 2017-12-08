@@ -69,6 +69,9 @@ describe('user service', () => {
       })
       .end((err, res) => {
         res.should.have.status(201);
+
+        res.body.should.not.have.property('password');
+
         done();
       });
   });

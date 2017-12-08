@@ -39,7 +39,7 @@
     "cors": "^2.7.1",
     "deep-diff": "^0.3.8",
     "dotenv": "^2.0.0",
-    "feathers-hooks-common": "^3.10.0",
+    "feathers-hooks-common": "git://github.com/feathers-plus/feathers-hooks-common.git#master",
     "feathers-sequelize": "^3.0.0",
     "helmet": "^3.9.0",
     "icalendar": "^0.7.1",
