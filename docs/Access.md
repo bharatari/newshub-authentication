@@ -16,6 +16,10 @@ Permissions and roles also regulate access control on the client. NewsHub compon
 [deny!]global:<custom>
 <role>
 
+### Conventions
+
+Models are camel cased while actions, custom values and roles are dasherized. Properties follow the same naming conventions as the properties they reference.
+
 ## CRUD Permissions
 
 CRUD permissions correspond to standard create, read, update and delete actions. These permissions are implicitly created by the system.

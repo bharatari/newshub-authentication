@@ -51,12 +51,16 @@ module.exports = async function (models) {
   }
 
   const specialReservation = await models.reservation.findOne({
-    notes: 'SPECIAL',
+    where: {
+      notes: 'SPECIAL',
+    },
   });
 
   const specialDevice = await models.device.findOne({
-    name: 'SPECIAL',
-  })
+    where: {
+      name: 'SPECIAL',
+    },
+  });
 
   await specialReservation.addDevice(specialDevice.id, { through: { quantity: 1 }});
 };

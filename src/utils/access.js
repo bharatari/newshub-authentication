@@ -183,6 +183,14 @@ module.exports = {
       });
   },
 
+  /**
+   * Retrieves and populates a user's roles and permissions.
+   * 
+   * @param {*} models 
+   * @param {*} redis 
+   * @param {*} userId
+   * @public
+   */
   async resolve(models, redis, userId) {
     const roles = await this.getUserRoles(models, userId);
     const permissions = await this.populateRoles(models, redis, roles, userId);
@@ -319,7 +327,7 @@ module.exports = {
    * @private
    * @param {Object} models - Sequelize models
    * @param {Object} redis - Redis instance
-   * @param {string} permissions
+   * @param {string} roles
    * @returns {Array}
    */
   populateRoles(models, redis, roles, userId) {

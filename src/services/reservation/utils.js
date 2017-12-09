@@ -43,8 +43,14 @@ module.exports = {
       const specialApproval = await this.checkSpecialApproval(models, reservation.id);
 
       if (specialApproval) {
-        const canApproveSpecialApproval = await access.has(models, redis, userId, specialApproval);
+        let canApproveSpecialApproval;
 
+        if (access.isPermission(specialApproval)) {
+          canApproveSpecialApproval = await access.has(models, redis, userId, specialApproval);
+        } else {
+          canApproveSpecialApproval = await access.is(models, userId, specialApproval);
+        }
+        
         if (canApproveSpecialApproval) {
           hook.data.approvedById = userId;
 

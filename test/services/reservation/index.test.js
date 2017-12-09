@@ -9,6 +9,7 @@ let user;
 let admin;
 let master;
 let mercury;
+let special;
 
 const should = chai.should();
 
@@ -178,7 +179,7 @@ describe('reservation service', () => {
         approved: true,
       })
       .end((err, res) => {
-        res.should.have.status(200);
+        res.should.have.status(401);
 
         done();
       });
