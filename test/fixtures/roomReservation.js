@@ -14,13 +14,13 @@ module.exports = function (models) {
 
     const ownerDenyReservation = await models.user.findOne({
       where: {
-        username: 'ownerDenyReservation',
+        username: 'ownerdenyreservation',
       },
     });
 
     const ownerDenyReservationProperty = await models.user.findOne({
       where: {
-        username: 'ownerDenyReservationProperty',
+        username: 'ownerdenyreservationproperty',
       },
     });
 

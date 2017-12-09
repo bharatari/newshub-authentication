@@ -68,7 +68,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'masterDeny',
+                  username: 'masterdeny',
                   firstName: 'Master',
                   lastName: 'User',
                   email: 'masterDeny@domain.com',
@@ -133,7 +133,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerDeny',
+                  username: 'ownerdeny',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDeny@domain.com',
@@ -146,7 +146,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerDenyProperty',
+                  username: 'ownerdenyproperty',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDenyProperty@domain.com',
@@ -159,7 +159,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerDenyOverlap',
+                  username: 'ownerdenyoverlap',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDenyOverlap@domain.com',
@@ -172,7 +172,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerDenyReservation',
+                  username: 'ownerdenyreservation',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDenyReservation@domain.com',
@@ -185,7 +185,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerDenyReservationProperty',
+                  username: 'ownerdenyreservationproperty',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDenyReservationProperty@domain.com',

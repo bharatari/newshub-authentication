@@ -32,7 +32,7 @@ module.exports = async function (models) {
               permissions: 'reservation:read, device:read, reservation:create, user:firstName:update!owner, user:lastName:update!owner, user:title:update!owner',
               organizationId: organization.id,  
             }
-          }
+          },
         ]);
       });
   });

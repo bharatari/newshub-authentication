@@ -75,7 +75,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'masterDeny',
+          username: 'masterdeny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -166,7 +166,7 @@ describe('access utils', () => {
       
       const user = await models.user.findOne({
         where: {
-          username: 'ownerDenyReservation',
+          username: 'ownerdenyreservation',
         }
       });
 
@@ -217,7 +217,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerDeny',
+          username: 'ownerdeny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -234,7 +234,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerDenyProperty',
+          username: 'ownerdenyproperty',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -251,7 +251,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerDeny',
+          username: 'ownerdeny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -276,7 +276,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerDenyProperty',
+          username: 'ownerdenyproperty',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -301,7 +301,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerDenyReservation',
+          username: 'ownerdenyreservation',
         },
       });
 
@@ -320,7 +320,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerDenyReservationProperty',
+          username: 'ownerdenyreservationproperty',
         },
       });
 
@@ -339,7 +339,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerDenyReservation',
+          username: 'ownerdenyreservation',
         },
       });
 
@@ -358,7 +358,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerDenyReservationProperty',
+          username: 'ownerdenyreservationproperty',
         },
       });
 
