@@ -1,5 +1,17 @@
 module.exports = function (models) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
+    const utdtv = await models.organization.findOne({
+      where: {
+        name: 'utdtv',
+      },
+    });
+
+    const mercury = await models.organization.findOne({
+      where: {
+        name: 'themercury',
+      },
+    });
+
     return models.device.destroy({ where: {} })
       .then(() => {
         resolve([
@@ -14,6 +26,7 @@ module.exports = function (models) {
               meta: null,
               quantity: 1,
               disabled: false,
+              organizationId: utdtv.id,
             },
           },
           {
@@ -27,6 +40,21 @@ module.exports = function (models) {
               meta: null,
               quantity: 1,
               disabled: true,
+              organizationId: utdtv.id,
+            },
+          },
+          {
+            model: 'device',
+            data: {
+              name: 'Zoom H6',
+              label: 'Zoom 3s',
+              description: null,
+              notes: 'Mercury Device',
+              type: 'Recorders',
+              meta: null,
+              quantity: 1,
+              disabled: false,
+              organizationId: mercury.id,
             },
           },
         ]);

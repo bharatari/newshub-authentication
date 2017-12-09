@@ -1,5 +1,7 @@
 'use strict';
 
+const modelUtils = require('../../../utils/models');
+
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
@@ -10,13 +12,7 @@ module.exports = function (options) {
         as: 'thumbnail',
       }];
 
-      if (hook.params.sequelize) {
-        hook.params.sequelize.include = include;
-      } else {
-        hook.params.sequelize = {
-          include,
-        };
-      }
+      hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, null, include);
     }
 
     return hook;

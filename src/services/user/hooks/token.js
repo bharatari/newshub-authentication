@@ -1,6 +1,6 @@
 'use strict';
 
-const errors = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 const moment = require('moment');
 
 module.exports = function (options) {
@@ -19,7 +19,11 @@ module.exports = function (options) {
           } else {
             return response.update({
               hasBeenUsed: true,
-            }).then(response => hook).catch((err) => {
+            }).then(() => {
+              hook.data.currentOrganizationId = response.organizationId;
+
+              return hook;
+            }).catch((err) => {
               throw new errors.GeneralError('Unknown signup token error');
             });
           }

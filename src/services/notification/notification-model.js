@@ -18,27 +18,33 @@ module.exports = function (sequelize) {
       allowNull: false,
     },
     type: {
-      type: Sequelize.TEXT,
+      type: Sequelize.ENUM,
       allowNull: false,
+      values: ['success', 'info', 'warning', 'error'],
     },
-    icon: {
-      type: Sequelize.TEXT,
+    read: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
-    sound: {
-      type: Sequelize.TEXT,
+    meta: {
+      type: Sequelize.JSONB,
+      allowNull: false,
+      defaultValue: {},
     },
-    actionId: {
-      type: Sequelize.TEXT,
-    },
+    /*
+    activityId: {
+      type: Sequelize.NUMBER,
+    },*/
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        notification.belongsTo(models.user, { as: 'recipient' });
-        notification.belongsTo(models.user, { as: 'sender' });
-      },
-    },
   });
+
+  notification.associate = function (models) {
+    notification.belongsTo(models.user, { as: 'recipient' });
+    notification.belongsTo(models.user, { as: 'sender' });
+    notification.belongsTo(models.organization);
+  };
 
   return notification;
 };

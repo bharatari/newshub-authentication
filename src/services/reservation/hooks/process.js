@@ -9,9 +9,9 @@ module.exports = function (options) {
 
     hook.data.userId = hook.params.user.id;
     hook.params.devices = hook.data.devices;
+    
     delete hook.data.devices;
 
     return hook;
   };
 };
-

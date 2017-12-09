@@ -4,19 +4,92 @@
 
 const _ = require('lodash');
 const async = require('async');
+const diff = require('deep-diff').deep;
 
 module.exports = {
   userModel: 'user',
   userIdField: 'userId',
 
-  check(models, redis, userId, service, method, property, record, previousRecord) {
-    // detect differences in properties for update
-    // validate against roles
+  async check(models, redis, userId, service, method, record, previousRecord, id) {
+    if (method === 'update' || method === 'patch') {
+      const result = await this.checkUpdateOrPatch(models, redis, userId, service, method, record, previousRecord, id);
+      
+      return result;
+    }
 
-    // for create, check deny permissions for properties
-    // the user is allowed or not allowed to create
+    if (method === 'create') {
+      const result = await this.checkCreate(models, redis, userId, service, method, record, id);
+      
+      return result;
+    }
 
-    // check for standard roles otherwise
+    if (method === 'remove') {
+      const result = await this.can(models, redis, userId, service, method, null, id);
+
+      return result;
+    }
+
+    throw new Error('access.check() only works for update, patch, create and remove methods.')
+  },
+
+  async checkCreate(models, redis, userId, service, method, record, id) {
+    for (let property in record) {
+      if (record.hasOwnProperty(property)) {
+        let hasAccess;
+
+        try {
+          hasAccess = await this.can(models, redis, userId, service, method, property, id);
+        } catch (e) {
+          throw e;
+        }
+
+        if (!hasAccess) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  },
+
+  async checkUpdateOrPatch(models, redis, userId, service, method, record, previousRecord, id) {
+    if (method === 'update') {
+      differences = diff(record, previousRecord);
+    }
+
+    if (method === 'patch') {
+      const properties = [];
+
+      for (let property in record) {
+        if (record.hasOwnProperty(property)) {
+          properties.push(property);
+        }
+      }
+
+      // Only deal with properties being patched
+      const oldRecord = _.pick(previousRecord, properties);
+      
+      differences = diff(record, oldRecord);
+    }
+
+    // Pluck properties that are being changed
+    const properties = this.convertDifferences(differences);
+
+    for (let i = 0; i < properties.length; i++) {
+      let hasAccess;
+
+      try {
+        hasAccess = await this.can(models, redis, userId, service, method, properties[i], id);
+      } catch (e) {
+        throw e;
+      }
+
+      if (!hasAccess) {
+        return false;
+      }
+    }
+
+    return true;
   },
 
   /**
@@ -69,7 +142,7 @@ module.exports = {
   },
 
   /**
-   * Checks if user has the given permission. Used by
+   * Checks if user has the specific given permission. Used by
    * the can function and also can be used for checking
    * and custom permissions.
    * 
@@ -84,7 +157,7 @@ module.exports = {
 
         return this.getUserRoles(models, userId)
           .then(roles =>
-            this.populateRoles(models, redis, roles)
+            this.populateRoles(models, redis, roles, userId)
           )
           .then(permissionsArray =>
             this.includesPermission(models, permissionsArray, permission, userId, model, id)
@@ -112,20 +185,19 @@ module.exports = {
 
   async resolve(models, redis, userId) {
     const roles = await this.getUserRoles(models, userId);
-    const permissions = await this.populateRoles(models, redis, roles);
+    const permissions = await this.populateRoles(models, redis, roles, userId);
 
     if (roles) {
       const rolesArray = roles.split(', ');
-      rolesArray.concat(permissions);
 
-      return rolesArray;
+      return rolesArray.concat(permissions);
     }
 
     return [];
   },
 
   /**
-   * Checks if there is a deny permission for the given
+   * Checks if there is a deny permission for the specific given
    * permission.
    * 
    * @private
@@ -141,7 +213,7 @@ module.exports = {
 
         return this.getUserRoles(models, userId)
           .then(roles =>
-            this.populateRoles(models, redis, roles)
+            this.populateRoles(models, redis, roles, userId)
           )
           .then((permissionsArray) => {
             return this.includesPermission(models, permissionsArray, denyPermission, userId, model, id)
@@ -250,7 +322,7 @@ module.exports = {
    * @param {string} permissions
    * @returns {Array}
    */
-  populateRoles(models, redis, roles) {
+  populateRoles(models, redis, roles, userId) {
     let original;
 
     if (roles && _.isString(roles)) {
@@ -266,7 +338,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       async.each(original, (role, callback) => {
         if (this.isRole(role)) {
-          this.populateRole(models, redis, role)
+          this.populateRole(models, redis, role, userId)
             .then((newPermissions) => {
               _.remove(permissions, n =>
                 n === role
@@ -301,10 +373,14 @@ module.exports = {
    * @param {string} role - Role to replace
    * @returns {Promise}
    */
-  populateRole(models, redis, role) {
+  async populateRole(models, redis, role, userId) {
+    const user = await models.user.findOne({ where: { id: userId } });
+    const organizationId = user.currentOrganizationId;
+
     return models.role.find({
       where: {
         name: role,
+        organizationId,
       },
     }).then((data) => {
       const role = JSON.parse(JSON.stringify(data));
@@ -332,11 +408,14 @@ module.exports = {
    * @param {string} role
    * @returns {Object}
    */
-  getRole(models, redis, role) {
+  async getRole(models, redis, role, userId) {
+    const user = await models.user.findOne({ where: { id: userId } });
+    const organizationId = user.currentOrganizationId;
+
     return new Promise((resolve, reject) => {
-      redis.hget('role', role, function (err, permissions) {
+      redis.hget('role', this.constructRoleForRedis(role, organizationId), function (err, permissions) {
         if (err || !permissions) {
-          return this.retrieveRole(models, redis, role)
+          return this.retrieveRole(models, redis, role, userId)
             .then((result) => {
               resolve(result);
             })
@@ -360,15 +439,19 @@ module.exports = {
    * @param {string} role
    * @returns {string}
    */
-  retrieveRole(models, redis, role) {
+  async retrieveRole(models, redis, role, userId) {
+    const user = await models.user.findOne({ where: { id: userId } });
+    const organizationId = user.currentOrganizationId;
+
     return models.role.find({
       where: {
         name: role,
+        organizationId,
       },
     }).then((data) => {
       const result = JSON.parse(JSON.stringify(data));
 
-      redis.hset('role', result.name, result.permissions);
+      redis.hset('role', this.constructRoleForRedis(result.name, organizationId), result.permissions);
 
       return result.permissions;
     }).catch((err) => {
@@ -384,22 +467,35 @@ module.exports = {
    * @param {string} userId
    * @returns {Promise}
    */
-  getUserRoles(models, userId) {
-    return models.user.findOne({
-      where: {
-        id: userId,
-      },
-    }).then((result) => {
-      const user = JSON.parse(JSON.stringify(result));
+  async getUserRoles(models, userId) {
+    const user = await models.user.findOne({ where: { id: userId } });
 
-      if (user) {
-        return user.roles;
+    return models.organization_user.findOne({
+      where: {
+        userId: userId,
+        organizationId: user.currentOrganizationId,
+      },
+    }).then(async (result) => {
+      const data = JSON.parse(JSON.stringify(result));
+
+      if (data) {
+        if (data.roles) {
+          return data.roles;
+        }
+
+        const organization = await models.organization.findOne({ where: { id: user.currentOrganizationId }});
+
+        return organization.defaultRoles;
       }
 
       throw new Error();
     }).catch((err) => {
       throw err;
     });
+  },
+
+  constructRoleForRedis(role, organizationId) {
+    return `${organizationId}:${role}`;
   },
 
   /**
@@ -543,4 +639,34 @@ module.exports = {
   split(value) {
     return value.split(':');
   },
+
+  /**
+   * Converts deep-diff object.
+   *
+   * @private
+   * @param {Array} differences
+   * @returns {Array}
+   */
+  convertDifferences(differences) {
+    const result = [];
+
+    for (let i = 0; i < differences.length; i++) {
+      const path = this.constructPath(differences[i].path);
+
+      result.push(path);
+    }
+
+    return result;
+  },
+
+  constructPath(array) {
+    const path = array[0];
+
+    for (let i = 1; i < array.length; i++) {
+      path += '.' + array[i];
+    }
+
+    return path;
+  }
+  
 };

@@ -13,6 +13,7 @@ module.exports = function () {
       default: 5,
       max: 25,
     },
+    raw: false,
   };
 
   // Initialize our service with any options it requires
@@ -21,9 +22,5 @@ module.exports = function () {
   // Get our initialize service to that we can bind hooks
   const reservationService = app.service('/api/reservation');
 
-  // Set up our before hooks
-  reservationService.before(hooks.before);
-
-  // Set up our after hooks
-  reservationService.after(hooks.after);
+  reservationService.hooks(hooks);
 };

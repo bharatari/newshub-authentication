@@ -8,6 +8,14 @@ Roles on the other hand do not directly correspond to anything in the system and
 
 Permissions and roles also regulate access control on the client. NewsHub components are access control-aware meaning components will change their appearance and structure based on the permissions the user has. For example, if a user has the permission to edit a certain field in a data record, it will appear as an editable field and if they only have read access, the field will display as static text. This extends to pages as well. Pages have access control in two ways. The first way is dependency-based access control where the permissions that are needed for the page to properly function are defined for each page. If the user does not have the required permissions, the page will not be accessible to them. The second way is custom access control where you can restrict certain pages to certain roles. Because roles are dynamically defined, these pages are dynamically restricted. In the code, a `dynamic` flag is set and the client knows to check the database for the corresponding role required to access the page and then match that against the user.
 
+## Structure
+
+[deny!]<model>:<action>[!owner]
+[deny!]<model>:<property>:<action>[!owner]
+[deny!]<model>:<custom>
+[deny!]global:<custom>
+<role>
+
 ## CRUD Permissions
 
 CRUD permissions correspond to standard create, read, update and delete actions. These permissions are implicitly created by the system.
@@ -31,6 +39,10 @@ if (approved || checkedOut || checkedIn || adminNotes || disabled || specialRequ
   }
 }
 ```
+
+# Owner Modifier
+
+The owner modifier gives the specified role to a user if they own the object they are attempting to access/modify.
 
 ## Roles
 

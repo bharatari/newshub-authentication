@@ -13,6 +13,7 @@ module.exports = function () {
       default: 5,
       max: 25,
     },
+    raw: false,
   };
 
   // Initialize our service with any options it requires
@@ -24,9 +25,5 @@ module.exports = function () {
   // Get our initialize service to that we can bind hooks
   const imageService = app.service('/api/image');
 
-  // Set up our before hooks
-  imageService.before(hooks.before);
-
-  // Set up our after hooks
-  imageService.after(hooks.after);
+  imageService.hooks(hooks);
 };

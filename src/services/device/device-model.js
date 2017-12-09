@@ -36,8 +36,8 @@ module.exports = function (sequelize) {
       allowNull: false,
     },
     specialApproval: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false,
+      type: Sequelize.TEXT,
+      defaultValue: null,
     },
     disabled: {
       type: Sequelize.BOOLEAN,
@@ -46,18 +46,15 @@ module.exports = function (sequelize) {
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        device.belongsTo(models.image, { as: 'thumbnail' });
-        device.belongsToMany(models.reservation, {
-          through: modelUtils.reservationDevices(sequelize),
-        });
-        device.belongsToMany(models.organization, {
-          through: modelUtils.organizationDevice(sequelize),
-        });
-      },
-    },
   });
+
+  device.associate = function (models) {
+    device.belongsTo(models.image, { as: 'thumbnail' });
+    device.belongsTo(models.organization);
+    device.belongsToMany(models.reservation, {
+      through: modelUtils.reservationDevices(sequelize),
+    });
+  };
 
   return device;
 };

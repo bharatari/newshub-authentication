@@ -1,6 +1,6 @@
 'use strict';
 
-const errors = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 const email = require('../../utils/email');
 const _ = require('lodash');
 const access = require('../../utils/access');
@@ -18,7 +18,7 @@ module.exports = {
     }).then((reservation) => {
       for (let i = 0; i < reservation.devices.length; i++) {
         if (reservation.devices[i].specialApproval) {
-          return true;
+          return reservation.devices[i].specialApproval;
         }
       }
 
@@ -43,34 +43,36 @@ module.exports = {
       const specialApproval = await this.checkSpecialApproval(models, reservation.id);
 
       if (specialApproval) {
-        const canApproveSpecialApproval = await access.has(models, redis, userId, 'reservation:special-approval');
+        const canApproveSpecialApproval = await access.has(models, redis, userId, specialApproval);
 
         if (canApproveSpecialApproval) {
           hook.data.approvedById = userId;
 
-          return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
-            .then(function (response) {
-              return hook;
-            }).catch(function (err) {
-              // Don't throw error just because email didn't send
-              return hook;
-            });
+          try {
+            await email.queueEmails([reservation.user], null, 'approved', 'USER_RESERVATION_RESPONSE');
+
+            return hook;
+          } catch (e) {
+            // Don't throw error just because email didn't send
+            return hook;
+          }
         } else {
           throw new errors.NotAuthenticated('MASTER_SPECIAL_REQUEST');
         }
       } else {
-        const canApprove = await access.can(models, redis, userId, 'reservation', 'update', 'approved')
+        const canApprove = await access.can(models, redis, userId, 'reservation', 'update', 'approved', hook.id);
 
         if (canApprove) {
           hook.data.approvedById = userId;
 
-          return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
-            .then(function (response) {
-              return hook;
-            }).catch(function (err) {
-              // Don't throw error just because email didn't send
-              return hook;
-            });
+          try {
+            await email.queueEmails([reservation.user], null, 'approved', 'USER_RESERVATION_RESPONSE');
+
+            return hook;
+          } catch (e) {
+            // Don't throw error just because email didn't send
+            return hook;
+          }
         } else {
           throw new errors.NotAuthenticated('Must have permission to update reservation status.');
         }
@@ -81,80 +83,85 @@ module.exports = {
       if (canApproveSpecialRequests) {
         hook.data.approvedById = userId;
 
-        return email.sendEmail(hook.app, reservation.user.email, null, 'approved', 'USER_RESERVATION_RESPONSE')
-          .then(function (response) {
-            return hook;
-          }).catch(function (err) {
-            // Don't throw error just because email didn't send
-            return hook;
-          });
+        try {
+          await email.queueEmails([reservation.user], null, 'approved', 'USER_RESERVATION_RESPONSE');
+
+          return hook;
+        } catch (e) {
+          // Don't throw error just because email didn't send
+          return hook;
+        }
       } else {
         throw new errors.NotAuthenticated('MASTER_SPECIAL_REQUEST');
       }
     }
   },
   async checkOut(hook, models, redis, userId, reservation, data) {
-    const canCheckOut = await access.can(models, redis, userId, 'reservation', 'update', 'checkedOut');
+    const canCheckOut = await access.can(models, redis, userId, 'reservation', 'update', 'checkedOut', hook.id);
 
     if (canCheckOut) {
       hook.data.checkedOutById = userId;
 
-      return email.sendEmail(hook.app, reservation.user.email, null, 'checked out', 'USER_RESERVATION_RESPONSE')
-        .then(function (response) {
-          return hook;
-        }).catch(function (err) {
-          // Don't throw error just because email didn't send
-          return hook;
-        });
+      try {
+        await email.queueEmails([reservation.user], null, 'checked out', 'USER_RESERVATION_RESPONSE')
+
+        return hook;
+      } catch (e) {
+        // Don't throw error just because email didn't send
+        return hook;
+      }
     } else {
       throw new errors.NotAuthenticated('Must have permission to update reservation status.');
     }
   },
   async checkIn(hook, models, redis, userId, reservation, data) {
-    const canCheckIn = await access.can(models, redis, userId, 'reservation', 'update', 'checkedIn');
+    const canCheckIn = await access.can(models, redis, userId, 'reservation', 'update', 'checkedIn', hook.id);
 
     if (canCheckIn) {
       hook.data.checkedInById = userId;
 
-      return email.sendEmail(hook.app, reservation.user.email, null, 'checked in', 'USER_RESERVATION_RESPONSE')
-        .then(function (response) {
-          return hook;
-        }).catch(function (err) {
-          // Don't throw error just because email didn't send
-          return hook;
-        });
+      try {
+        await email.queueEmails([reservation.user], null, 'checked in', 'USER_RESERVATION_RESPONSE')
+
+        return hook;
+      } catch (e) {
+        // Don't throw error just because email didn't send
+        return hook;
+      }
     } else {
       throw new errors.NotAuthenticated('Must have permission to update reservation status.');
     }
   },
   async disable(hook, models, redis, userId, reservation, data) {
-    const canDisable = await access.can(models, redis, userId, 'reservation', 'update', 'disabled');
+    const canDisable = await access.can(models, redis, userId, 'reservation', 'update', 'disabled', hook.id);
 
     if (canDisable) {
       hook.data.disabledById = userId;
 
-      return email.sendEmail(hook.app, reservation.user.email, null, 'rejected', 'USER_RESERVATION_RESPONSE')
-        .then(function (response) {
-          return hook;
-        }).catch(function (err) {
-          // Don't throw error just because email didn't send
-          return hook;
-        });
+      try {
+        await email.queueEmails([reservation.user], null, 'rejected', 'USER_RESERVATION_RESPONSE')
+
+        return hook;
+      } catch (e) {
+        // Don't throw error just because email didn't send
+        return hook;
+      }
     } else {
       throw new errors.NotAuthenticated('Must have permission to update reservation status.');
     }
   },
   async adminNotes(hook, models, redis, userId, reservation, data) {
-    const canUpdateAdminNotes = await access.can(models, redis, userId, 'reservation', 'update', 'adminNotes');
+    const canUpdateAdminNotes = await access.can(models, redis, userId, 'reservation', 'update', 'adminNotes', hook.id);
 
     if (canUpdateAdminNotes) {
-      return email.sendEmail(hook.app, reservation.user.email, null, adminNotes, 'USER_RESERVATION_ADMIN_NOTES')
-        .then(function (response) {
-          return hook;
-        }).catch(function (err) {
-          // Don't throw error just because email didn't send
-          return hook;
-        });
+      try {
+        await email.queueEmails([reservation.user], null, adminNotes, 'USER_RESERVATION_ADMIN_NOTES')
+
+        return hook;
+      } catch (e) {
+        // Don't throw error just because email didn't send
+        return hook;
+      }
     } else {
       throw new errors.NotAuthenticated('Must have permission to update reservation admin notes.');
     }

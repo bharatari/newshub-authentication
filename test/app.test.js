@@ -5,38 +5,57 @@ if (!process.env.S3_API_KEY) {
 }
 
 const assert = require('assert');
+const request = require('request');
+const fixtures = require('sequelize-fixtures');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const request = require('request');
+const chaiHttp = require('chai-http');
+const authentication = require('@feathersjs/authentication');
+const jwt = require('@feathersjs/authentication-jwt');
+const local = require('@feathersjs/authentication-local');
+const bodyParser = require('body-parser');
+
 const app = require('../src/app');
-const fixtures = require('sequelize-fixtures');
+const organization = require('./fixtures/organization');
 const user = require('./fixtures/user');
 const resetPasswordToken = require('./fixtures/resetPasswordToken');
 const role = require('./fixtures/role');
 const reservation = require('./fixtures/reservation');
+const roomReservation = require('./fixtures/roomReservation');
+const room = require('./fixtures/room');
 const device = require('./fixtures/device');
-const mockery = require('mockery');
-const sendgrid = require('./mocks/sendgrid');
+const signupToken = require('./fixtures/signupToken');
+const associate = require('./fixtures/associate');
+const building = require('./fixtures/building');
+
+chai.use(chaiHttp);
 
 describe('Feathers application tests', () => {
   before(function (done) {
-    mockery.enable({
-      warnOnUnregistered: false,
-    });
-    mockery.registerMock('sendgrid', sendgrid);
-
     chai.use(chaiAsPromised);
-
+      
     this.server = app.listen(3030);
+    
     this.server.once('listening', async () => {
-      const models = app.get('sequelize').models;
-
-      await fixtures.loadFixtures(user(models), models);
-      await fixtures.loadFixtures(resetPasswordToken(models), models)
-      await fixtures.loadFixtures(role(models), models);
-      await fixtures.loadFixtures(reservation(models), models);
-      await fixtures.loadFixtures(device(models), models);
-
+      try {
+        const models = app.get('sequelize').models;
+        
+        await fixtures.loadFixtures(organization(models), models);
+        await fixtures.loadFixtures(user(models), models);
+        await fixtures.loadFixtures(resetPasswordToken(models), models)
+        await fixtures.loadFixtures(role(models), models);
+        await fixtures.loadFixtures(reservation(models), models);
+        await fixtures.loadFixtures(building(models), models);
+        await fixtures.loadFixtures(roomReservation(models), models);
+        await fixtures.loadFixtures(room(models), models);
+        await fixtures.loadFixtures(device(models), models);
+        await fixtures.loadFixtures(signupToken(models), models);
+        
+        await associate(models);
+      } catch (e) {
+        throw e;
+      }
+  
       done();
     });
   });

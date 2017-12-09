@@ -24,7 +24,14 @@ module.exports = function (sequelize) {
     },
   }, {
     freezeTableName: true,
+    classMethods: {
+      
+    },
   });
+
+  signupToken.associate = function (models) {
+    signupToken.belongsTo(models.organization);
+  };
 
   return signupToken;
 };

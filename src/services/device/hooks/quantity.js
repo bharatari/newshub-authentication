@@ -22,7 +22,7 @@ module.exports = function () {
         const devices = hook.result;
 
         async.each(devices, (device, callback) => {
-          device.dataValues.availableQuantity = device.dataValues.quantity;
+          device.availableQuantity = device.quantity;
           callback();
         }, (err) => {
           if (hook.data.startDate && hook.data.endDate) {

@@ -10,7 +10,7 @@ const Sequelize = require('sequelize');
 module.exports = function (sequelize) {
   const resetPasswordToken = sequelize.define('resetPasswordToken', {
     token: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     expires: {
@@ -23,17 +23,17 @@ module.exports = function (sequelize) {
       allowNull: false,
     },
     email: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        resetPasswordToken.belongsTo(models.user);
-      },
-    },
   });
+
+  resetPasswordToken.associate = function (models) {
+    resetPasswordToken.belongsTo(models.user);
+    resetPasswordToken.belongsTo(models.organization);
+  };
 
   return resetPasswordToken;
 };

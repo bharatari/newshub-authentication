@@ -1,6 +1,24 @@
 const bcrypt = require('bcryptjs');
 
-module.exports = function (models) {
+module.exports = async function (models) {
+  const organization = await models.organization.findOne({
+    where: {
+      name: 'utdtv',
+    },
+  });
+
+  const alternate = await models.organization.findOne({
+    where: {
+      name: 'themercury'
+    },
+  });
+  
+  const radio = await models.organization.findOne({
+    where: {
+      name: 'radio'
+    },
+  });
+
   return new Promise((resolve, reject) => models.user.destroy({ where: {} })
       .then(() => {
         bcrypt.genSalt(10, (error, salt) => {
@@ -18,6 +36,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -30,7 +49,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'admin',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -43,7 +62,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'master',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -56,7 +75,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'master, deny!user:update',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -69,7 +88,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'device:create',
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -82,7 +101,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'admin, reservation:approve',
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -95,7 +114,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'admin, advisor',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -108,7 +127,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'deny!user:update, user:update',
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -121,7 +140,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'user:update, deny!user:update!owner'
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -134,7 +153,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'user:update!owner, deny!user:roles:update!owner'
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -147,7 +166,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'user:update, deny!user:update!owner, user:roles:update!owner'
+                  currentOrganizationId: organization.id,
                 }
               },
               {
@@ -160,7 +179,7 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'reservation:update, deny!reservation:update!owner'
+                  currentOrganizationId: organization.id,
                 },
               },
               {
@@ -173,7 +192,72 @@ module.exports = function (models) {
                   password: hash,
                   disabled: false,
                   options: {},
-                  roles: 'reservation:update, deny!reservation:approved:update!owner'
+                  currentOrganizationId: organization.id,
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'mercury',
+                  firstName: 'Mercury',
+                  lastName: 'User',
+                  email: 'mercuryUser@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: alternate.id,
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'editroles',
+                  firstName: 'Edit',
+                  lastName: 'Roles',
+                  email: 'editRoles@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: organization.id,
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'editorganizations',
+                  firstName: 'Edit',
+                  lastName: 'Organizations',
+                  email: 'editOrganizations@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: alternate.id,
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'radiouser',
+                  firstName: 'Radio',
+                  lastName: 'User',
+                  email: 'radioUser@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: radio.id,
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'radioadmin',
+                  firstName: 'Radio',
+                  lastName: 'Admin',
+                  email: 'radioAdmin@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: radio.id,
                 },
               }
             ]);

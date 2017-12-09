@@ -1,12 +1,11 @@
 {
   "host": "localhost",
-  "port": 3030,
+  "port": "PORT",
   "postgres": "TEST_DB",
+  "DATABASE_SSL": "true",
   "public": "../public/",
   "auth": {
-    "token": {
-      "secret": "p9g6Jt5SqfJ9HoM5hIO0UG9r1JjlhRN4fGXheh5kcG2BxMjtpCw4u1uTJTOO5iztQZVTPZ1SBueCdzSfOnAwEw=="
-    }
+    "secret": "p9g6Jt5SqfJ9HoM5hIO0UG9r1JjlhRN4fGXheh5kcG2BxMjtpCw4u1uTJTOO5iztQZVTPZ1SBueCdzSfOnAwEw=="
   },
   "keys": {
     "S3_API_KEY": "S3_API_KEY",

@@ -10,6 +10,7 @@ module.exports = function (options) {
 
     hook.data.token = chance.hash({ casing: 'upper', length: 6 });
     hook.data.expires = moment().add(3, 'days').toDate();
+    hook.data.organizationId = hook.params.user.currentOrganizationId;
 
     return hook;
   };

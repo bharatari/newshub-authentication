@@ -3,32 +3,10 @@
 const assert = require('assert');
 const app = require('../../../src/app');
 const chai = require('chai');
-const chaiHttp = require('chai-http');
-const authentication = require('feathers-authentication/client');
-const bodyParser = require('body-parser');
-
-app
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-  .configure(authentication());
-
-chai.use(chaiHttp);
 
 const should = chai.should();
   
 describe('resetPassword service', () => {
-  before((done) => {
-    this.server = app.listen(3030);
-
-    this.server.once('listening', () => done());
-  });
-
-  after((done) => {
-    this.server.close(() => {
-      done();
-    });
-  });
-
   it('registered the resetPassword service', () => {
     assert.ok(app.service('/api/reset-password'));
   });
@@ -74,7 +52,9 @@ describe('resetPassword service', () => {
             email: 'normal@domain.com',
             used: false,
           },
-          order: '"createdAt" DESC',
+          order: [
+            ['createdAt', 'DESC'],
+          ],
         }).then((token) => {
           const data = JSON.parse(JSON.stringify(token));
 

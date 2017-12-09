@@ -1,6 +1,7 @@
 'use strict';
 
 const access = require('../../../utils/access');
+const modelUtils = require('../../../utils/models');
 
 module.exports = function (options) {
   return async function (hook) {
@@ -12,13 +13,9 @@ module.exports = function (options) {
         const canViewDisabled = await access.has(models, redis, hook.params.user.id, 'user:view-disabled')
 
         if (!canViewDisabled) {
-          hook.params.sequelize = {
-            where: {
-              disabled: false,
-            },
-          };
-        } else {
-          hook.params.sequelize = {};
+          hook.params.sequelize = modelUtils.mergeQuery(hook.params.sequelize, {
+            disabled: false,
+          });
         }
       }
     }

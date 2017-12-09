@@ -3,67 +3,66 @@
 const assert = require('assert');
 const app = require('../../../src/app');
 const chai = require('chai');
-const chaiHttp = require('chai-http');
-const authentication = require('feathers-authentication/client');
-const bodyParser = require('body-parser');
+const _ = require('lodash');
 
 let user;
 let admin;
 let master;
-
-app
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-  .configure(authentication());
-
-chai.use(chaiHttp);
+let mercury;
 
 const should = chai.should();
 
 describe('reservation service', () => {
   before((done) => {
-    this.server = app.listen(3030);
-
     chai.request(app)
       .post('/api/login')
       .set('Accept', 'application/json')
       .send({
+        strategy: 'local',
         username: 'normal',
         password: 'password',
       })
       .end((err, res) => {
-        user = res.body.token;
+        user = res.body.accessToken;
 
         chai.request(app)
           .post('/api/login')
           .set('Accept', 'application/json')
           .send({
+            strategy: 'local',
             username: 'admin',
             password: 'password',
           })
           .end((err, res) => {
-            admin = res.body.token;
+            admin = res.body.accessToken;
 
             chai.request(app)
               .post('/api/login')
               .set('Accept', 'application/json')
               .send({
+                strategy: 'local',
                 username: 'master',
                 password: 'password',
               })
               .end((err, res) => {
-                master = res.body.token;
+                master = res.body.accessToken;
 
-                done();
+                chai.request(app)
+                  .post('/api/login')
+                  .set('Accept', 'application/json')
+                  .send({
+                    strategy: 'local',
+                    username: 'mercury',
+                    password: 'password',
+                  })
+                  .end((err, res) => {
+                    mercury = res.body.accessToken;
+
+                    done();
+                  });
               });
           });
       });
-  });
-
-  after((done) => {
-    this.server.close(() => {
-      done();
-    });
   });
 
   it('registered the reservation service', () => {
@@ -179,5 +178,101 @@ describe('reservation service', () => {
 
   it('should not allow normal user to check in a reservation', () => {
 
+  });
+
+  it('should allow find requests', (done) => {
+    chai.request(app)
+      .get(`/api/reservation`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        done();
+      });
+  });
+
+  it('should sort by start date', (done) => {
+    chai.request(app)
+      .get(`/api/reservation?$sort[startDate]=-1&$limit=10&$skip=0`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        const data = res.body.data;
+
+        const sorted = _.every(data, (value, index, array) => {
+          return index === 0 || new Date(array[index - 1].startDate) >= new Date(array[index].startDate);
+        });
+
+        sorted.should.equal(true);
+
+        done();
+      });
+  });
+
+  it('should sort by user without crashing', (done) => {
+    chai.request(app)
+      .get(`/api/reservation?$sort[user.fullName]=-1&$limit=10&$skip=0`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        done();
+      });
+  });
+
+  it('should sort by reservation status', () => {
+
+  });
+
+  it('should only return reservations in the same organization', async (done) => {
+    const orgUser = await app.get('sequelize').models.user.findOne({
+      where: {
+        username: 'normal',
+      },
+    });
+
+    chai.request(app)
+      .get(`/api/reservation?$limit=10`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        const data = res.body.data;
+
+        const inOrg = _.every(data, (value, index, array) => {
+          if (value.organization.id === orgUser.currentOrganizationId) {
+            return true;
+          }
+
+          return false;
+        });
+
+        inOrg.should.equal(true);
+
+        done();
+      });
+  });
+
+  it('should not return reservation that is not in organization', async (done) => {
+    const reservation = await app.get('sequelize').models.reservation.findOne({
+      where: {
+        notes: 'VIDEO_SHOOT',
+      },
+    });
+
+    chai.request(app)
+      .get(`/api/reservation/${reservation.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(mercury))
+      .end((err, res) => {
+        res.should.have.status(401);
+
+        done();
+      });
   });
 });

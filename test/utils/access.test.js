@@ -154,12 +154,51 @@ describe('access utils', () => {
       });
     });
 
-    it('should not throw error for user with non-existent roles', () => {
+    it('should handle id', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT3',
+        },
+      });
+      
+      const user = await models.user.findOne({
+        where: {
+          username: 'ownerDenyReservation',
+        }
+      });
+
+      assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null), true);
+
+      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null, reservation.id), false);
     });
 
-    it('should not throw error for user with non-existent permissions', () => {
+    it('should not throw error for user with non-existent roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      const user = await models.user.findOne({
+        where: {
+          username: 'normal',
+        }
+      });
+
+      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update'), false);
+    });
+
+    it('should not throw error for user with non-existent permissions', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({
+        where: {
+          username: 'normal',
+        }
+      });
+
+      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update'), false);
     });
   });
 
@@ -256,66 +295,84 @@ describe('access utils', () => {
       });
     });
 
-    it.skip('should deny access to own record with deny permission', () => {
+    it('should deny access to own record with deny permission', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      return models.user.findOne({
+      const user = await models.user.findOne({
         where: {
           username: 'ownerDenyReservation',
         },
-      }).then((data) => {
-        const user = JSON.parse(JSON.stringify(data));
-
-        return models.reservation.findOne({
-          where: {
-            username: 'admin',
-          },
-        }).then((result) => {
-          const reservation = JSON.parse(JSON.stringify(result));
-
-          return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), false);
-        });
-      }).catch((err) => {
-        assert.fail();
       });
+
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT3',
+        },
+      });
+
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), true);
     });
 
-    it.skip('should deny access to own record with deny property permission', () => {
+    it('should deny access to own record with deny property permission', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      return models.user.findOne({
+      const user = await models.user.findOne({
         where: {
           username: 'ownerDenyReservationProperty',
         },
-      }).then((data) => {
-        const user = JSON.parse(JSON.stringify(data));
-
-        return models.reservation.findOne({
-          where: {
-            username: 'admin',
-          },
-        }).then((result) => {
-          const reservation = JSON.parse(JSON.stringify(result));
-
-          return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), false);
-        });
-      }).catch((err) => {
-        assert.fail();
       });
+
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT4',
+        },
+      });
+
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), true);
     });
 
-    it('should not deny access to other record with deny permission', () => {
+    it.skip('should not deny access to other record with deny permission', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      const user = await models.user.findOne({
+        where: {
+          username: 'ownerDenyReservation',
+        },
+      });
+
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT',
+        },
+      });
+
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), false);
     });
 
-    it('should not deny access to other record with deny property permission', () => {
+    it.skip('should not deny access to other record with deny property permission', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      const user = await models.user.findOne({
+        where: {
+          username: 'ownerDenyReservationProperty',
+        },
+      });
+
+      const reservation = await models.reservation.findOne({
+        where: {
+          notes: 'VIDEO_SHOOT',
+        },
+      });
+
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), true);
     });
 
     it('should handle overlap by making deny flag take precedence', () => {
-
+      
     });
   });
 
@@ -352,15 +409,38 @@ describe('access utils', () => {
   });
 
   describe('#resolve', () => {
-    it('should not remove roles', () => {
+    it('should resolve roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
 
+      const user = await models.user.findOne({ where: { username: 'admin' } });
+
+      const expected = 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, reservation:approve, roomReservation:create, roomReservation:read, roomReservation:delete, roomReservation:update, roomReservation:approve, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled';
+      const array = ['admin'];
+
+      array.push(...expected.split(', '));
+
+      return assert.becomes(utils.resolve(models, redis, user.id), array);
+    });
+
+    it('should handle user with no roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'normal' } });
+
+      const expected = [];
+
+      return assert.becomes(utils.resolve(models, redis, user.id), expected);
     });
   });
 
-  describe('#populateRoles', () => {
-    it('should replace a single role with corresponding permission', () => {
+  describe('#populateRoles', async () => {
+    it('should replace a single role with corresponding permission', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'admin' } });
 
       return models.role.findOne({
         where: {
@@ -369,15 +449,17 @@ describe('access utils', () => {
       }).then((data) => {
         const role = JSON.parse(JSON.stringify(data));
 
-        return assert.becomes(utils.populateRole(models, redis, 'admin'), role.permissions.split(', '));
+        return assert.becomes(utils.populateRole(models, redis, 'admin', user.id), role.permissions.split(', '));
       }).catch((err) => {
         assert.fail();
       });
     });
 
-    it('should replace all roles with corresponding permissions', () => {
+    it('should replace all roles with corresponding permissions', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'admin' } });
 
       return models.role.findOne({
         where: {
@@ -386,7 +468,7 @@ describe('access utils', () => {
       }).then((data) => {
         const role = JSON.parse(JSON.stringify(data));
 
-        return utils.populateRole(models, redis, 'admin, advisor')
+        return utils.populateRole(models, redis, 'admin, advisor', user.id)
           .then((result) => {
             return _.includes(result, 'user:delete');
           });
@@ -395,11 +477,13 @@ describe('access utils', () => {
       });
     });
 
-    it('should not throw error for non-existent roles', () => {
+    it('should not throw error for non-existent roles', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      return assert.becomes(utils.populateRole(models, redis, 'doesnotexist'), []);
+      const user = await models.user.findOne({ where: { username: 'admin' } });
+
+      return assert.becomes(utils.populateRole(models, redis, 'doesnotexist', user.id), []);
     });
 
     it('should support roles with empty permissions property', () => {
@@ -420,6 +504,7 @@ describe('access utils', () => {
 
     });
   });
+
   describe('#getRole', () => {
     it('should get permissions from corresponding role', () => {
 
@@ -429,15 +514,19 @@ describe('access utils', () => {
       
     })
   });
+
   describe('#retrieveRole', () => {
-    it('should retrieve role from database', () => {
+    it('should retrieve role from database', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      return assert.isFulfilled(utils.retrieveRole(models, redis, 'admin'));
+      const user = await models.user.findOne({ where: { username: 'admin' } });
+
+      return assert.isFulfilled(utils.retrieveRole(models, redis, 'admin', user.id));
     });
   });
-  describe('#getPermissions', () => {
+
+  describe('#getUserRoles', () => {
     it('should return user roles', () => {
       const models = app.get('sequelize').models;
 
@@ -453,7 +542,26 @@ describe('access utils', () => {
         assert.fail();
       });
     });
+
+    it('should handle default roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'radiouser' } });
+
+      return assert.becomes(utils.getUserRoles(models, user.id), 'roomReservation:create');
+    });
+
+    it('should not return default roles if user has roles', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'radioadmin' } });
+
+      return assert.becomes(utils.getUserRoles(models, user.id), 'reservation:update, roomReservation:update');
+    });
   });
+
   describe('#isRole', () => {
     it('should return true for a role', () => {
       const result = utils.isRole('admin');
@@ -476,6 +584,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#isPermission', () => {
     it('should return true for a standard role', () => {
       const result = utils.isPermission('reservation:read');
@@ -493,6 +602,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#isPropertyPermission', () => {
     it('should return true for a property permission', () => {
       const result = utils.isPropertyPermission('reservation:purpose:update');
@@ -510,6 +620,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#isCustomPermission', () => {
     it('should return true for custom permission', () => {
       const result = utils.isCustomPermission('reservation:approve');
@@ -527,6 +638,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#isCRUDAction', () => {
     it('should return true for create', () => {
       const result = utils.isCRUDAction('create');
@@ -554,6 +666,7 @@ describe('access utils', () => {
       assert.equal(result, false);
     });
   });
+
   describe('#convertToCRUD', () => {
     it('should convert find', () => {
       const action = utils.convertToCRUD('find');
@@ -586,6 +699,7 @@ describe('access utils', () => {
       assert.equal(action, 'delete');
     });
   });
+
   describe('#split', () => {
     it('should split standard roles', () => {
       const role = 'reservation:read';

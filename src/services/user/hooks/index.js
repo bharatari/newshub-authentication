@@ -1,51 +1,74 @@
 'use strict';
 
 const globalHooks = require('../../../hooks');
-const hooks = require('feathers-hooks');
-const auth = require('feathers-authentication').hooks;
+const auth = require('@feathersjs/authentication').hooks;
+const local = require('@feathersjs/authentication-local').hooks;
+const hooks = require('feathers-hooks-common');
+const dehydrate = require('feathers-sequelize/hooks/dehydrate');
 const token = require('./token');
 const master = require('./master');
 const normalize = require('./normalize');
 const sanitize = require('./sanitize');
+const associate = require('./associate');
+const populate = require('./populate');
+const organization = require('./organization');
+const result = require('./result');
 
 exports.before = {
   all: [],
   find: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
+    auth.authenticate('jwt'),
+    globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
+    populate(),
     sanitize(),
   ],
   get: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
+    auth.authenticate('jwt'),
+    globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
+    populate(),
   ],
   create: [
     normalize(),
-    auth.hashPassword(),
+    local.hashPassword({ passwordField: 'password' }),
     token(),
   ],
   update: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
   patch: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
+    auth.authenticate('jwt'),
+    organization(),
+    globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
+    globalHooks.restrictChangeOrganization({ model: 'user', belongsToMany: true }),
     master(),
   ],
   remove: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
 };
 
 exports.after = {
-  all: [hooks.remove('password')],
-  find: [],
-  get: [],
-  create: [],
-  update: [],
-  patch: [],
-  remove: [],
+  all: [],
+  find: [
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
+  get: [
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
+  create: [
+    associate(),
+    dehydrate(),
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
+  update: [
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
+  patch: [
+    result(),
+    dehydrate(),
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
+  remove: [
+    hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
+  ],
 };

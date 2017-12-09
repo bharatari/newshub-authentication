@@ -32,13 +32,7 @@ module.exports = function (sequelize) {
       type: Sequelize.TEXT,
       allowNull: false,
     },
-    title: {
-      type: Sequelize.TEXT,
-    },
     notes: {
-      type: Sequelize.TEXT,
-    },
-    roles: {
       type: Sequelize.TEXT,
     },
     disabled: {
@@ -49,6 +43,16 @@ module.exports = function (sequelize) {
     options: {
       type: Sequelize.JSONB,
     },
+    barcode: {
+      type: Sequelize.TEXT,
+    },
+    meta: {
+      type: Sequelize.JSONB,
+      allowNull: false,
+      defaultValue: {
+        code: null,
+      },
+    },
   }, {
     freezeTableName: true,
     getterMethods: {
@@ -56,14 +60,14 @@ module.exports = function (sequelize) {
         return `${this.firstName} ${this.lastName}`;
       },
     },
-    classMethods: {
-      associate(models) {
-        user.belongsToMany(models.organization, {
-          through: modelUtils.organizationUser(sequelize),
-        });
-      },
-    },
   });
+
+  user.associate = function (models) {
+    user.belongsToMany(models.organization, {
+      through: modelUtils.organizationUser(sequelize),
+    });
+    user.belongsTo(models.organization, { as: 'currentOrganization' });
+  };
 
   return user;
 };

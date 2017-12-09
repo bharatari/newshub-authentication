@@ -11,16 +11,16 @@ const modelUtils = require('../../utils/models');
 module.exports = function(sequelize) {
   const room = sequelize.define('room', {
     name: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
       unique: true,
     },
     label: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     description: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
     },
     capacity: {
       type: Sequelize.INTEGER,
@@ -36,17 +36,19 @@ module.exports = function(sequelize) {
       allowNull: false,
       defaultValue: false,
     },
+    specialApproval: {
+      type: Sequelize.TEXT,
+      defaultValue: null,
+    },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        room.belongsTo(models.building);
-        room.belongsToMany(models.organization, {
-          through: modelUtils.organizationRoom(sequelize),
-        });
-      },
-    },
   });
+
+  room.associate = function (models) {
+    room.belongsTo(models.building);
+    room.belongsTo(models.organization);
+    room.belongsTo(models.user, { as: 'manager' });
+  };
 
   return room;
 };

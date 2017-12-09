@@ -1,8 +1,8 @@
 'use strict';
 
 const globalHooks = require('../../../hooks');
-const hooks = require('feathers-hooks');
-const auth = require('feathers-authentication').hooks;
+const auth = require('@feathersjs/authentication').hooks;
+const hooks = require('feathers-hooks-common');
 const populate = require('./populate');
 const process = require('./process');
 const filter = require('./filter');
@@ -14,12 +14,13 @@ const restrict = require('./restrict');
 const count = require('./count');
 const approve = require('./approve');
 const available = require('./available');
+const manager = require('./manager');
 
 exports.before = {
   all: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
+    auth.authenticate('jwt'),
+    globalHooks.protectOrganization({ model: 'roomReservation'}),
+    globalHooks.restrictChangeOrganization({ model: 'roomReservation'}),
   ],
   find: [
     validate(),
@@ -35,9 +36,10 @@ exports.before = {
     validate(),
     restrict(),
     approve(),
+    globalHooks.addToOrganization(),
   ],
   update: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
   patch: [
     status(),
@@ -55,6 +57,7 @@ exports.after = {
   get: [],
   create: [
     email(),
+    manager(),
   ],
   update: [],
   patch: [],

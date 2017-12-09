@@ -3,7 +3,7 @@
 const Chance = require('chance');
 const chance = new Chance();
 const moment = require('moment');
-const errors = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 const email = require('../../../utils/email');
 
 module.exports = function (options) {
@@ -17,7 +17,7 @@ module.exports = function (options) {
       where: {
         email: hook.data.email,
       },
-    }).then((result) => {
+    }).then(async (result) => {
       if (!result) {
         throw new errors.BadRequest('USER_NOT_FOUND_RESET_PASSWORD_TOKEN');
       }
@@ -25,11 +25,13 @@ module.exports = function (options) {
       hook.data.userId = result.id;
       hook.data.email = result.email;
 
-      return email.sendEmail(hook.app, hook.data.email, 'Password Reset', hook.data.token, 'RESET_PASSWORD')
-        .then(result => hook)
-        .catch((err) => {
-          throw new errors.GeneralError(err);
-        });
+      try {
+        await email.queueEmails([{ email: hook.data.email }], 'Password Reset', hook.data.token, 'RESET_PASSWORD')
+
+        return hook;
+      } catch (e) {
+        throw new errors.GeneralError(e);
+      }
     }).catch((err) => {
       throw err;
     });

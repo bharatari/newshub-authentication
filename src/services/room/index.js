@@ -12,7 +12,8 @@ module.exports = function(){
     paginate: {
       default: 5,
       max: 25
-    }
+    },
+    raw: false,
   };
 
   // Initialize our service with any options it requires
@@ -21,9 +22,5 @@ module.exports = function(){
   // Get our initialize service to that we can bind hooks
   const roomService = app.service('/api/room');
 
-  // Set up our before hooks
-  roomService.before(hooks.before);
-
-  // Set up our after hooks
-  roomService.after(hooks.after);
+  roomService.hooks(hooks);
 };

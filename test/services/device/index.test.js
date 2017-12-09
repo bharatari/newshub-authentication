@@ -3,74 +3,58 @@
 /* eslint no-shadow: 0 */
 
 const chai = require('chai');
-const chaiHttp = require('chai-http');
 const assert = require('assert');
+const _ = require('lodash');
 const app = require('../../../src/app');
 const User = app.service('/api/user');
 const Device = app.service('/api/device');
 const Token = app.service('/api/signup-token');
-const authentication = require('feathers-authentication/client');
-const bodyParser = require('body-parser');
 
 let user;
 let admin;
 let master;
 
-app
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-  .configure(authentication());
-
-chai.use(chaiHttp);
-
 const should = chai.should();
 
 describe('device service', function () {
   before((done) => {
-    this.server = app.listen(3030);
+    chai.request(app)
+      .post('/api/login')
+      .set('Accept', 'application/json')
+      .send({
+        strategy: 'local',
+        username: 'normal',
+        password: 'password',
+      })
+      .end((err, res) => {
+        user = res.body.accessToken;
 
-    this.server.once('listening', () => {
-      chai.request(app)
-        .post('/api/login')
-        .set('Accept', 'application/json')
-        .send({
-          username: 'normal',
-          password: 'password',
-        })
-        .end((err, res) => {
-          user = res.body.token;
+        chai.request(app)
+          .post('/api/login')
+          .set('Accept', 'application/json')
+          .send({
+            strategy: 'local',
+            username: 'admin',
+            password: 'password',
+          })
+          .end((err, res) => {
+            admin = res.body.accessToken;
 
-          chai.request(app)
-            .post('/api/login')
-            .set('Accept', 'application/json')
-            .send({
-              username: 'admin',
-              password: 'password',
-            })
-            .end((err, res) => {
-              admin = res.body.token;
+            chai.request(app)
+              .post('/api/login')
+              .set('Accept', 'application/json')
+              .send({
+                strategy: 'local',
+                username: 'master',
+                password: 'password',
+              })
+              .end((err, res) => {
+                master = res.body.accessToken;
 
-              chai.request(app)
-                .post('/api/login')
-                .set('Accept', 'application/json')
-                .send({
-                  username: 'master',
-                  password: 'password',
-                })
-                .end((err, res) => {
-                  master = res.body.token;
-
-                  done();
-                });
-            });
-        });
-    });
-  });
-
-  after((done) => {
-    this.server.close(() => {
-      done();
-    }); 
+                done();
+              });
+          });
+      });
   });
 
   it('registered the device service', () => {
@@ -126,5 +110,69 @@ describe('device service', function () {
         res.should.have.status(401);
         done();
       });
+  });
+
+  it('should not return device within organization', async (done) => {
+    const device = await app.get('sequelize').models.device.findOne({
+      where: {
+        name: 'Zoom H6'
+      }
+    });
+
+    chai.request(app)
+      .get(`/api/device/${device.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(401);
+        done();
+      });
+  });
+
+  it('should return device within organization', async (done) => {
+    const device = await app.get('sequelize').models.device.findOne({
+      where: {
+        name: 'Mixer 1 Tascam'
+      }
+    });
+
+    chai.request(app)
+      .get(`/api/device/${device.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(user))
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      });
+  });
+
+  it('should return devices within organization', async (done) => {
+    const orgUser = await app.get('sequelize').models.user.findOne({
+      where: {
+        username: 'normal',
+      },
+    });
+
+    chai.request(app)
+    .get(`/api/device?$limit=10`)
+    .set('Accept', 'application/json')
+    .set('Authorization', 'Bearer '.concat(user))
+    .end((err, res) => {
+      res.should.have.status(200);
+
+      const data = res.body.data;
+
+      const inOrg = _.every(data, (value, index, array) => {
+        if (value.organization.id === orgUser.currentOrganizationId) {
+          return true;
+        }
+
+        return false;
+      });
+
+      inOrg.should.equal(true);
+
+      done();
+    });
   });
 });

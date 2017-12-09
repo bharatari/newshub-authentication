@@ -56,20 +56,17 @@ module.exports = function (sequelize) {
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        reservation.belongsToMany(models.device, { through: modelUtils.reservationDevices(sequelize) });
-        reservation.belongsTo(models.user, { as: 'approvedBy' });
-        reservation.belongsTo(models.user, { as: 'checkedOutBy' });
-        reservation.belongsTo(models.user, { as: 'checkedInBy' });
-        reservation.belongsTo(models.user, { as: 'disabledBy' });
-        reservation.belongsTo(models.user);
-        reservation.belongsToMany(models.organization, {
-          through: modelUtils.organizationReservation(sequelize),
-        });
-      },
-    },
   });
+
+  reservation.associate = function (models) {
+    reservation.belongsToMany(models.device, { through: modelUtils.reservationDevices(sequelize) });
+    reservation.belongsTo(models.user, { as: 'approvedBy' });
+    reservation.belongsTo(models.user, { as: 'checkedOutBy' });
+    reservation.belongsTo(models.user, { as: 'checkedInBy' });
+    reservation.belongsTo(models.user, { as: 'disabledBy' });
+    reservation.belongsTo(models.user);
+    reservation.belongsTo(models.organization);
+  };
 
   return reservation;
 };

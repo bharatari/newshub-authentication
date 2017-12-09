@@ -11,24 +11,21 @@ const modelUtils = require('../../utils/models');
 module.exports = function(sequelize) {
   const building = sequelize.define('building', {
     name: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
       unique: true,
     },
     label: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
   }, {
     freezeTableName: true,
-    classMethods: {
-      associate(models) {
-        building.belongsToMany(models.organization, {
-          through: modelUtils.organizationBuilding(sequelize),
-        });
-      },
-    },
   });
+
+  building.associate = function (models) {
+    building.belongsTo(models.organization);
+  };
 
   return building;
 };

@@ -1,26 +1,30 @@
 'use strict';
 
 const globalHooks = require('../../../hooks');
-const hooks = require('feathers-hooks');
-const auth = require('feathers-authentication').hooks;
+const auth = require('@feathersjs/authentication').hooks;
+const hooks = require('feathers-hooks-common');
 const create = require('./create');
+const access = require('./access');
 
 exports.before = {
-  all: [],
+  all: [
+    auth.authenticate('jwt'),
+  ],
   find: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
   get: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
   create: [
+    access(),
     create(),
   ],
   update: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
   patch: [
-    hooks.disable(),
+    hooks.disallow(),
   ],
   remove: [],
 };

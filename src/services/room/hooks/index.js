@@ -1,15 +1,15 @@
 'use strict';
 
 const globalHooks = require('../../../hooks');
-const hooks = require('feathers-hooks');
-const auth = require('feathers-authentication').hooks;
+const auth = require('@feathersjs/authentication').hooks;
 const populate = require('./populate');
+const create = require('./create');
 
 exports.before = {
   all: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated()
+    auth.authenticate('jwt'),
+    globalHooks.protectOrganization({ model: 'room' }),
+    globalHooks.restrictChangeOrganization({ model: 'room' }),
   ],
   find: [
     populate(),
@@ -17,7 +17,10 @@ exports.before = {
   get: [
     populate(),
   ],
-  create: [],
+  create: [
+    create(),
+    globalHooks.addToOrganization(),
+  ],
   update: [],
   patch: [],
   remove: []

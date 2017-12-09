@@ -1,7 +1,7 @@
 'use strict';
 
 const utils = require('../utils');
-const errors = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 
 module.exports = function () {
   return function (hook) {
@@ -12,9 +12,9 @@ module.exports = function () {
       .then((result) => {
         if (result) {
           return hook;
-        }
-
-        throw new errors.BadRequest('ROOM_UNAVAILABLE');
+        } else {
+          throw new errors.BadRequest('ROOM_UNAVAILABLE');
+        }        
       })
       .catch((err) => {
         throw err;

@@ -13,6 +13,7 @@ module.exports = function () {
       default: 5,
       max: 25,
     },
+    raw: false,
   };
 
   // Initialize our service with any options it requires
@@ -21,9 +22,5 @@ module.exports = function () {
   // Get our initialize service to that we can bind hooks
   const notificationService = app.service('/api/notification');
 
-  // Set up our before hooks
-  notificationService.before(hooks.before);
-
-  // Set up our after hooks
-  notificationService.after(hooks.after);
+  notificationService.hooks(hooks);
 };
