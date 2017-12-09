@@ -107,7 +107,20 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'adminAdvisor',
+                  username: 'approvespecial',
+                  firstName: 'Special',
+                  lastName: 'Approve',
+                  email: 'approveSpecial@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: organization.id,
+                }
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'adminadvisor',
                   firstName: 'Admin',
                   lastName: 'Advisor',
                   email: 'adminAdvisor@domain.com',
@@ -258,6 +271,19 @@ module.exports = async function (models) {
                   disabled: false,
                   options: {},
                   currentOrganizationId: radio.id,
+                },
+              },
+              {
+                model: 'user',
+                data: {
+                  username: 'nondatabase',
+                  firstName: 'Non',
+                  lastName: 'Database',
+                  email: 'nonDatabase@domain.com',
+                  password: hash,
+                  disabled: false,
+                  options: {},
+                  currentOrganizationId: organization.id,
                 },
               }
             ]);

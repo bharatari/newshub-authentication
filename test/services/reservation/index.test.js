@@ -13,56 +13,63 @@ let mercury;
 const should = chai.should();
 
 describe('reservation service', () => {
-  before((done) => {
-    chai.request(app)
+  before(async (done) => {
+    const normalUser = await chai.request(app)
       .post('/api/login')
       .set('Accept', 'application/json')
       .send({
         strategy: 'local',
         username: 'normal',
         password: 'password',
-      })
-      .end((err, res) => {
-        user = res.body.accessToken;
-
-        chai.request(app)
-          .post('/api/login')
-          .set('Accept', 'application/json')
-          .send({
-            strategy: 'local',
-            username: 'admin',
-            password: 'password',
-          })
-          .end((err, res) => {
-            admin = res.body.accessToken;
-
-            chai.request(app)
-              .post('/api/login')
-              .set('Accept', 'application/json')
-              .send({
-                strategy: 'local',
-                username: 'master',
-                password: 'password',
-              })
-              .end((err, res) => {
-                master = res.body.accessToken;
-
-                chai.request(app)
-                  .post('/api/login')
-                  .set('Accept', 'application/json')
-                  .send({
-                    strategy: 'local',
-                    username: 'mercury',
-                    password: 'password',
-                  })
-                  .end((err, res) => {
-                    mercury = res.body.accessToken;
-
-                    done();
-                  });
-              });
-          });
       });
+
+    user = normalUser.body.accessToken;
+    
+    const adminUser = await chai.request(app)
+      .post('/api/login')
+      .set('Accept', 'application/json')
+      .send({
+        strategy: 'local',
+        username: 'admin',
+        password: 'password',
+      });
+
+    admin = adminUser.body.accessToken;
+      
+    const masterUser = await chai.request(app)
+      .post('/api/login')
+      .set('Accept', 'application/json')
+      .send({
+        strategy: 'local',
+        username: 'master',
+        password: 'password',
+      });
+
+    master = masterUser.body.accessToken;
+        
+    const mercuryUser = await chai.request(app)
+      .post('/api/login')
+      .set('Accept', 'application/json')
+      .send({
+        strategy: 'local',
+        username: 'mercury',
+        password: 'password',
+      });
+
+    mercury = mercuryUser.body.accessToken;
+
+    const specialUser = await chai.request(app)
+      .post('/api/login')
+      .set('Accept', 'application/json')
+      .send({
+        strategy: 'local',
+        username: 'approvespecial',
+        password: 'password',
+      });
+    
+    special = specialUser.body.accessToken;
+
+    done();
   });
 
   it('registered the reservation service', () => {
@@ -156,12 +163,88 @@ describe('reservation service', () => {
       });
   });
 
-  it('should allow authorized user to approve a reservation with special requests', () => {
+  it('should not allow user to approve reservation with special requests without appropriate access', async (done) => {
+    const reservation = await app.get('sequelize').models.reservation.findOne({
+      where: {
+        notes: 'SPECIAL_REQUESTS',
+      },
+    });
 
+    chai.request(app)
+      .patch(`/api/reservation/${reservation.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(admin))
+      .send({
+        approved: true,
+      })
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        done();
+      });
   });
 
-  it('should not allow user to approve reservation with special requests without appropriate access', () => {
+  it('should allow authorized user to approve a reservation with special requests', async (done) => {
+    const reservation = await app.get('sequelize').models.reservation.findOne({
+      where: {
+        notes: 'SPECIAL_REQUESTS',
+      },
+    });
 
+    chai.request(app)
+      .patch(`/api/reservation/${reservation.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(special))
+      .send({
+        approved: true,
+      })
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        done();
+      });
+  });
+
+  it('should not allow user to approve a special approval reservation without appropriate access', async (done) => {
+    const reservation = await app.get('sequelize').models.reservation.findOne({
+      where: {
+        notes: 'SPECIAL',
+      },
+    });
+
+    chai.request(app)
+      .patch(`/api/reservation/${reservation.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(admin))
+      .send({
+        approved: true,
+      })
+      .end((err, res) => {
+        res.should.have.status(401);
+
+        done();
+      });
+  });
+
+  it('should allow authorized user to approve a reservation with special approval', async (done) => {
+    const reservation = await app.get('sequelize').models.reservation.findOne({
+      where: {
+        notes: 'SPECIAL',
+      },
+    });
+
+    chai.request(app)
+      .patch(`/api/reservation/${reservation.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(special))
+      .send({
+        approved: true,
+      })
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        done();
+      });
   });
 
   it('should allow authorized user to check out a reservation', () => {
@@ -222,10 +305,6 @@ describe('reservation service', () => {
 
         done();
       });
-  });
-
-  it('should sort by reservation status', () => {
-
   });
 
   it('should only return reservations in the same organization', async (done) => {

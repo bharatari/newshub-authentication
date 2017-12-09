@@ -433,9 +433,31 @@ describe('access utils', () => {
 
       return assert.becomes(utils.resolve(models, redis, user.id), expected);
     });
+
+    it('should handle roles not in database', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'nondatabase' } });
+
+      const expected = ['not-database-role'];
+
+      return assert.becomes(utils.resolve(models, redis, user.id), expected);
+    });
   });
 
-  describe('#populateRoles', async () => {
+  describe('#populateRoles', () => {
+    it('should handle roles that are not in database', async () => {
+      const models = app.get('sequelize').models;
+      const redis = app.get('redis');
+
+      const user = await models.user.findOne({ where: { username: 'admin' } });
+
+      return assert.becomes(utils.populateRoles(models, redis, 'non-database-role', user.id), []);
+    });
+  });
+
+  describe('#populateRole', async () => {
     it('should replace a single role with corresponding permission', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
@@ -477,27 +499,13 @@ describe('access utils', () => {
       });
     });
 
-    it('should not throw error for non-existent roles', async () => {
+    it('should handle roles that are not in database', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
       const user = await models.user.findOne({ where: { username: 'admin' } });
 
-      return assert.becomes(utils.populateRole(models, redis, 'doesnotexist', user.id), []);
-    });
-
-    it('should support roles with empty permissions property', () => {
-
-    });
-  });
-
-  describe('#populateRole', () => {
-    it('should replace role with corresponding roles', () => {
-
-    });
-
-    it('should not throw error for non-existent role', () => {
-
+      return assert.becomes(utils.populateRole(models, redis, 'non-database-role', user.id), []);
     });
 
     it('should support roles with empty permissions property', () => {

@@ -57,6 +57,21 @@ module.exports = function (models) {
               organizationId: mercury.id,
             },
           },
+          {
+            model: 'device',
+            data: {
+              name: 'SPECIAL',
+              label: 'Special Device',
+              description: null,
+              notes: 'Device',
+              type: 'Camera',
+              specialApproval: 'technology-director',
+              meta: null,
+              quantity: 1,
+              disabled: false,
+              organizationId: utdtv.id,
+            },
+          },
         ]);
       });
   });

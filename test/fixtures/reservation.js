@@ -119,6 +119,39 @@ module.exports = function (models) {
               organizationId: mercury.id,
             },
           },
+          {
+            model: 'reservation',
+            data: {
+              purpose: 'Special Requests',
+              notes: 'SPECIAL_REQUESTS',
+              startDate: '2016-09-03 00:00:00+00',
+              endDate: '2016-09-07 00:00:00+00',
+              meta: {},
+              approved: false,
+              checkedOut: false,
+              checkedIn: false,
+              disabled: false,
+              userId: user.id,
+              specialRequests: 'Some special request',
+              organizationId: utdtv.id,
+            },
+          },
+          {
+            model: 'reservation',
+            data: {
+              purpose: 'Special Approval',
+              notes: 'SPECIAL',
+              startDate: '2016-10-03 00:00:00+00',
+              endDate: '2016-10-07 00:00:00+00',
+              meta: {},
+              approved: false,
+              checkedOut: false,
+              checkedIn: false,
+              disabled: false,
+              userId: user.id,
+              organizationId: utdtv.id,
+            },
+          },
         ]);
       });
   });

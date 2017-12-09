@@ -20,6 +20,7 @@ module.exports = async function (models) {
     { username: 'masterdeny', roles: 'master, deny!user:update' },
     { username: 'device', roles: 'device:create' },
     { username: 'approve', roles: 'admin, reservation:approve' },
+    { username: 'approvespecial', roles: 'reservation:approve, technology-director, reservation:special-requests' },
     { username: 'adminadvisor', roles: 'admin, advisor' },
     { username: 'deny', roles: 'deny!user:update, user:update' },
     { username: 'ownerdeny', roles: 'user:update, deny!user:update!owner' },
@@ -30,6 +31,7 @@ module.exports = async function (models) {
     { username: 'editroles', roles: 'member' },
     { username: 'radiouser', roles: null },
     { username: 'radioadmin', roles: 'reservation:update, roomReservation:update' },
+    { username: 'nondatabase', roles: 'not-database-role' },
   ];
 
   try {
@@ -47,4 +49,14 @@ module.exports = async function (models) {
   } catch (e) {
     throw e;
   }
+
+  const specialReservation = await models.reservation.findOne({
+    notes: 'SPECIAL',
+  });
+
+  const specialDevice = await models.device.findOne({
+    name: 'SPECIAL',
+  })
+
+  await specialReservation.addDevice(specialDevice.id, { through: { quantity: 1 }});
 };
