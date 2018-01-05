@@ -39,6 +39,9 @@ module.exports = function (sequelize) {
       type: Sequelize.TEXT,
       defaultValue: null,
     },
+    barcode: {
+      type: Sequelize.TEXT,
+    },
     disabled: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
