@@ -36,6 +36,7 @@ module.exports = function (options) {
           delete hook.data.organizationId;
 
           hook.params.skip = true;
+          
           hook.result = {
             organizationId,
           };
