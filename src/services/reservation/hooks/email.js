@@ -6,15 +6,15 @@ module.exports = function (options) {
   return function (hook) {
     return hook.app.get('sequelize').models.user.findAll({
       where: {
-        '$organizations.organization_user.organizationId$': hook.params.user.currentOrganizationId,
+        '$organizations.organization_users.organizationId$': hook.params.user.currentOrganizationId,
         $or: [
           {
-            '$organizations.organization_user.roles$': {
+            '$organizations.organization_users.roles$': {
               $like: '%admin%',
             },
           },
           {
-            '$organizations.organization_user.roles$': {
+            '$organizations.organization_users.roles$': {
               $like: '%master%',
             }
           },

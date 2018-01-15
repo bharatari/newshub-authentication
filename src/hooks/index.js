@@ -44,7 +44,7 @@ exports.protectOrganization = function (options) {
     if (hook.params.provider) {
       if (hook.method === 'update' || hook.method === 'patch' || hook.method === 'get') {
         if (options.belongsToMany) {
-          const query = `$organizations.organization_${options.model}.organizationId$`;
+          const query = `$organizations.organization_${options.model}s.organizationId$`;
 
           return models[options.model].findOne({
             where: {
@@ -79,7 +79,7 @@ exports.protectOrganization = function (options) {
           });
         }
       } else if (hook.method === 'find') {
-        const query = `$organizations.organization_${options.model}.organizationId$`;
+        const query = `$organizations.organization_${options.model}s.organizationId$`;
     
         if (options.belongsToMany) {
           const where = {

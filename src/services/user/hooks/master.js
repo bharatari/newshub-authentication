@@ -24,11 +24,11 @@ module.exports = function (options) {
       include: [{
         model: models.organization,
         where: {
-          '$organizations.organization_user.organizationId$': hook.params.user.currentOrganizationId,
+          '$organizations.organization_users.organizationId$': hook.params.user.currentOrganizationId,
         },
       }],
     }).then(async (user) => {
-      const currentRoles = user.get('organizations')[0].organization_user.roles;
+      const currentRoles = user.get('organizations')[0].organization_users.roles;
 
       if (roles && (roles != currentRoles)) {
         const canUpdateRoles = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'roles', hook.id);
@@ -40,9 +40,9 @@ module.exports = function (options) {
             }
           });
 
-          organization[0].organization_user.roles = hook.data.roles;
+          organization[0].organization_users.roles = hook.data.roles;
 
-          await organization[0].organization_user.save();
+          await organization[0].organization_users.save();
   
           delete hook.data.roles;
         } else {

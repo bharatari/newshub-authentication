@@ -64,7 +64,7 @@ module.exports = function (sequelize) {
 
   user.associate = function (models) {
     user.belongsToMany(models.organization, {
-      through: modelUtils.organizationUser(sequelize),
+      through: modelUtils.organizationUsers(sequelize),
     });
     user.belongsTo(models.organization, { as: 'currentOrganization' });
   };

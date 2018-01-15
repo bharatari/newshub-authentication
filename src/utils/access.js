@@ -478,7 +478,7 @@ module.exports = {
   async getUserRoles(models, userId) {
     const user = await models.user.findOne({ where: { id: userId } });
 
-    return models.organization_user.findOne({
+    return models.organization_users.findOne({
       where: {
         userId: userId,
         organizationId: user.currentOrganizationId,

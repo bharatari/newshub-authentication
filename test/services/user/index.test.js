@@ -135,12 +135,12 @@ describe('user service', () => {
           include: [{
             model: app.get('sequelize').models.organization,
             where: {
-              '$organizations.organization_user.organizationId$': user.currentOrganizationId,
+              '$organizations.organization_users.organizationId$': user.currentOrganizationId,
             },
           }]
         });
 
-        assert.equal(updatedUser.organizations[0].organization_user.roles, 'admin');
+        assert.equal(updatedUser.organizations[0].organization_users.roles, 'admin');
 
         done();
       });

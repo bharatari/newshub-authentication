@@ -80,8 +80,8 @@ module.exports = {
       quantity: Sequelize.INTEGER,
     });
   },
-  organizationUser(sequelize) {
-    return sequelize.define('organization_user', {
+  organizationUsers(sequelize) {
+    return sequelize.define('organization_users', {
       roles: Sequelize.TEXT,
       title: Sequelize.TEXT,
     });
