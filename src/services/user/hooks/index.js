@@ -50,9 +50,11 @@ exports.before = {
 exports.after = {
   all: [],
   find: [
+    dehydrate(),
     hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
   ],
   get: [
+    dehydrate(),
     hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
   ],
   create: [
