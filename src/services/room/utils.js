@@ -2,7 +2,7 @@
 
 const async = require('async');
 const _ = require('lodash');
-const reservation = require('../reservation/utils');
+const reservation = require('../roomReservation/utils');
 
 module.exports = {
   available(models, roomId, startDate, endDate) {
@@ -12,7 +12,7 @@ module.exports = {
       disabled: false,
     });
 
-    return models.reservation.findAll({
+    return models.roomReservation.findAll({
       where,
       include: [{
         model: models.room,
