@@ -13,12 +13,14 @@ const associate = require('./associate');
 const populate = require('./populate');
 const organization = require('./organization');
 const result = require('./result');
+const deviceManager = require('./deviceManager');
 
 exports.before = {
   all: [],
   find: [
     auth.authenticate('jwt'),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
+    deviceManager(),
     populate(),
     sanitize(),
   ],
