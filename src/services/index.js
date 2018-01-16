@@ -10,15 +10,11 @@ const role = require('./role');
 const image = require('./image');
 const signupToken = require('./signupToken');
 const notification = require('./notification');
-const reservation = require('./reservation');
-const device = require('./device');
 const user = require('./user');
 const Sequelize = require('sequelize');
 
 module.exports = function (app) {
   app.configure(user);
-  app.configure(device);
-  app.configure(reservation);
   app.configure(notification);
   app.configure(signupToken);
   app.configure(image);

@@ -75,11 +75,6 @@ module.exports = {
     
     return result;
   },
-  reservationDevices(sequelize) {
-    return sequelize.define('reservation_devices', {
-      quantity: Sequelize.INTEGER,
-    });
-  },
   organizationUsers(sequelize) {
     return sequelize.define('organization_users', {
       roles: Sequelize.TEXT,
