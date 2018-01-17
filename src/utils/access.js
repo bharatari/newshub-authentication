@@ -105,7 +105,7 @@ module.exports = {
   async can(models, redis, userId, service, method, property, id) {
     const permission = this.convertToPermission(service, method, property);
 
-    if (!_.isNil(property)) {
+    if (!_.isNil(property) && !_.isEmpty(property)) {
       const upperPermission = this.convertToUpperPermission(permission);
 
       try {
@@ -255,12 +255,12 @@ module.exports = {
     return new Promise((resolve, reject) => {
       if (this.includes(permissions, permission)) {
         resolve(true);
-      } else if (!_.isNil(id)) {
+      } else if (!_.isNil(id) && !_.isEmpty(id)) {
         const ownerPermission = `${permission}!owner`;
 
         if (this.includes(permissions, ownerPermission)) {
           return this.getRecord(models, model, id)
-            .then((data) => {              
+            .then((data) => {             
               if (model === this.userModel) {
                 if (data.id === userId) {
                   resolve(true);
