@@ -400,6 +400,18 @@ describe('access utils', () => {
 
       assert.equal(result, 'reservation:update');
     });
+    
+    it('should return the correct permission', () => {
+      const result = utils.convertToPermission('reservation', 'find');
+
+      assert.equal(result, 'reservation:read');
+    });
+
+    it('should return the correct permission', () => {
+      const result = utils.convertToPermission('reservation', 'get');
+
+      assert.equal(result, 'reservation:read');
+    });
   });
 
   describe('#is', () => {

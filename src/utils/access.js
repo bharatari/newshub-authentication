@@ -314,11 +314,11 @@ module.exports = {
    * @returns {string}
    */
   convertToPermission(service, method, property) {
-    if (!_.isNil(property)) {
-      return `${service}:${property}:${method}`
+    if (!_.isNil(property) && !_.isEmpty(property)) {
+      return `${service}:${property}:${this.convertToCRUD(method)}`
     }
 
-    return `${service}:${method}`;
+    return `${service}:${this.convertToCRUD(method)}`;
   },
 
   /**
