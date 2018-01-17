@@ -14,6 +14,7 @@ const populate = require('./populate');
 const organization = require('./organization');
 const result = require('./result');
 const deviceManager = require('./deviceManager');
+const currentOrganization = require('./currentOrganization');
 
 exports.before = {
   all: [],
@@ -53,10 +54,12 @@ exports.after = {
   all: [],
   find: [
     dehydrate(),
+    currentOrganization(),
     hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
   ],
   get: [
     dehydrate(),
+    currentOrganization(),
     hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
   ],
   create: [
