@@ -20,10 +20,8 @@ const organization = require('./fixtures/organization');
 const user = require('./fixtures/user');
 const resetPasswordToken = require('./fixtures/resetPasswordToken');
 const role = require('./fixtures/role');
-const reservation = require('./fixtures/reservation');
 const roomReservation = require('./fixtures/roomReservation');
 const room = require('./fixtures/room');
-const device = require('./fixtures/device');
 const signupToken = require('./fixtures/signupToken');
 const associate = require('./fixtures/associate');
 const building = require('./fixtures/building');
@@ -44,11 +42,9 @@ describe('Feathers application tests', () => {
         await fixtures.loadFixtures(user(models), models);
         await fixtures.loadFixtures(resetPasswordToken(models), models)
         await fixtures.loadFixtures(role(models), models);
-        await fixtures.loadFixtures(reservation(models), models);
         await fixtures.loadFixtures(building(models), models);
         await fixtures.loadFixtures(roomReservation(models), models);
         await fixtures.loadFixtures(room(models), models);
-        await fixtures.loadFixtures(device(models), models);
         await fixtures.loadFixtures(signupToken(models), models);
         
         await associate(models);
