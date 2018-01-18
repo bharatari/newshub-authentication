@@ -11,7 +11,7 @@ module.exports = function (models) {
               link: 'http://www.utdtv.com',
               logo: 'http://www.utdtv.com',
               meta: {},
-              defaultRoles: 'admin',
+              defaultRoles: '',
             },
           },
           {
