@@ -11,7 +11,7 @@ module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');
-    const { currentOrganizationId, roles, disabled, options } = hook.data;
+    const { currentOrganizationId, roles, title, disabled, options } = hook.data;
 
     if (hook.params.skip) {
       return hook;  
@@ -47,6 +47,28 @@ module.exports = function (options) {
           delete hook.data.roles;
         } else {
           throw new errors.NotAuthenticated('You do not have the permission to update roles');
+        }
+      }
+
+      const currentTitle = user.get('organizations')[0].organization_users.title;
+
+      if (!_.isNil(title) && !_.isEmpty(title) && (title != currentTitle)) {
+        const canUpdateTitle = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'title', hook.id);
+
+        if (canUpdateTitle) {
+          const organization = await user.getOrganizations({
+            where: {
+              id: hook.params.user.currentOrganizationId
+            }
+          });
+
+          organization[0].organization_users.title = hook.data.title;
+
+          await organization[0].organization_users.save();
+  
+          delete hook.data.title;
+        } else {
+          throw new errors.NotAuthenticated('You do not have the permission to update title');
         }
       }
 
