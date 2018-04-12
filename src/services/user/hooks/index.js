@@ -15,6 +15,7 @@ const organization = require('./organization');
 const result = require('./result');
 const deviceManager = require('./deviceManager');
 const currentOrganization = require('./currentOrganization');
+const search = require('./search');
 
 exports.before = {
   all: [],
@@ -24,6 +25,7 @@ exports.before = {
     deviceManager(),
     populate(),
     sanitize(),
+    search(),
   ],
   get: [
     auth.authenticate('jwt'),
