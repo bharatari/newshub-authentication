@@ -12,7 +12,7 @@ exports.disabled = function (options) {
     }).then((user) => {
       if (user) {
         if (user.disabled) {
-          throw new errors.NotAuthenticated('USER_DISABLED');
+          throw new errors.Forbidden('USER_DISABLED');
         } else {
           return hook;
         }

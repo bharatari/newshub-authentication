@@ -22,7 +22,7 @@ exports.checkAccess = function (options) {
             return hook;
           }
 
-          throw new errors.NotAuthenticated();
+          throw new errors.Forbidden();
         })
         .catch((err) => {
           throw err;
@@ -58,7 +58,7 @@ exports.protectOrganization = function (options) {
             if (object) {
               return hook;
             } else {
-              throw new errors.NotAuthenticated();
+              throw new errors.Forbidden();
             }
           }).catch((e) => {
             throw e;
@@ -70,7 +70,7 @@ exports.protectOrganization = function (options) {
             }
           }).then((object) => {
             if (object.organizationId !== hook.params.user.currentOrganizationId) {
-              throw new errors.NotAuthenticated();
+              throw new errors.Forbidden();
             }
 
             return hook;

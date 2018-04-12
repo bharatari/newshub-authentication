@@ -17,7 +17,7 @@ module.exports = function (options) {
     if (canCreateUser) {
       return hook;
     } else {
-      throw new errors.NotAuthenticated();
+      throw new errors.Forbidden();
     }
   };
 };

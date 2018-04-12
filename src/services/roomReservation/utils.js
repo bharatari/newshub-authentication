@@ -38,7 +38,7 @@ module.exports = {
           return hook;
         }
       } else {
-        throw new errors.NotAuthenticated('Must have permission to update reservation status.');
+        throw new errors.Forbidden('Must have permission to update reservation status.');
       }
     } else {
       const canApproveSpecialRequests = await access.has(models, redis, userId, 'roomReservation:special-requests');
@@ -55,7 +55,7 @@ module.exports = {
           return hook;
         }
       } else {
-        throw new errors.NotAuthenticated('MASTER_SPECIAL_REQUEST');
+        throw new errors.Forbidden('MASTER_SPECIAL_REQUEST');
       }
     }
   },
@@ -74,7 +74,7 @@ module.exports = {
         return hook;
       }
     } else {
-      throw new errors.NotAuthenticated('Must have permission to update reservation status.');
+      throw new errors.Forbidden('Must have permission to update reservation status.');
     }
   },
   async adminNotes(hook, models, redis, userId, reservation, data) {
@@ -90,7 +90,7 @@ module.exports = {
         return hook;
       }
     } else {
-      throw new errors.NotAuthenticated('Must have permission to update reservation admin notes.');
+      throw new errors.Forbidden('Must have permission to update reservation admin notes.');
     }
   },
   available(models, roomId, startDate, endDate) {

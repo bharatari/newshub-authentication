@@ -21,7 +21,7 @@ module.exports = function (app) {
       subject: 'anonymous',
       issuer: 'feathers',
       algorithm: 'HS256',
-      expiresIn: '1d',
+      expiresIn: '7d',
     },
     local: {
       entity: 'user',

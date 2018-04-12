@@ -18,7 +18,7 @@ module.exports = function (options) {
       const userId = hook.id;
 
       if (hook.params.user.currentOrganizationId !== organizationId) {
-        throw new errors.NotAuthenticated();
+        throw new errors.Forbidden();
       }
 
       try {
@@ -43,7 +43,7 @@ module.exports = function (options) {
           
           return hook;
         } else {
-          throw new errors.NotAuthenticated();
+          throw new errors.Forbidden();
         }
       } catch (e) {
         throw e;

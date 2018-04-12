@@ -26,7 +26,7 @@ module.exports = function (options) {
       } else if (hook.reservation.userId === hook.params.user.id) {
         return hook;
       } else {
-        throw new errors.NotAuthenticated('You do not have permission to delete this');
+        throw new errors.Forbidden('You do not have permission to delete this');
       }
     }).catch((err) => {
       throw err;

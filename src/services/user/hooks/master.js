@@ -46,7 +46,7 @@ module.exports = function (options) {
   
           delete hook.data.roles;
         } else {
-          throw new errors.NotAuthenticated('You do not have the permission to update roles');
+          throw new errors.Forbidden('You do not have the permission to update roles');
         }
       }
 
@@ -68,7 +68,7 @@ module.exports = function (options) {
   
           delete hook.data.title;
         } else {
-          throw new errors.NotAuthenticated('You do not have the permission to update title');
+          throw new errors.Forbidden('You do not have the permission to update title');
         }
       }
 
@@ -76,7 +76,7 @@ module.exports = function (options) {
         const canDisable = await access.can(models, redis, hook.params.user.id, 'user', 'update', 'disabled', hook.id);
 
         if (!canDisable) {
-          throw new errors.NotAuthenticated('You do not have the permission to update disabled status');
+          throw new errors.Forbidden('You do not have the permission to update disabled status');
         }
       }
 
@@ -86,19 +86,19 @@ module.exports = function (options) {
         if (user.options) {
           if (!_.isNil(options.doNotDisturb) && (options.doNotDisturb != user.options.doNotDisturb)) {            
             if (!canUpdateDoNotDisturb) {
-              throw new errors.NotAuthenticated('You do not have the permission to update do not disturb status');
+              throw new errors.Forbidden('You do not have the permission to update do not disturb status');
             }
           }
         } else if (!_.isNil(options.doNotDisturb)) {
           if (!canUpdateDoNotDisturb) {
-            throw new errors.NotAuthenticated('You do not have the permission to update do not disturb status');
+            throw new errors.Forbidden('You do not have the permission to update do not disturb status');
           }
         }
       }
 
       if (!_.isNil(currentOrganizationId) && (currentOrganizationId !== user.currentOrganizationId)) {
         if (hook.params.user.id != hook.id) {
-          throw new errors.NotAuthenticated('You do not have the permission to switch organizations.');
+          throw new errors.Forbidden('You do not have the permission to switch organizations.');
         }        
       }
 
