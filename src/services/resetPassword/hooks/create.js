@@ -5,6 +5,7 @@ const chance = new Chance();
 const moment = require('moment');
 const errors = require('@feathersjs/errors');
 const email = require('../../../utils/email');
+const general = require('../../../utils/general');
 
 module.exports = function (options) {
   return function (hook) {
@@ -13,9 +14,11 @@ module.exports = function (options) {
     hook.data.token = chance.hash({ casing: 'lower', length: 12 });
     hook.data.expires = moment().add(1, 'days').toDate();
 
+    const email = general.cleanString(hook.data.email);
+
     return models.user.findOne({
       where: {
-        email: hook.data.email,
+        email,
       },
     }).then(async (result) => {
       if (!result) {

@@ -2,24 +2,25 @@
 
 const moment = require('moment');
 const errors = require('@feathersjs/errors');
+const general = require('../../../utils/general');
 
 module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
 
+    const email = general.cleanString(hook.data.email);
+
     return models.user.findOne({
       where: {
-        email: hook.data.email,
+        email,
       },
     }).then(user => user.update({
       password: hook.data.password,
     }).then((result) => {
-      const data = hook.data;
-
       delete hook.data;
 
       hook.data = {
-        email: data.email,
+        email,
         used: true,
       };
 
