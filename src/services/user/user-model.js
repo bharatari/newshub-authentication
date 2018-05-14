@@ -23,11 +23,6 @@ module.exports = function (sequelize) {
       allowNull: false,
       unique: true,
     },
-    username: {
-      type: Sequelize.TEXT,
-      allowNull: false,
-      unique: true,
-    },
     password: {
       type: Sequelize.TEXT,
       allowNull: false,

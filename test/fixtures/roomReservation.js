@@ -2,25 +2,25 @@ module.exports = function (models) {
   return new Promise(async (resolve, reject) => {
     const user = await models.user.findOne({
       where: {
-        username: 'admin',
+        email: 'admin',
       },
     });
 
     const mercuryUser = await models.user.findOne({
       where: {
-        username: 'mercury',
+        email: 'mercury',
       },
     });
 
     const ownerDenyReservation = await models.user.findOne({
       where: {
-        username: 'ownerdenyreservation',
+        email: 'ownerdenyreservation',
       },
     });
 
     const ownerDenyReservationProperty = await models.user.findOne({
       where: {
-        username: 'ownerdenyreservationproperty',
+        email: 'ownerdenyreservationproperty',
       },
     });
 

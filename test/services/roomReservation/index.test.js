@@ -19,7 +19,7 @@ describe('roomReservation service', function() {
       .set('Accept', 'application/json')
       .send({
         strategy: 'local',
-        username: 'normal',
+        email: 'normal',
         password: 'password',
       })
       .end((err, res) => {
@@ -30,7 +30,7 @@ describe('roomReservation service', function() {
           .set('Accept', 'application/json')
           .send({
             strategy: 'local',
-            username: 'admin',
+            email: 'admin',
             password: 'password',
           })
           .end((err, res) => {
@@ -41,7 +41,7 @@ describe('roomReservation service', function() {
               .set('Accept', 'application/json')
               .send({
                 strategy: 'local',
-                username: 'master',
+                email: 'master',
                 password: 'password',
               })
               .end((err, res) => {
@@ -52,7 +52,7 @@ describe('roomReservation service', function() {
                   .set('Accept', 'application/json')
                   .send({
                     strategy: 'local',
-                    username: 'mercury',
+                    email: 'mercury',
                     password: 'password',
                   })
                   .end((err, res) => {
@@ -204,7 +204,7 @@ describe('roomReservation service', function() {
   it('should only return reservations in the same organization', async (done) => {
     const orgUser = await app.get('sequelize').models.user.findOne({
       where: {
-        username: 'normal',
+        email: 'normal',
       },
     });
 

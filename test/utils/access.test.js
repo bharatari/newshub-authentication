@@ -24,7 +24,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'device',
+          email: 'device',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -41,7 +41,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'admin',
+          email: 'admin',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -58,7 +58,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'master',
+          email: 'master',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -75,7 +75,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'masterdeny',
+          email: 'masterdeny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -92,7 +92,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'deny',
+          email: 'deny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -109,7 +109,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'admin',
+          email: 'admin',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -126,7 +126,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'normal',
+          email: 'normal',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -143,7 +143,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'admin',
+          email: 'admin',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -166,7 +166,7 @@ describe('access utils', () => {
       
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservation',
+          email: 'ownerdenyreservation',
         }
       });
 
@@ -181,7 +181,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'normal',
+          email: 'normal',
         }
       });
 
@@ -194,7 +194,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'normal',
+          email: 'normal',
         }
       });
 
@@ -217,7 +217,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerdeny',
+          email: 'ownerdeny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -234,7 +234,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerdenyproperty',
+          email: 'ownerdenyproperty',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -251,14 +251,14 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerdeny',
+          email: 'ownerdeny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
         return models.user.findOne({
           where: {
-            username: 'admin',
+            email: 'admin',
           },
         }).then((result) => {
           const otherUser = JSON.parse(JSON.stringify(result));
@@ -276,14 +276,14 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerdenyproperty',
+          email: 'ownerdenyproperty',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
         return models.user.findOne({
           where: {
-            username: 'admin',
+            email: 'admin',
           },
         }).then((result) => {
           const otherUser = JSON.parse(JSON.stringify(result));
@@ -301,7 +301,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservation',
+          email: 'ownerdenyreservation',
         },
       });
 
@@ -320,7 +320,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservationproperty',
+          email: 'ownerdenyreservationproperty',
         },
       });
 
@@ -339,7 +339,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservation',
+          email: 'ownerdenyreservation',
         },
       });
 
@@ -358,7 +358,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservationproperty',
+          email: 'ownerdenyreservationproperty',
         },
       });
 
@@ -425,7 +425,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       const expected = 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, reservation:approve, roomReservation:create, roomReservation:read, roomReservation:delete, roomReservation:update, roomReservation:approve, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled';
       const array = ['admin'];
@@ -439,7 +439,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'normal' } });
+      const user = await models.user.findOne({ where: { email: 'normal' } });
 
       const expected = [];
 
@@ -450,7 +450,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'nondatabase' } });
+      const user = await models.user.findOne({ where: { email: 'nondatabase' } });
 
       const expected = ['not-database-role'];
 
@@ -463,7 +463,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return assert.becomes(utils.populateRoles(models, redis, 'non-database-role', user.id), []);
     });
@@ -474,7 +474,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return models.role.findOne({
         where: {
@@ -493,7 +493,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return models.role.findOne({
         where: {
@@ -515,7 +515,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return assert.becomes(utils.populateRole(models, redis, 'non-database-role', user.id), []);
     });
@@ -540,7 +540,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return assert.isFulfilled(utils.retrieveRole(models, redis, 'admin', user.id));
     });
@@ -552,7 +552,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'approve',
+          email: 'approve',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -567,7 +567,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'radiouser' } });
+      const user = await models.user.findOne({ where: { email: 'radiouser' } });
 
       return assert.becomes(utils.getUserRoles(models, user.id), 'roomReservation:create');
     });
@@ -576,7 +576,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'radioadmin' } });
+      const user = await models.user.findOne({ where: { email: 'radioadmin' } });
 
       return assert.becomes(utils.getUserRoles(models, user.id), 'reservation:update, roomReservation:update');
     });

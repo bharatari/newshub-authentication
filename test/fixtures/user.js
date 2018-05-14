@@ -29,7 +29,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'normal',
+                  email: 'normal',
                   firstName: 'Normal',
                   lastName: 'User',
                   email: 'normal@sitrea.com',
@@ -42,7 +42,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'admin',
+                  email: 'admin',
                   firstName: 'Admin',
                   lastName: 'User',
                   email: 'admin@sitrea.com',
@@ -55,7 +55,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'master',
+                  email: 'master',
                   firstName: 'Master',
                   lastName: 'User',
                   email: 'master@sitrea.com',
@@ -68,7 +68,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'masterdeny',
+                  email: 'masterdeny',
                   firstName: 'Master',
                   lastName: 'User',
                   email: 'masterDeny@sitrea.com',
@@ -81,7 +81,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'device',
+                  email: 'device',
                   firstName: 'Device',
                   lastName: 'Creator',
                   email: 'device@sitrea.com',
@@ -94,7 +94,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'approve',
+                  email: 'approve',
                   firstName: 'Reservation',
                   lastName: 'Approve',
                   email: 'reservation@sitrea.com',
@@ -107,7 +107,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'approvespecial',
+                  email: 'approvespecial',
                   firstName: 'Special',
                   lastName: 'Approve',
                   email: 'approveSpecial@sitrea.com',
@@ -120,7 +120,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'adminadvisor',
+                  email: 'adminadvisor',
                   firstName: 'Admin',
                   lastName: 'Advisor',
                   email: 'adminAdvisor@sitrea.com',
@@ -133,7 +133,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'deny',
+                  email: 'deny',
                   firstName: 'Deny',
                   lastName: 'User',
                   email: 'deny@sitrea.com',
@@ -146,7 +146,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerdeny',
+                  email: 'ownerdeny',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDeny@sitrea.com',
@@ -159,7 +159,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerdenyproperty',
+                  email: 'ownerdenyproperty',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDenyProperty@sitrea.com',
@@ -172,7 +172,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerdenyoverlap',
+                  email: 'ownerdenyoverlap',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDenyOverlap@sitrea.com',
@@ -185,7 +185,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerdenyreservation',
+                  email: 'ownerdenyreservation',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDenyReservation@sitrea.com',
@@ -198,7 +198,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'ownerdenyreservationproperty',
+                  email: 'ownerdenyreservationproperty',
                   firstName: 'Owner',
                   lastName: 'Deny',
                   email: 'ownerDenyReservationProperty@sitrea.com',
@@ -211,7 +211,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'mercury',
+                  email: 'mercury',
                   firstName: 'Mercury',
                   lastName: 'User',
                   email: 'mercuryUser@sitrea.com',
@@ -224,7 +224,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'editroles',
+                  email: 'editroles',
                   firstName: 'Edit',
                   lastName: 'Roles',
                   email: 'editRoles@sitrea.com',
@@ -237,7 +237,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'editorganizations',
+                  email: 'editorganizations',
                   firstName: 'Edit',
                   lastName: 'Organizations',
                   email: 'editOrganizations@sitrea.com',
@@ -250,7 +250,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'radiouser',
+                  email: 'radiouser',
                   firstName: 'Radio',
                   lastName: 'User',
                   email: 'radioUser@sitrea.com',
@@ -263,7 +263,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'radioadmin',
+                  email: 'radioadmin',
                   firstName: 'Radio',
                   lastName: 'Admin',
                   email: 'radioAdmin@sitrea.com',
@@ -276,7 +276,7 @@ module.exports = async function (models) {
               {
                 model: 'user',
                 data: {
-                  username: 'nondatabase',
+                  email: 'nondatabase',
                   firstName: 'Non',
                   lastName: 'Database',
                   email: 'nonDatabase@sitrea.com',
