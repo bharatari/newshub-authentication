@@ -7,7 +7,7 @@ exports.disabled = function (options) {
     
     return models.user.findOne({
       where: {
-        username: hook.data.username,
+        email: hook.data.email,
       },
     }).then((user) => {
       if (user) {
@@ -29,9 +29,9 @@ exports.disabled = function (options) {
 
 exports.normalize = function (options) {
   return function (hook) {
-    if (hook.data.username) {
-      if (_.isString(hook.data.username)) {
-        hook.data.username = hook.data.username.toLowerCase().trim();
+    if (hook.data.email) {
+      if (_.isString(hook.data.email)) {
+        hook.data.email = hook.data.email.toLowerCase().trim();
       } else {
         return errors.BadRequest();
       }

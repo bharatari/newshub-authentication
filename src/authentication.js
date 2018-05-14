@@ -25,7 +25,7 @@ module.exports = function (app) {
     },
     local: {
       entity: 'user',
-      usernameField: 'username',
+      usernameField: 'email',
       passwordField: 'password',
       service: '/api/user',
     },
