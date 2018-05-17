@@ -174,4 +174,30 @@ describe('user service', () => {
         done();
       });
   });
+
+  it('should find device managers', async (done) => {
+    const models = app.get('sequelize').models;
+
+    const user = await models.user.findOne({
+      where: {
+        email: 'normal',
+      },
+    });
+
+    chai.request(app)
+      .patch(`/api/user?deviceManager=true`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(master))
+      .send({
+        organizationId: organization.id,
+      })
+      .end(async (err, res) => {
+        // res.should.have.status(200);
+        // should contain one record
+
+        done();
+      });
+  });
+
+  // TODO test editing each of these user fields
 });
