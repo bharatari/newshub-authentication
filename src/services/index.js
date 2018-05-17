@@ -1,9 +1,7 @@
 'use strict';
 
 const organization = require('./organization');
-const building = require('./building');
 const roomReservation = require('./roomReservation');
-const room = require('./room');
 const resetPassword = require('./resetPassword');
 const meta = require('./meta');
 const role = require('./role');
@@ -21,8 +19,6 @@ module.exports = function (app) {
   app.configure(role);
   app.configure(meta);
   app.configure(resetPassword);
-  app.configure(room);
   app.configure(roomReservation);
-  app.configure(building);
   app.configure(organization);
 };
