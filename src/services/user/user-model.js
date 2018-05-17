@@ -27,27 +27,10 @@ module.exports = function (sequelize) {
       type: Sequelize.TEXT,
       allowNull: false,
     },
-    notes: {
-      type: Sequelize.TEXT,
-    },
     disabled: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false,
-    },
-    options: {
-      type: Sequelize.JSONB,
-    },
-    barcode: {
-      type: Sequelize.TEXT,
-      unique: true,
-    },
-    meta: {
-      type: Sequelize.JSONB,
-      allowNull: false,
-      defaultValue: {
-        code: null,
-      },
     },
   }, {
     freezeTableName: true,

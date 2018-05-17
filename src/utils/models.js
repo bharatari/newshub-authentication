@@ -79,6 +79,26 @@ module.exports = {
     return sequelize.define('organization_users', {
       roles: Sequelize.TEXT,
       title: Sequelize.TEXT,
+      options: {
+        type: Sequelize.JSONB,
+      },
+      barcode: {
+        type: Sequelize.TEXT,
+        unique: true,
+      },
+      meta: {
+        type: Sequelize.JSONB,
+        allowNull: false,
+        defaultValue: {
+          code: null,
+          notes: null,
+        },
+      },
+      disabled: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     });
   },
 };
