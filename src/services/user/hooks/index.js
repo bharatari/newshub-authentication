@@ -8,7 +8,6 @@ const dehydrate = require('feathers-sequelize/hooks/dehydrate');
 const token = require('./token');
 const master = require('./master');
 const normalize = require('./normalize');
-const sanitize = require('./sanitize');
 const associate = require('./associate');
 const populate = require('./populate');
 const organization = require('./organization');
@@ -24,7 +23,6 @@ exports.before = {
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     deviceManager(),
     populate(),
-    sanitize(),
     search(),
   ],
   get: [
