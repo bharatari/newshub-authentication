@@ -14,7 +14,7 @@ module.exports = async function (models) {
   });
 
   const roles = [
-    { email: 'normal', roles: null, organizations: [{ id: alternate.id, roles: null, options: { deviceManger: true } }] },
+    { email: 'normal', roles: null, barcode: 'NORMAL', organizations: [{ id: alternate.id, roles: null, options: { deviceManger: true } }] },
     { email: 'admin', roles: 'admin' },
     { email: 'master', roles: 'master' },
     { email: 'masterdeny', roles: 'master, deny!user:update' },
@@ -39,11 +39,11 @@ module.exports = async function (models) {
     for (let i = 0; i < roles.length; i++) {
       const user = await models.user.findOne({ where: { email: roles[i].email } });
 
-      await user.addOrganization(user.currentOrganizationId, { through: { roles: roles[i].roles, options: roles[i].options }});
+      await user.addOrganization(user.currentOrganizationId, { through: { roles: roles[i].roles, options: roles[i].options, barcode: roles[i].barcode }});
     
       if (roles[i].organizations) {
         for (let e = 0; e < roles[i].organizations.length; e++) {
-          await user.addOrganization(roles[i].organizations[e].id, { through: { roles: roles[i].organizations[e].roles, options: roles[i].organizations[e].options }});
+          await user.addOrganization(roles[i].organizations[e].id, { through: { roles: roles[i].organizations[e].roles, options: roles[i].organizations[e].options, barcode: roles[i].organizations[e].barcode }});
         }
       }
     }

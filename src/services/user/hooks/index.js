@@ -15,6 +15,7 @@ const result = require('./result');
 const deviceManager = require('./deviceManager');
 const currentOrganization = require('./currentOrganization');
 const search = require('./search');
+const barcode = require('./barcode');
 
 exports.before = {
   all: [],
@@ -22,6 +23,7 @@ exports.before = {
     auth.authenticate('jwt'),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     deviceManager(),
+    barcode(),
     populate(),
     search(),
   ],

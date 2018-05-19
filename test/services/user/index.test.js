@@ -194,8 +194,6 @@ describe('user service', () => {
   });
 
   it('should find device managers', (done) => {
-    const models = app.get('sequelize').models;
-
     chai.request(app)
       .get(`/api/user?deviceManager=true`)
       .set('Accept', 'application/json')
@@ -206,6 +204,22 @@ describe('user service', () => {
         assert.equal(res.body.length, 1);
 
         assert.equal(res.body[0].email, 'devicemanager');
+
+        done();
+      });
+  });
+
+  it('should find user by barcode', (done) => {
+    chai.request(app)
+      .get(`/api/user?barcode=NORMAL`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(admin))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        assert.equal(res.body.length, 1);
+
+        assert.equal(res.body[0].email, 'normal');
 
         done();
       });
