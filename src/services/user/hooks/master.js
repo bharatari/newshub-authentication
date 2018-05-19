@@ -9,6 +9,7 @@ const access = require('../../../utils/access');
 
 module.exports = function (options) {
   return function (hook) {
+    // TODO migrate all of this
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');
     const { currentOrganizationId, roles, title, disabled, options } = hook.data;

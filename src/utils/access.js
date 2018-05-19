@@ -102,18 +102,18 @@ module.exports = {
    * @param {string} method
    * @returns {Promise}
    */
-  async can(models, redis, userId, service, method, property, id) {
+  async can(models, redis, userId, service, method, property, object) {
     const permission = this.convertToPermission(service, method, property);
 
     if (!_.isNil(property) && !_.isEmpty(property)) {
       const upperPermission = this.convertToUpperPermission(permission);
 
       try {
-        const hasPermission = await this.has(models, redis, userId, permission, service, id);
-        const cannotPermission = await this.cannot(models, redis, userId, permission, service, id);
+        const hasPermission = await this.has(models, redis, userId, permission, service, object);
+        const cannotPermission = await this.cannot(models, redis, userId, permission, service, object);
 
-        const hasUpperPermission = await this.has(models, redis, userId, upperPermission, service, id);
-        const cannotUpperPermission = await this.cannot(models, redis, userId, upperPermission, service, id);
+        const hasUpperPermission = await this.has(models, redis, userId, upperPermission, service, object);
+        const cannotUpperPermission = await this.cannot(models, redis, userId, upperPermission, service, object);
 
         if (hasPermission && !cannotPermission) {
           return true;
@@ -128,8 +128,8 @@ module.exports = {
     }
 
     try {
-      const hasPermission = await this.has(models, redis, userId, permission, service, id);
-      const cannotPermission = await this.cannot(models, redis, userId, permission, service, id);
+      const hasPermission = await this.has(models, redis, userId, permission, service, object);
+      const cannotPermission = await this.cannot(models, redis, userId, permission, service, object);
 
       if (hasPermission && !cannotPermission) {
         return true;
@@ -148,7 +148,7 @@ module.exports = {
    * 
    * @public
    */
-  has(models, redis, userId, permission, model, id) {
+  has(models, redis, userId, permission, model, object) {
     return this.is(models, userId, 'master')
       .then((result) => {
         if (result) {
@@ -160,7 +160,7 @@ module.exports = {
             this.populateRoles(models, redis, roles, userId)
           )
           .then(permissionsArray =>
-            this.includesPermission(models, permissionsArray, permission, userId, model, id)
+            this.includesPermission(models, permissionsArray, permission, userId, model, object)
           )
       })
       .catch((err) => {
@@ -210,7 +210,7 @@ module.exports = {
    * 
    * @private
    */
-  cannot(models, redis, userId, permission, model, id) {
+  cannot(models, redis, userId, permission, model, object) {
     const denyPermission = this.convertToDenyPermission(permission);
 
     return this.is(models, userId, 'master')
@@ -224,7 +224,7 @@ module.exports = {
             this.populateRoles(models, redis, roles, userId)
           )
           .then((permissionsArray) => {
-            return this.includesPermission(models, permissionsArray, denyPermission, userId, model, id)
+            return this.includesPermission(models, permissionsArray, denyPermission, userId, model, object)
               .then((deny) => {
                 return deny;
               });
@@ -251,32 +251,27 @@ module.exports = {
    * 
    * @private
    */
-  includesPermission(models, permissions, permission, userId, model, id) {
+  includesPermission(models, permissions, permission, userId, model, object) {
     return new Promise((resolve, reject) => {
       if (this.includes(permissions, permission)) {
         resolve(true);
-      } else if (!_.isNil(id) && !_.isEmpty(id)) {
+      } else if (!_.isNil(object) && !_.isEmpty(object)) {
         const ownerPermission = `${permission}!owner`;
 
         if (this.includes(permissions, ownerPermission)) {
-          return this.getRecord(models, model, id)
-            .then((data) => {             
-              if (model === this.userModel) {
-                if (data.id === userId) {
-                  resolve(true);
-                } else {
-                  resolve(false);
-                }
-              } else {
-                if (data[this.userIdField] === userId) {
-                  resolve(true);
-                } else {
-                  resolve(false);
-                }
-              }
-            }).catch((err) => {
-              reject(err);
-            });
+          if (model === this.userModel) {
+            if (object.id === userId) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          } else {
+            if (object[this.userIdField] === userId) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          }
         } else {
           resolve(false);
         }

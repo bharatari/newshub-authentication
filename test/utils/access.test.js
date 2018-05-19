@@ -24,7 +24,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'device',
+          email: 'device',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -41,7 +41,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'admin',
+          email: 'admin',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -58,7 +58,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'master',
+          email: 'master',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -75,7 +75,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'masterdeny',
+          email: 'masterdeny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -92,7 +92,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'deny',
+          email: 'deny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -109,7 +109,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'admin',
+          email: 'admin',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -126,7 +126,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'normal',
+          email: 'normal',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -143,7 +143,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'admin',
+          email: 'admin',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -157,22 +157,20 @@ describe('access utils', () => {
     it('should handle id', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
-
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT3',
-        },
-      });
       
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservation',
+          email: 'ownerdenyreservation',
         }
       });
 
+      const reservation = {
+        userId: user.id,
+      };
+
       assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null), true);
 
-      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null, reservation.id), false);
+      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null, reservation), false);
     });
 
     it('should not throw error for user with non-existent roles', async () => {
@@ -181,7 +179,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'normal',
+          email: 'normal',
         }
       });
 
@@ -194,7 +192,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'normal',
+          email: 'normal',
         }
       });
 
@@ -217,12 +215,12 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerdeny',
+          email: 'ownerdeny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
-        return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', user.id), true);
+        return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', user), true);
       }).catch((err) => {
         assert.fail();
       });
@@ -234,12 +232,12 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerdenyproperty',
+          email: 'ownerdenyproperty',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
-        return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', user.id), true);
+        return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', user), true);
       }).catch((err) => {
         assert.fail();
       });
@@ -251,19 +249,19 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerdeny',
+          email: 'ownerdeny',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
         return models.user.findOne({
           where: {
-            username: 'admin',
+            email: 'admin',
           },
         }).then((result) => {
           const otherUser = JSON.parse(JSON.stringify(result));
 
-          return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', otherUser.id), false);
+          return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', otherUser), false);
         });
       }).catch((err) => {
         assert.fail();
@@ -276,19 +274,19 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'ownerdenyproperty',
+          email: 'ownerdenyproperty',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
         return models.user.findOne({
           where: {
-            username: 'admin',
+            email: 'admin',
           },
         }).then((result) => {
           const otherUser = JSON.parse(JSON.stringify(result));
 
-          return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', otherUser.id), false);
+          return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', otherUser), false);
         });
       }).catch((err) => {
         assert.fail();
@@ -301,17 +299,15 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservation',
+          email: 'ownerdenyreservation',
         },
       });
 
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT3',
-        },
-      });
+      const reservation = {
+        userId: user.id,
+      };
 
-      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), true);
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation), true);
     });
 
     it('should deny access to own record with deny property permission', async () => {
@@ -320,17 +316,15 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservationproperty',
+          email: 'ownerdenyreservationproperty',
         },
       });
 
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT4',
-        },
-      });
+      const reservation = {
+        userId: user.id,
+      };
 
-      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), true);
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation), true);
     });
 
     it.skip('should not deny access to other record with deny permission', async () => {
@@ -339,17 +333,15 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservation',
+          email: 'ownerdenyreservation',
         },
       });
 
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT',
-        },
-      });
+      const reservation = {
+        userId: -1,
+      };
 
-      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), false);
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation), false);
     });
 
     it.skip('should not deny access to other record with deny property permission', async () => {
@@ -358,17 +350,15 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({
         where: {
-          username: 'ownerdenyreservationproperty',
+          email: 'ownerdenyreservationproperty',
         },
       });
 
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT',
-        },
-      });
+      const reservation = {
+        userId: -1,
+      };
 
-      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), true);
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation), true);
     });
 
     it('should handle overlap by making deny flag take precedence', () => {
@@ -425,9 +415,9 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
-      const expected = 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, reservation:approve, roomReservation:create, roomReservation:read, roomReservation:delete, roomReservation:update, roomReservation:approve, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled';
+      const expected = 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, reservation:approve, roomReservation:create, roomReservation:read, roomReservation:delete, roomReservation:update, roomReservation:approve, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update';
       const array = ['admin'];
 
       array.push(...expected.split(', '));
@@ -439,7 +429,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'normal' } });
+      const user = await models.user.findOne({ where: { email: 'normal' } });
 
       const expected = [];
 
@@ -450,7 +440,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'nondatabase' } });
+      const user = await models.user.findOne({ where: { email: 'nondatabase' } });
 
       const expected = ['not-database-role'];
 
@@ -463,7 +453,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return assert.becomes(utils.populateRoles(models, redis, 'non-database-role', user.id), []);
     });
@@ -474,7 +464,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return models.role.findOne({
         where: {
@@ -493,7 +483,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return models.role.findOne({
         where: {
@@ -515,7 +505,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return assert.becomes(utils.populateRole(models, redis, 'non-database-role', user.id), []);
     });
@@ -540,7 +530,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'admin' } });
+      const user = await models.user.findOne({ where: { email: 'admin' } });
 
       return assert.isFulfilled(utils.retrieveRole(models, redis, 'admin', user.id));
     });
@@ -552,7 +542,7 @@ describe('access utils', () => {
 
       return models.user.findOne({
         where: {
-          username: 'approve',
+          email: 'approve',
         },
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
@@ -567,7 +557,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'radiouser' } });
+      const user = await models.user.findOne({ where: { email: 'radiouser' } });
 
       return assert.becomes(utils.getUserRoles(models, user.id), 'roomReservation:create');
     });
@@ -576,7 +566,7 @@ describe('access utils', () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
 
-      const user = await models.user.findOne({ where: { username: 'radioadmin' } });
+      const user = await models.user.findOne({ where: { email: 'radioadmin' } });
 
       return assert.becomes(utils.getUserRoles(models, user.id), 'reservation:update, roomReservation:update');
     });

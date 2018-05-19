@@ -17,7 +17,7 @@ describe('signupToken service', () => {
       .set('Accept', 'application/json')
       .send({
         strategy: 'local',
-        username: 'normal',
+        email: 'normal',
         password: 'password',
       })
       .end((err, res) => {
@@ -28,7 +28,7 @@ describe('signupToken service', () => {
           .set('Accept', 'application/json')
           .send({
             strategy: 'local',
-            username: 'admin',
+            email: 'admin',
             password: 'password',
           })
           .end((err, res) => {
@@ -39,7 +39,7 @@ describe('signupToken service', () => {
               .set('Accept', 'application/json')
               .send({
                 strategy: 'local',
-                username: 'master',
+                email: 'master',
                 password: 'password',
               })
               .end((err, res) => {
@@ -74,7 +74,7 @@ describe('signupToken service', () => {
       .set('Authorization', 'Bearer '.concat(user))
       .send({})
       .end((err, res) => {
-        res.should.have.status(401);
+        res.should.have.status(403);
         done();
       });
   });

@@ -17,7 +17,7 @@ describe('role service', () => {
       .set('Accept', 'application/json')
       .send({
         strategy: 'local',
-        username: 'normal',
+        email: 'normal',
         password: 'password',
       })
       .end((err, res) => {
@@ -28,7 +28,7 @@ describe('role service', () => {
           .set('Accept', 'application/json')
           .send({
             strategy: 'local',
-            username: 'admin',
+            email: 'admin',
             password: 'password',
           })
           .end((err, res) => {
@@ -39,7 +39,7 @@ describe('role service', () => {
               .set('Accept', 'application/json')
               .send({
                 strategy: 'local',
-                username: 'master',
+                email: 'master',
                 password: 'password',
               })
               .end((err, res) => {

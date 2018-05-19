@@ -17,7 +17,7 @@ describe('user service', () => {
       .set('Accept', 'application/json')
       .send({
         strategy: 'local',
-        username: 'normal',
+        email: 'normal',
         password: 'password',
       })
       .end((err, res) => {
@@ -28,7 +28,7 @@ describe('user service', () => {
           .set('Accept', 'application/json')
           .send({
             strategy: 'local',
-            username: 'admin',
+            email: 'admin',
             password: 'password',
           })
           .end((err, res) => {
@@ -39,7 +39,7 @@ describe('user service', () => {
               .set('Accept', 'application/json')
               .send({
                 strategy: 'local',
-                username: 'master',
+                email: 'master',
                 password: 'password',
               })
               .end((err, res) => {
@@ -64,7 +64,7 @@ describe('user service', () => {
         lastName: 'User',
         password: 'password',
         email: 'email@nothing.com',
-        username: 'newuser',
+        email: 'newuser',
         signupToken: 'TOKEN_1'
       })
       .end((err, res) => {
@@ -85,7 +85,7 @@ describe('user service', () => {
         lastName: 'User',
         password: 'password',
         email: 'email2@nothing.com',
-        username: 'newuser2',
+        email: 'newuser2',
         signupToken: 'TOKEN_2'
       })
       .end(async (err, res) => {
@@ -114,7 +114,7 @@ describe('user service', () => {
   it('should allow editing for roles for authorized users', async (done) => {
     const user = await app.get('sequelize').models.user.findOne({
       where: {
-        username: 'editroles',
+        email: 'editroles',
       },
     });
 
@@ -151,7 +151,7 @@ describe('user service', () => {
 
     const user = await models.user.findOne({
       where: {
-        username: 'editorganizations',
+        email: 'editorganizations',
       },
     });
 
@@ -174,4 +174,56 @@ describe('user service', () => {
         done();
       });
   });
+
+  it('should find device managers', (done) => {
+    const models = app.get('sequelize').models;
+
+    chai.request(app)
+      .get(`/api/user?deviceManager=true`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(admin))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        assert.equal(res.body.length, 1);
+
+        assert.equal(res.body[0].email, 'devicemanager');
+
+        done();
+      });
+  });
+
+  it('should find device managers', (done) => {
+    chai.request(app)
+      .get(`/api/user?deviceManager=true`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(admin))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        assert.equal(res.body.length, 1);
+
+        assert.equal(res.body[0].email, 'devicemanager');
+
+        done();
+      });
+  });
+
+  it('should find user by barcode', (done) => {
+    chai.request(app)
+      .get(`/api/user?barcode=NORMAL`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(admin))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        assert.equal(res.body.length, 1);
+
+        assert.equal(res.body[0].email, 'normal');
+
+        done();
+      });
+  });
+
+  // TODO test editing each of these user fields
 });

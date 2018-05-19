@@ -8,7 +8,6 @@ const dehydrate = require('feathers-sequelize/hooks/dehydrate');
 const token = require('./token');
 const master = require('./master');
 const normalize = require('./normalize');
-const sanitize = require('./sanitize');
 const associate = require('./associate');
 const populate = require('./populate');
 const organization = require('./organization');
@@ -16,6 +15,7 @@ const result = require('./result');
 const deviceManager = require('./deviceManager');
 const currentOrganization = require('./currentOrganization');
 const search = require('./search');
+const barcode = require('./barcode');
 
 exports.before = {
   all: [],
@@ -23,8 +23,8 @@ exports.before = {
     auth.authenticate('jwt'),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     deviceManager(),
+    barcode(),
     populate(),
-    sanitize(),
     search(),
   ],
   get: [

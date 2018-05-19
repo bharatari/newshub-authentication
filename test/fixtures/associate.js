@@ -14,35 +14,36 @@ module.exports = async function (models) {
   });
 
   const roles = [
-    { username: 'normal', roles: null, organizations: [{ id: alternate.id, roles: null }] },
-    { username: 'admin', roles: 'admin' },
-    { username: 'master', roles: 'master' },
-    { username: 'masterdeny', roles: 'master, deny!user:update' },
-    { username: 'device', roles: 'device:create' },
-    { username: 'approve', roles: 'admin, reservation:approve' },
-    { username: 'approvespecial', roles: 'reservation:approve, technology-director, reservation:special-requests' },
-    { username: 'adminadvisor', roles: 'admin, advisor' },
-    { username: 'deny', roles: 'deny!user:update, user:update' },
-    { username: 'ownerdeny', roles: 'user:update, deny!user:update!owner' },
-    { username: 'ownerdenyproperty', roles: 'user:update!owner, deny!user:roles:update!owner' },
-    { username: 'ownerdenyoverlap', roles: 'user:update, deny!user:update!owner, user:roles:update!owner' },
-    { username: 'ownerdenyreservation', roles: 'reservation:update, deny!reservation:update!owner, roomReservation:update, deny!roomReservation:update!owner' },
-    { username: 'ownerdenyreservationproperty', roles: 'reservation:update, deny!reservation:approved:update!owner, roomReservation:update, deny!roomReservation:approved:update!owner' },
-    { username: 'editroles', roles: 'member' },
-    { username: 'radiouser', roles: null },
-    { username: 'radioadmin', roles: 'reservation:update, roomReservation:update' },
-    { username: 'nondatabase', roles: 'not-database-role' },
+    { email: 'normal', roles: null, barcode: 'NORMAL', organizations: [{ id: alternate.id, roles: null, options: { deviceManger: true } }] },
+    { email: 'admin', roles: 'admin' },
+    { email: 'master', roles: 'master' },
+    { email: 'masterdeny', roles: 'master, deny!user:update' },
+    { email: 'device', roles: 'device:create',  },
+    { email: 'approve', roles: 'admin, reservation:approve' },
+    { email: 'approvespecial', roles: 'reservation:approve, technology-director, reservation:special-requests' },
+    { email: 'adminadvisor', roles: 'admin, advisor' },
+    { email: 'deny', roles: 'deny!user:update, user:update' },
+    { email: 'ownerdeny', roles: 'user:update, deny!user:update!owner' },
+    { email: 'ownerdenyproperty', roles: 'user:update!owner, deny!user:roles:update!owner' },
+    { email: 'ownerdenyoverlap', roles: 'user:update, deny!user:update!owner, user:roles:update!owner' },
+    { email: 'ownerdenyreservation', roles: 'reservation:update, deny!reservation:update!owner, roomReservation:update, deny!roomReservation:update!owner' },
+    { email: 'ownerdenyreservationproperty', roles: 'reservation:update, deny!reservation:approved:update!owner, roomReservation:update, deny!roomReservation:approved:update!owner' },
+    { email: 'editroles', roles: 'member' },
+    { email: 'radiouser', roles: null },
+    { email: 'radioadmin', roles: 'reservation:update, roomReservation:update' },
+    { email: 'nondatabase', roles: 'not-database-role' },
+    { email: 'devicemanager', roles: 'admin', options: { deviceManager: true }, organizations: [{ id: alternate.id, roles: null, options: {} }] },
   ];
 
   try {
     for (let i = 0; i < roles.length; i++) {
-      const user = await models.user.findOne({ where: { username: roles[i].username } });
+      const user = await models.user.findOne({ where: { email: roles[i].email } });
 
-      await user.addOrganization(user.currentOrganizationId, { through: { roles: roles[i].roles }});
+      await user.addOrganization(user.currentOrganizationId, { through: { roles: roles[i].roles, options: roles[i].options, barcode: roles[i].barcode }});
     
       if (roles[i].organizations) {
         for (let e = 0; e < roles[i].organizations.length; e++) {
-          await user.addOrganization(roles[i].organizations[e].id, { through: { roles: roles[i].organizations[e].roles }});
+          await user.addOrganization(roles[i].organizations[e].id, { through: { roles: roles[i].organizations[e].roles, options: roles[i].organizations[e].options, barcode: roles[i].organizations[e].barcode }});
         }
       }
     }
