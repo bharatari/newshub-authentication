@@ -81,6 +81,9 @@ module.exports = {
       title: Sequelize.TEXT,
       options: {
         type: Sequelize.JSONB,
+        defaultValue: {
+          deviceManager: false,
+        },
       },
       barcode: {
         type: Sequelize.TEXT,
