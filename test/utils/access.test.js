@@ -220,7 +220,7 @@ describe('access utils', () => {
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
-        return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', user.id), true);
+        return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', user), true);
       }).catch((err) => {
         assert.fail();
       });
@@ -237,7 +237,7 @@ describe('access utils', () => {
       }).then((data) => {
         const user = JSON.parse(JSON.stringify(data));
 
-        return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', user.id), true);
+        return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', user), true);
       }).catch((err) => {
         assert.fail();
       });
@@ -261,7 +261,7 @@ describe('access utils', () => {
         }).then((result) => {
           const otherUser = JSON.parse(JSON.stringify(result));
 
-          return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', otherUser.id), false);
+          return assert.becomes(utils.cannot(models, redis, user.id, 'user:update', 'user', otherUser), false);
         });
       }).catch((err) => {
         assert.fail();
@@ -286,7 +286,7 @@ describe('access utils', () => {
         }).then((result) => {
           const otherUser = JSON.parse(JSON.stringify(result));
 
-          return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', otherUser.id), false);
+          return assert.becomes(utils.cannot(models, redis, user.id, 'user:roles:update', 'user', otherUser), false);
         });
       }).catch((err) => {
         assert.fail();

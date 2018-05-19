@@ -175,25 +175,37 @@ describe('user service', () => {
       });
   });
 
-  it('should find device managers', async (done) => {
+  it('should find device managers', (done) => {
     const models = app.get('sequelize').models;
 
-    const user = await models.user.findOne({
-      where: {
-        email: 'normal',
-      },
-    });
+    chai.request(app)
+      .get(`/api/user?deviceManager=true`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(admin))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        assert.equal(res.body.length, 1);
+
+        assert.equal(res.body[0].email, 'devicemanager');
+
+        done();
+      });
+  });
+
+  it('should find device managers', (done) => {
+    const models = app.get('sequelize').models;
 
     chai.request(app)
-      .patch(`/api/user?deviceManager=true`)
+      .get(`/api/user?deviceManager=true`)
       .set('Accept', 'application/json')
-      .set('Authorization', 'Bearer '.concat(master))
-      .send({
-        organizationId: organization.id,
-      })
-      .end(async (err, res) => {
-        // res.should.have.status(200);
-        // should contain one record
+      .set('Authorization', 'Bearer '.concat(admin))
+      .end((err, res) => {
+        res.should.have.status(200);
+
+        assert.equal(res.body.length, 1);
+
+        assert.equal(res.body[0].email, 'devicemanager');
 
         done();
       });

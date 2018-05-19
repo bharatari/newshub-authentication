@@ -14,8 +14,8 @@ module.exports = async function (models) {
   });
 
   const roles = [
-    { email: 'normal', roles: null, organizations: [{ id: alternate.id, roles: null }] },
-    { email: 'admin', roles: 'admin', options: { deviceManager: true } },
+    { email: 'normal', roles: null, organizations: [{ id: alternate.id, roles: null, options: { deviceManger: true } }] },
+    { email: 'admin', roles: 'admin' },
     { email: 'master', roles: 'master' },
     { email: 'masterdeny', roles: 'master, deny!user:update' },
     { email: 'device', roles: 'device:create',  },
