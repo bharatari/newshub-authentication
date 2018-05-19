@@ -6,7 +6,7 @@ module.exports = function (models) {
           {
             model: 'resetPasswordToken',
             data: {
-              email: 'normal@domain.com',
+              email: 'normal',
               expires: '2016-02-14 15:34:46.264+00',
               used: false,
               token: '3jd9dvszu',
@@ -15,7 +15,7 @@ module.exports = function (models) {
           {
             model: 'resetPasswordToken',
             data: {
-              email: 'normal@domain.com',
+              email: 'normal',
               expires: new Date(),
               used: true,
               token: '2jdedvszu',

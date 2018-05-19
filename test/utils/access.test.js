@@ -157,12 +157,6 @@ describe('access utils', () => {
     it('should handle id', async () => {
       const models = app.get('sequelize').models;
       const redis = app.get('redis');
-
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT3',
-        },
-      });
       
       const user = await models.user.findOne({
         where: {
@@ -170,9 +164,13 @@ describe('access utils', () => {
         }
       });
 
+      const reservation = {
+        userId: user.id,
+      };
+
       assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null), true);
 
-      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null, reservation.id), false);
+      return assert.becomes(utils.can(models, redis, user.id, 'reservation', 'update', null, reservation), false);
     });
 
     it('should not throw error for user with non-existent roles', async () => {
@@ -305,13 +303,11 @@ describe('access utils', () => {
         },
       });
 
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT3',
-        },
-      });
+      const reservation = {
+        userId: user.id,
+      };
 
-      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), true);
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation), true);
     });
 
     it('should deny access to own record with deny property permission', async () => {
@@ -324,13 +320,11 @@ describe('access utils', () => {
         },
       });
 
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT4',
-        },
-      });
+      const reservation = {
+        userId: user.id,
+      };
 
-      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), true);
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation), true);
     });
 
     it.skip('should not deny access to other record with deny permission', async () => {
@@ -343,13 +337,11 @@ describe('access utils', () => {
         },
       });
 
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT',
-        },
-      });
+      const reservation = {
+        userId: -1,
+      };
 
-      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation.id), false);
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:update', 'reservation', reservation), false);
     });
 
     it.skip('should not deny access to other record with deny property permission', async () => {
@@ -362,13 +354,11 @@ describe('access utils', () => {
         },
       });
 
-      const reservation = await models.reservation.findOne({
-        where: {
-          notes: 'VIDEO_SHOOT',
-        },
-      });
+      const reservation = {
+        userId: -1,
+      };
 
-      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation.id), true);
+      return assert.becomes(utils.cannot(models, redis, user.id, 'reservation:approved:update', 'reservation', reservation), true);
     });
 
     it('should handle overlap by making deny flag take precedence', () => {
@@ -427,7 +417,7 @@ describe('access utils', () => {
 
       const user = await models.user.findOne({ where: { email: 'admin' } });
 
-      const expected = 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, reservation:approve, roomReservation:create, roomReservation:read, roomReservation:delete, roomReservation:update, roomReservation:approve, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update, user:view-disabled';
+      const expected = 'device:read, device:update, reservation:create, reservation:read, reservation:delete, reservation:update, reservation:approve, roomReservation:create, roomReservation:read, roomReservation:delete, roomReservation:update, roomReservation:approve, user:update, deny!user:roles:update, deny!user:disabled:update, deny!user:doNotDisturb:update';
       const array = ['admin'];
 
       array.push(...expected.split(', '));

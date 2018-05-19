@@ -4,7 +4,7 @@ const Chance = require('chance');
 const chance = new Chance();
 const moment = require('moment');
 const errors = require('@feathersjs/errors');
-const email = require('../../../utils/email');
+const emailUtils = require('../../../utils/email');
 const general = require('../../../utils/general');
 
 module.exports = function (options) {
@@ -29,7 +29,7 @@ module.exports = function (options) {
       hook.data.email = result.email;
 
       try {
-        await email.queueEmails([{ email: hook.data.email }], 'Password Reset', hook.data.token, 'RESET_PASSWORD')
+        await emailUtils.queueEmails([{ email: hook.data.email }], 'Password Reset', hook.data.token, 'RESET_PASSWORD')
 
         return hook;
       } catch (e) {

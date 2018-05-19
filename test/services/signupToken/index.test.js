@@ -74,7 +74,7 @@ describe('signupToken service', () => {
       .set('Authorization', 'Bearer '.concat(user))
       .send({})
       .end((err, res) => {
-        res.should.have.status(401);
+        res.should.have.status(403);
         done();
       });
   });

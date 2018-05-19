@@ -16,7 +16,7 @@ describe('resetPassword service', () => {
       .post('/api/reset-password')
       .set('Accept', 'application/json')
       .send({
-        email: 'normal@domain.com'
+        email: 'normal'
       })
       .end((err, res) => {
         res.should.have.status(201);
@@ -44,12 +44,12 @@ describe('resetPassword service', () => {
       .post('/api/reset-password')
       .set('Accept', 'application/json')
       .send({
-        email: 'normal@domain.com'
+        email: 'normal'
       })
       .end((err, res) => {
         models.resetPasswordToken.findOne({
           where: {
-            email: 'normal@domain.com',
+            email: 'normal',
             used: false,
           },
           order: [
@@ -62,7 +62,7 @@ describe('resetPassword service', () => {
             .patch('/api/reset-password')
             .set('Accept', 'application/json')
             .send({
-              email: 'normal@domain.com',
+              email: 'normal',
               password: 'password',
               resetToken: data.token,
             })
@@ -83,12 +83,12 @@ describe('resetPassword service', () => {
       .post('/api/reset-password')
       .set('Accept', 'application/json')
       .send({
-        email: 'normal@domain.com'
+        email: 'normal'
       })
       .end((err, res) => {
         models.resetPasswordToken.findOne({
           where: {
-            email: 'normal@domain.com',
+            email: 'normal',
             used: false,
           },
         }).then((token) => {
@@ -132,7 +132,7 @@ describe('resetPassword service', () => {
       .patch('/api/reset-password')
       .set('Accept', 'application/json')
       .send({
-        email: 'normal@domain.com',
+        email: 'normal',
         password: 'password',
         resetToken: '3jd9dvszu',
       })
@@ -147,7 +147,7 @@ describe('resetPassword service', () => {
       .patch('/api/reset-password')
       .set('Accept', 'application/json')
       .send({
-        email: 'normal@domain.com',
+        email: 'normal',
         password: 'password',
         resetToken: '2jdedvszu',
       })
