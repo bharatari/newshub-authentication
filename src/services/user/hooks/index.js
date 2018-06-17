@@ -5,8 +5,7 @@ const auth = require('@feathersjs/authentication').hooks;
 const local = require('@feathersjs/authentication-local').hooks;
 const hooks = require('feathers-hooks-common');
 const dehydrate = require('feathers-sequelize/hooks/dehydrate');
-const token = require('./token');
-const master = require('./master');
+const edit = require('./edit');
 const normalize = require('./normalize');
 const associate = require('./associate');
 const populate = require('./populate');
@@ -34,8 +33,8 @@ exports.before = {
   ],
   create: [
     normalize(),
+    
     local.hashPassword({ passwordField: 'password' }),
-    token(),
   ],
   update: [
     hooks.disallow(),
@@ -45,7 +44,7 @@ exports.before = {
     organization(),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     globalHooks.restrictChangeOrganization({ model: 'user', belongsToMany: true }),
-    master(),
+    edit(),
   ],
   remove: [
     hooks.disallow(),
