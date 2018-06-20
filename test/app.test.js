@@ -20,7 +20,6 @@ const organization = require('./fixtures/organization');
 const user = require('./fixtures/user');
 const resetPasswordToken = require('./fixtures/resetPasswordToken');
 const role = require('./fixtures/role');
-const signupToken = require('./fixtures/signupToken');
 const associate = require('./fixtures/associate');
 
 chai.use(chaiHttp);
