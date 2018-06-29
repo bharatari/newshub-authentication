@@ -5,7 +5,7 @@ const auth = require('@feathersjs/authentication').hooks;
 const local = require('@feathersjs/authentication-local').hooks;
 const hooks = require('feathers-hooks-common');
 const dehydrate = require('feathers-sequelize/hooks/dehydrate');
-const edit = require('./edit');
+const fields = require('./fields');
 const normalize = require('./normalize');
 const associate = require('./associate');
 const populate = require('./populate');
@@ -15,11 +15,13 @@ const deviceManager = require('./deviceManager');
 const currentOrganization = require('./currentOrganization');
 const search = require('./search');
 const barcode = require('./barcode');
+const switchOrganization = require('./switchOrganization');
 
 exports.before = {
-  all: [],
-  find: [
+  all: [
     auth.authenticate('jwt'),
+  ],
+  find: [
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     deviceManager(),
     barcode(),
@@ -27,24 +29,22 @@ exports.before = {
     search(),
   ],
   get: [
-    auth.authenticate('jwt'),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     populate(),
   ],
   create: [
     normalize(),
-    
     local.hashPassword({ passwordField: 'password' }),
   ],
   update: [
     hooks.disallow(),
   ],
   patch: [
-    auth.authenticate('jwt'),
     organization(),
     globalHooks.protectOrganization({ model: 'user', belongsToMany: true }),
     globalHooks.restrictChangeOrganization({ model: 'user', belongsToMany: true }),
-    edit(),
+    switchOrganization(),
+    fields(),
   ],
   remove: [
     hooks.disallow(),
@@ -65,6 +65,7 @@ exports.after = {
   ],
   create: [
     associate(),
+    fields(),
     dehydrate(),
     hooks.iff(hooks.isProvider('external'), hooks.discard('password')),
   ],

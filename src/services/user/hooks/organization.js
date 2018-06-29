@@ -22,7 +22,7 @@ module.exports = function (options) {
       }
 
       try {
-        const canAddOrganization = await access.has(models, redis, adminId, 'user:add-organization');
+        const canAddOrganization = await access.has(models, redis, adminId, 'user:create');
 
         if (canAddOrganization) {
           const user = await models.user.findOne({

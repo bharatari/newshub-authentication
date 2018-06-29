@@ -11,15 +11,28 @@ module.exports = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
     const redis = hook.app.get('redis');
-    const { currentOrganizationId, organization_users: { roles, title, disabled, options, meta, barcode } } = hook.data;
+
+    if (!hook.data.organization_users) {
+      hook.data.organization_users = {};
+    }
+
+    const { organization_users: { roles, title, disabled, options, meta, barcode } } = hook.data;
 
     if (hook.params.skip) {
       return hook;  
     }
 
+    let id;
+
+    if (hook.method == 'create') {
+      id = hook.result.id;
+    } else {
+      id = hook.id;
+    }
+
     return models.user.findOne({
       where: {
-        id: hook.id,
+        id,
       },
       include: [{
         model: models.organization,
@@ -29,6 +42,7 @@ module.exports = function (options) {
       }],
     }).then(async (user) => {
       const newOrganizationUsers = user.get('organizations')[0].organization_users;
+      
       const currentRoles = user.get('organizations')[0].organization_users.roles;
   
       if (roles && (roles != currentRoles)) {
@@ -111,12 +125,6 @@ module.exports = function (options) {
           } else {
             newOrganizationUsers.meta.notes = meta.notes;
           }
-        }
-      }
-
-      if (!_.isNil(currentOrganizationId) && (currentOrganizationId !== user.currentOrganizationId)) {
-        if (hook.params.user.id != hook.id) {
-          throw new errors.Forbidden('You do not have the permission to switch organizations.');
         }
       }
 
