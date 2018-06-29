@@ -55,41 +55,25 @@ describe('user service', () => {
     assert.ok(app.service('/api/user'));
   });
 
-  it('should allow creation of a new account with valid signup token', (done) => {
-    chai.request(app)
-      .post('/api/user')
-      .set('Accept', 'application/json')
-      .send({
-        firstName: 'New',
-        lastName: 'User',
-        password: 'password',
-        email: 'email@nothing.com',
-        email: 'newuser',
-        signupToken: 'TOKEN_1'
-      })
-      .end((err, res) => {
-        res.should.have.status(201);
-
-        res.body.should.not.have.property('password');
-
-        done();
-      });
-  });
-
   it('created user should have organization properties set', (done) => {
     chai.request(app)
       .post('/api/user')
       .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(master))
       .send({
-        firstName: 'New',
-        lastName: 'User',
-        password: 'password',
-        email: 'email2@nothing.com',
-        email: 'newuser2',
-        signupToken: 'TOKEN_2'
+        firstName: "Bharat",
+        lastName: "Arimilli",
+        email: "bharat2@arimilli.io",
+        password: "password",
+        organization_users: {
+          title: "Web Editor",
+          barcode: "B2ARIMILLI",
+          roles: "master"
+        }
       })
       .end(async (err, res) => {
         res.body.should.have.property('currentOrganizationId');
+
         res.should.have.status(201);
 
         const user = await app.get('sequelize').models.user.findOne({
@@ -127,6 +111,8 @@ describe('user service', () => {
       })
       .end(async (err, res) => {
         res.should.have.status(200);
+
+        console.log(res.body);
 
         const updatedUser = await app.get('sequelize').models.user.findOne({
           where: {
@@ -176,8 +162,6 @@ describe('user service', () => {
   });
 
   it('should find device managers', (done) => {
-    const models = app.get('sequelize').models;
-
     chai.request(app)
       .get(`/api/user?deviceManager=true`)
       .set('Accept', 'application/json')
@@ -225,5 +209,112 @@ describe('user service', () => {
       });
   });
 
-  // TODO test editing each of these user fields
+  it('should allow admin to create users', (done) => {
+    chai.request(app)
+      .post(`/api/user`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(master))
+      .send({
+        firstName: "Bharat",
+        lastName: "Arimilli",
+        email: "bharat@arimilli.io",
+        password: "password",
+        organization_users: {
+          title: "Web Editor",
+          barcode: "BARIMILLI",
+          meta: {
+            code: "BSA"
+          },
+          roles: "master"
+        }
+      })
+      .end(async (err, res) => {
+        res.should.have.status(201);
+
+        done();
+      });
+  });
+
+  it('should allow editing join table fields', async (done) => {
+    const models = app.get('sequelize').models;
+
+    const user = await models.user.findOne({
+      where: {
+        email: 'bharat@arimilli.io',
+      },
+    });
+
+    const title = "Edited";
+    const barcode = "BARIMILLIEdited";
+    const code = "BSAEdited";
+    const roles = "admin";
+
+    chai.request(app)
+      .patch(`/api/user/${user.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(master))
+      .send({
+        organization_users: {
+          title,
+          barcode,
+          meta: {
+            code
+          },
+          roles,
+        }
+      })
+      .end(async (err, res) => {
+        res.should.have.status(200);
+
+        const updatedUser = await app.get('sequelize').models.user.findOne({
+          where: {
+            id: user.id,
+          },
+          include: [{
+            model: app.get('sequelize').models.organization,
+            where: {
+              '$organizations.organization_users.organizationId$': user.currentOrganizationId,
+            },
+          }]
+        });
+
+        console.log(updatedUser.organizations[0].organization_users);
+
+        assert.equal(updatedUser.organizations[0].organization_users.title, title);
+        assert.equal(updatedUser.organizations[0].organization_users.barcode, barcode);
+        assert.equal(updatedUser.organizations[0].organization_users.meta.code, code);
+        assert.equal(updatedUser.organizations[0].organization_users.roles, roles);
+
+        done();
+      });
+  });
+
+  it('should allow user to switch organizations', async (done) => {
+    const models = app.get('sequelize').models;
+
+    const user = await models.user.findOne({
+      where: {
+        email: 'editorganizations',
+      },
+    });
+
+    const organization = await models.organization.findOne({
+      where: {
+        name: 'utdtv',
+      },
+    });
+
+    chai.request(app)
+      .patch(`/api/user/${user.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(master))
+      .send({
+        currentOrganizationId: organization.id,
+      })
+      .end(async (err, res) => {
+        res.should.have.status(200);
+
+        done();
+      });
+  });
 });

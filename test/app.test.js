@@ -38,8 +38,7 @@ describe('Feathers application tests', () => {
         await fixtures.loadFixtures(user(models), models);
         await fixtures.loadFixtures(resetPasswordToken(models), models)
         await fixtures.loadFixtures(role(models), models);
-        await fixtures.loadFixtures(signupToken(models), models);
-        
+
         await associate(models);
       } catch (e) {
         throw e;
