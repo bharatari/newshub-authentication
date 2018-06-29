@@ -4,7 +4,7 @@ const _ = require('lodash');
 exports.disabled = function (options) {
   return function (hook) {
     const models = hook.app.get('sequelize').models;
-    
+
     return models.user.findOne({
       where: {
         email: hook.data.email,
