@@ -18,6 +18,8 @@ module.exports = function (options) {
 
     const { organization_users: { roles, title, disabled, options, meta, barcode } } = hook.data;
 
+    // Check if currentOrganizationId is set instead of
+    // doing this fragile skip check
     if (hook.params.skip) {
       return hook;  
     }
@@ -100,7 +102,7 @@ module.exports = function (options) {
           if (!canUpdateDeviceManager) {
             throw new errors.Forbidden('You do not have permission to update device manager status');
           } else {
-            newOrganizationUsers.options.deviceManager = options.deviceManager;
+            newOrganizationUsers.set('options.deviceManager', options.deviceManager);
           }
         }
       }
@@ -115,7 +117,7 @@ module.exports = function (options) {
           if (!canUpdateCode) {
             throw new errors.Forbidden('You do not have permission to update user code');
           } else {
-            newOrganizationUsers.meta.code = meta.code;
+            newOrganizationUsers.set('meta.code', meta.code);
           }
         }
 
@@ -123,7 +125,7 @@ module.exports = function (options) {
           if (!canUpdateNotes) {
             throw new errors.Forbidden('You do not have permission to update notes');
           } else {
-            newOrganizationUsers.meta.notes = meta.notes;
+            newOrganizationUsers.set('meta.notes', meta.notes);
           }
         }
       }

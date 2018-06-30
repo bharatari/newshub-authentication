@@ -4,7 +4,7 @@ const assert = require('assert');
 const app = require('../../../src/app');
 const chai = require('chai');
 
-let user;
+let normal;
 let admin;
 let master;
 
@@ -21,7 +21,7 @@ describe('user service', () => {
         password: 'password',
       })
       .end((err, res) => {
-        user = res.body.accessToken;
+        normal = res.body.accessToken;
 
         chai.request(app)
           .post('/api/login')
@@ -107,12 +107,12 @@ describe('user service', () => {
       .set('Accept', 'application/json')
       .set('Authorization', 'Bearer '.concat(master))
       .send({
-        roles: 'admin'
+        organization_users: {
+          roles: 'admin'
+        }
       })
       .end(async (err, res) => {
         res.should.have.status(200);
-
-        console.log(res.body);
 
         const updatedUser = await app.get('sequelize').models.user.findOne({
           where: {
@@ -278,8 +278,6 @@ describe('user service', () => {
           }]
         });
 
-        console.log(updatedUser.organizations[0].organization_users);
-
         assert.equal(updatedUser.organizations[0].organization_users.title, title);
         assert.equal(updatedUser.organizations[0].organization_users.barcode, barcode);
         assert.equal(updatedUser.organizations[0].organization_users.meta.code, code);
@@ -294,20 +292,20 @@ describe('user service', () => {
 
     const user = await models.user.findOne({
       where: {
-        email: 'editorganizations',
+        email: 'normal',
       },
     });
 
     const organization = await models.organization.findOne({
       where: {
-        name: 'utdtv',
+        name: 'themercury',
       },
     });
 
     chai.request(app)
       .patch(`/api/user/${user.id}`)
       .set('Accept', 'application/json')
-      .set('Authorization', 'Bearer '.concat(master))
+      .set('Authorization', 'Bearer '.concat(normal))
       .send({
         currentOrganizationId: organization.id,
       })
