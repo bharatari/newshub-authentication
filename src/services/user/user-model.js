@@ -27,6 +27,9 @@ module.exports = function (sequelize) {
       type: Sequelize.TEXT,
       allowNull: false,
     },
+    image: {
+      type: Sequelize.TEXT,
+    },
     disabled: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
