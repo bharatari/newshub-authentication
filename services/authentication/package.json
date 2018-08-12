@@ -1,0 +1,71 @@
+{
+  "name": "newshub-authentication",
+  "description": "",
+  "version": "1.0.0-beta.2",
+  "homepage": "",
+  "main": "src/",
+  "keywords": [
+    "feathers"
+  ],
+  "repository": {},
+  "author": "Bharat Arimilli",
+  "contributors": [],
+  "bugs": {},
+  "engines": {
+    "node": "7.10.0"
+  },
+  "scripts": {
+    "test": "set NODE_ENV=test&& npm run mocha && npm run istanbul",
+    "lint": "eslint src test",
+    "lint:fix": "eslint src test --fix",
+    "start": "node src/",
+    "mocha": "mocha --require test/bootstrap.test.js test/ --recursive",
+    "istanbul": "istanbul cover node_modules/mocha/bin/_mocha --require test/bootstrap.test.js -- test/ --recursive && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+  },
+  "dependencies": {
+    "@feathersjs/authentication": "^2.0.1",
+    "@feathersjs/authentication-jwt": "^1.0.1",
+    "@feathersjs/authentication-local": "^1.0.1",
+    "@feathersjs/configuration": "^1.0.1",
+    "@feathersjs/errors": "^3.2.0",
+    "@feathersjs/express": "^1.1.2",
+    "@feathersjs/feathers": "^3.0.1",
+    "@feathersjs/socketio": "^3.0.1",
+    "async": "^2.0.0-rc.6",
+    "azure-storage": "^2.1.0",
+    "body-parser": "^1.15.2",
+    "chance": "^1.0.3",
+    "compression": "^1.6.2",
+    "cors": "^2.7.1",
+    "deep-diff": "^0.3.8",
+    "dotenv": "^2.0.0",
+    "feathers-hooks-common": "git://github.com/feathers-plus/feathers-hooks-common.git#master",
+    "feathers-sequelize": "^3.0.0",
+    "helmet": "^3.9.0",
+    "icalendar": "^0.7.1",
+    "lodash": "^4.13.1",
+    "moment": "^2.14.1",
+    "passport": "^0.3.2",
+    "pg": "^6.0.0",
+    "pg-hstore": "^2.3.2",
+    "redis": "^2.6.5",
+    "sequelize": "^4.27.0",
+    "sequelize-cli": "^2.5.1",
+    "sequelize-fixtures": "^0.7.0",
+    "serve-favicon": "^2.3.0",
+    "skipper": "^0.6.4",
+    "skipper-s3": "^0.5.6",
+    "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "bcryptjs": "^2.4.3",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "chai-http": "^3.0.0",
+    "coveralls": "^2.11.16",
+    "eslint": "^3.15.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^2.5.3",
+    "request": "^2.72.0"
+  }
+}

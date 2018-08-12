@@ -1,0 +1,16 @@
+{
+  "host": "localhost",
+  "port": "PORT",
+  "postgres": "DATABASE_URL",
+  "DATABASE_SSL": "DATABASE_SSL",
+  "public": "../public/",
+  "auth": {
+    "secret": "p9g6Jt5SqfJ9HoM5hIO0UG9r1JjlhRN4fGXheh5kcG2BxMjtpCw4u1uTJTOO5iztQZVTPZ1SBueCdzSfOnAwEw=="
+  },
+  "keys": {
+    "S3_API_KEY": "S3_API_KEY",
+    "S3_API_SECRET": "S3_API_SECRET",
+    "SENDGRID_KEY": "SENDGRID_KEY",
+    "REDIS_URL": "REDIS_URL"
+  }
+}
