@@ -1,12 +1,14 @@
 # Access Control Utilities
 
+A core piece of NewsHub's Authentication microservice is an access control system.
+
 The goal with NewsHub's access control system is for it to be flexible and configurable yet consistent.
 
 Permissions are the most granular level of access control. Each permission corresponds to a specific action and therefore every given action that can be taken with the application can be regulated with a corresponding permission.
 
 Roles on the other hand do not directly correspond to anything in the system and are instead defined dynamically. There is only one role that automatically exists; the `master` role which gives an administrator complete system access. 
 
-Permissions and roles also regulate access control on the client. NewsHub components are access control-aware meaning components will change their appearance and structure based on the permissions the user has. For example, if a user has the permission to edit a certain field in a data record, it will appear as an editable field and if they only have read access, the field will display as static text. This extends to pages as well. Pages have access control in two ways. The first way is dependency-based access control where the permissions that are needed for the page to properly function are defined for each page. If the user does not have the required permissions, the page will not be accessible to them. The second way is custom access control where you can restrict certain pages to certain roles. Because roles are dynamically defined, these pages are dynamically restricted. In the code, a `dynamic` flag is set and the client knows to check the database for the corresponding role required to access the page and then match that against the user.
+Permissions and roles also regulate access control on the client. NewsHub components are access control-aware meaning components will change their appearance and structure based on the permissions the user has. For example, if a user has the permission to edit a certain field in a data record,it will appear as an editable field and if they only have read access, the field will display as static text. This extends to pages as well. Pages have access control in two ways. The first way is dependency-based access control where the permissions that are needed for the page to properly function are defined for each page. If the user does not have the required permissions, the page will not be accessible to them. The second way is custom access control where you can restrict certain pages to certain roles. Because roles are dynamically defined, these pages are dynamically restricted. In the code, a `dynamic` flag is set and the client knows to check the database for the corresponding role required to access the page and then match that against the user.
 
 ## Structure
 
